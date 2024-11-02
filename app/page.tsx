@@ -1,17 +1,16 @@
-'use client'
+"use client";
 
-import {ModeToggle} from "@/components/mode-toggle";
-import {getApiStatus} from "@/app/api/status";
-
+import { ModeToggle } from "@/components/mode-toggle";
+import { getApiStatus } from "@/app/api/status";
 
 export default function Home() {
-    // Use like normal React
+  // Use like normal React
 
-    console.log(getApiStatus());
+  console.log(getApiStatus());
 
-    return (
+  return (
     <>
       <ModeToggle />
     </>
-    );
+  );
 }
