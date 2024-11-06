@@ -12,6 +12,10 @@ const config: Config = {
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        grayLight: "hsl(var(--gray-light))",
+        blue: "hsl(var(--blue))",
+        blueLight: "hsl(var(--blue-light))",
+
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
@@ -51,9 +55,9 @@ const config: Config = {
           "5": "hsl(var(--chart-5))",
         },
 
-        "button-bg": "#ffffff",
-        "button-text": "#000000",
-        "text-primary": "#ffffff",
+        // "button-bg": "#ffffff",
+        // "button-text": "#000000",
+        // "text-primary": "#ffffff",
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],

@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 import React from "react";
 import { ThemeProvider } from "@/components/theme-provider";
-import {Header} from "@/components/Header";
+import { Header } from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +26,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="w-full min-h-[calc(100dvh-4rem)] mx-auto rounded-md overflow-hidden flex flex-col justify-center items-center">
+          <div className="w-full min-h-[calc(100dvh-4rem)] mx-auto overflow-hidden flex flex-col justify-center items-center">
             {children}
           </div>
         </ThemeProvider>
