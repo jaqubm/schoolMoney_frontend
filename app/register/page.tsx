@@ -8,12 +8,24 @@ import { Header } from "@/components/Header";
 import { RegisterBody } from "@/app/register/Register.types";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { getValidationRules } from "@/app/register/validationRules";
+import { registerSchema } from "@/app/register/validationRules";
 import { clsx } from "clsx";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function Register() {
   const router = useRouter();
-  const form = useForm<RegisterBody>({
+
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -24,7 +36,18 @@ export default function Register() {
     },
   });
 
-  const validationRules = getValidationRules(form.getValues);
+  // const form = useForm<RegisterBody>({
+  //   defaultValues: {
+  //     email: "",
+  //     password: "",
+  //     repeatedPassword: "",
+  //     name: "",
+  //     surname: "",
+  //     termsAndConditions: false,
+  //   },
+  // });
+
+  // const regi = getValidationRules(form.getValues);
   const {
     register,
     formState: { errors },
@@ -53,11 +76,11 @@ export default function Register() {
     }
   };
 
-  console.log("email", register("email", validationRules.email));
-  console.log(
-    "termsAndConditions",
-    register("termsAndConditions", validationRules.termsAndConditions),
-  );
+  // console.log("email", register("email", validationRules.email));
+  // console.log(
+  //   "termsAndConditions",
+  //   register("termsAndConditions", validationRules.termsAndConditions),
+  // );
 
   return (
     <div className="relative h-screen w-screen">
@@ -91,97 +114,53 @@ export default function Register() {
           </div>
 
           <div className="w-[395px] flex flex-col justify-center gap-7">
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              {errors.name && (
-                <p className="text-destructive text-xs mb-1">
-                  {errors.name.message}
-                </p>
-              )}
-              <Input
-                className="shadow mb-5"
-                placeholder="First name"
-                {...register("name", validationRules.name)}
-              />
-
-              {errors.surname && (
-                <p className="text-destructive text-xs mb-1">
-                  {errors.surname.message}
-                </p>
-              )}
-              <Input
-                className="shadow mb-5"
-                placeholder="Last name"
-                {...form.register("surname", validationRules.surname)}
-              />
-
-              {errors.email && (
-                <p className="text-destructive text-xs mb-1">
-                  {errors.email.message}
-                </p>
-              )}
-              <Input
-                className="shadow mb-5"
-                type="email"
-                placeholder="Email"
-                {...register("email", validationRules.email)}
-              />
-
-              {errors.password && (
-                <p className="text-destructive text-xs mb-1">
-                  {errors.password.message}
-                </p>
-              )}
-              <Input
-                className="shadow mb-5"
-                type="password"
-                placeholder="Password"
-                {...register("password", validationRules.password)}
-              />
-
-              {errors.repeatedPassword && (
-                <p className="text-destructive text-xs mb-1">
-                  {errors.repeatedPassword.message}
-                </p>
-              )}
-              <Input
-                className="shadow mb-5"
-                type="password"
-                placeholder="Repeat password"
-                {...register(
-                  "repeatedPassword",
-                  validationRules.repeatedPassword,
-                )}
-              />
-
-              {errors.termsAndConditions && (
-                <p className="flex items-center gap-1 w-fit mx-auto text-destructive text-xs mb-1">
-                  {errors.termsAndConditions.message}
-                </p>
-              )}
-              <label className="flex items-center gap-1 text-xs w-fit mx-auto">
-                <Controller
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col gap-2"
+              >
+                <FormField
                   control={form.control}
-                  name="termsAndConditions"
-                  rules={validationRules.termsAndConditions}
-                  render={({ field: { value, onChange } }) => (
-                    <Checkbox
-                      className="border border-grayLight"
-                      checked={value}
-                      // onChange={onChange}
-                      onClick={onChange}
-
-                      // onClick={}
-                      //    {...register(
-                      //        "termsAndConditions",
-                      //        validationRules.termsAndConditions,
-                      //    )}
-                    />
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="">
+                      <div className="flex flex-col w-full gap-2">
+                        <FormLabel>Checkbox</FormLabel>
+                        <FormControl>
+                          <Input
+                            className="shadow"
+                            placeholder="First name"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </div>
+                    </FormItem>
                   )}
                 />
-                I accept the terms and conditions and privacy policy
-              </label>
 
-              <div className="flex items-center gap-1 w-fit mx-auto mt-5">
+                <FormField
+                  control={form.control}
+                  name="termsAndConditions"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <div className="flex flex-col w-full gap-2">
+                        <FormMessage />
+
+                        <div className="flex flex-row w-full">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormLabel>Checkbox</FormLabel>
+                        </div>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
                 <Button
                   type="submit"
                   variant="default"
@@ -192,8 +171,112 @@ export default function Register() {
                 >
                   Get Started
                 </Button>
-              </div>
-            </form>
+              </form>
+            </Form>
+
+            {/*  <form onSubmit={form.handleSubmit(onSubmit)}>*/}
+            {/*  {errors.name && (*/}
+            {/*    <p className="text-destructive text-xs mb-1">*/}
+            {/*      {errors.name.message}*/}
+            {/*    </p>*/}
+            {/*  )}*/}
+            {/*  <Input*/}
+            {/*    className="shadow mb-5"*/}
+            {/*    placeholder="First name"*/}
+            {/*    {...register("name", validationRules.name)}*/}
+            {/*  />*/}
+
+            {/*  {errors.surname && (*/}
+            {/*    <p className="text-destructive text-xs mb-1">*/}
+            {/*      {errors.surname.message}*/}
+            {/*    </p>*/}
+            {/*  )}*/}
+            {/*  <Input*/}
+            {/*    className="shadow mb-5"*/}
+            {/*    placeholder="Last name"*/}
+            {/*    {...form.register("surname", validationRules.surname)}*/}
+            {/*  />*/}
+
+            {/*  {errors.email && (*/}
+            {/*    <p className="text-destructive text-xs mb-1">*/}
+            {/*      {errors.email.message}*/}
+            {/*    </p>*/}
+            {/*  )}*/}
+            {/*  <Input*/}
+            {/*    className="shadow mb-5"*/}
+            {/*    type="email"*/}
+            {/*    placeholder="Email"*/}
+            {/*    {...register("email", validationRules.email)}*/}
+            {/*  />*/}
+
+            {/*  {errors.password && (*/}
+            {/*    <p className="text-destructive text-xs mb-1">*/}
+            {/*      {errors.password.message}*/}
+            {/*    </p>*/}
+            {/*  )}*/}
+            {/*  <Input*/}
+            {/*    className="shadow mb-5"*/}
+            {/*    type="password"*/}
+            {/*    placeholder="Password"*/}
+            {/*    {...register("password", validationRules.password)}*/}
+            {/*  />*/}
+
+            {/*  {errors.repeatedPassword && (*/}
+            {/*    <p className="text-destructive text-xs mb-1">*/}
+            {/*      {errors.repeatedPassword.message}*/}
+            {/*    </p>*/}
+            {/*  )}*/}
+            {/*  <Input*/}
+            {/*    className="shadow mb-5"*/}
+            {/*    type="password"*/}
+            {/*    placeholder="Repeat password"*/}
+            {/*    {...register(*/}
+            {/*      "repeatedPassword",*/}
+            {/*      validationRules.repeatedPassword,*/}
+            {/*    )}*/}
+            {/*  />*/}
+
+            {/*  {errors.termsAndConditions && (*/}
+            {/*    <p className="flex items-center gap-1 w-fit mx-auto text-destructive text-xs mb-1">*/}
+            {/*      {errors.termsAndConditions.message}*/}
+            {/*    </p>*/}
+            {/*  )}*/}
+            {/*  <label className="flex items-center gap-1 text-xs w-fit mx-auto">*/}
+            {/*    <Controller*/}
+            {/*      control={form.control}*/}
+            {/*      name="termsAndConditions"*/}
+            {/*      rules={validationRules.termsAndConditions}*/}
+            {/*      render={({ field: { value, onChange } }) => (*/}
+            {/*        <Checkbox*/}
+            {/*          className="border border-grayLight"*/}
+            {/*          checked={value}*/}
+            {/*          // onChange={onChange}*/}
+            {/*          onClick={onChange}*/}
+
+            {/*          // onClick={}*/}
+            {/*          //    {...register(*/}
+            {/*          //        "termsAndConditions",*/}
+            {/*          //        validationRules.termsAndConditions,*/}
+            {/*          //    )}*/}
+            {/*        />*/}
+            {/*      )}*/}
+            {/*    />*/}
+            {/*    I accept the terms and conditions and privacy policy*/}
+            {/*  </label>*/}
+
+            {/*  <div className="flex items-center gap-1 w-fit mx-auto mt-5">*/}
+            {/*    <Button*/}
+            {/*      type="submit"*/}
+            {/*      variant="default"*/}
+            {/*      className={clsx(*/}
+            {/*        "font-poppins rounded-2xl font-semibold bg-blue text-primary",*/}
+            {/*        "hover:bg-blueLight",*/}
+            {/*      )}*/}
+            {/*    >*/}
+            {/*      Get Started*/}
+            {/*    </Button>*/}
+            {/*  </div>*/}
+            {/*</form>*/}
           </div>
         </div>
       </div>
