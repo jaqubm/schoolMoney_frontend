@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import Image from "next/image";
+import {postLogin} from "@/app/api/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -14,12 +14,7 @@ export default function Login() {
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    try {
-      const response = await axios.post("/auth/login", { email, password });
-      console.log("Login successful", response.data);
-    } catch (error) {
-      console.error("Login failed", error);
-    }
+    console.log(await postLogin(email, password));
   };
 
   return (
