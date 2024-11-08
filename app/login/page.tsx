@@ -6,16 +6,32 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import Image from "next/image";
-import {postLogin} from "@/app/api/auth";
+import { postLogin } from "@/app/api/auth";
+
+import Cookies from 'js-cookie';
+import {useRouter} from "next/navigation";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
-  const handleLogin = async (event: React.FormEvent) => {
+  const handleLogin = async (event: React.FormEvent) =>
+  {
     event.preventDefault();
-    console.log(await postLogin(email, password));
-  };
+    try {
+      const result = await postLogin(email, password);
+      if (result.data?.Token) {
+        Cookies.set('access_token', result.data.Token, { expires: 1, secure: true });
+        router.replace("/home");
+      }
+      else {
+        console.error("Login failed: No token returned.");
+      }
+    } catch (error) {
+      console.error("Login failed", error);
+    }
+  }
 
   return (
     <div className="flex w-screen h-screen">
