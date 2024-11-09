@@ -4,40 +4,85 @@ import { Sidebar } from "@/components/sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Activity, ActivityCard } from "@/components/activity-card";
+
 
 const HomePage = () => {
-  return (
-      <div className="flex min-h-screen w-full">
-        <div className="absolute w-full h-[151px]">
-          <header className="flex items-center justify-between w-full h-full">
-            <h1 className="text-3xl font-semibold">SchoolMoney</h1>
-            <div className="flex items-center space-x-4">
-              <Input
-                  type="search"
-                  placeholder="Search..."
-                  className="w-64 border rounded-md"
-              />
-              <Button variant="ghost" className="p-2">
-                <span className="material-icons">settings</span>
-              </Button>
-              <div className="flex items-center space-x-2">
-                <span className="text-lg">Welcome, Piotr</span>
-                <Avatar>
-                  <AvatarFallback>AV</AvatarFallback>
-                </Avatar>
+   const activityCards:Activity[] = [
+      {
+         title: "Payment for School Trip to the Museum",
+         transactionType: "Deposit",
+         amount: "$25",
+         date: "October 20, 2024",
+         paidBy: "John Doe",
+      },
+      {
+         title: "Donation to School Art Program",
+         transactionType: "Donation",
+         amount: "$50",
+         date: "October 15, 2024",
+         paidBy: "Jane Smith",
+      },
+      {
+         title: "Payment for Science Project Materials",
+         transactionType: "Purchase",
+         amount: "$15",
+         date: "October 10, 2024",
+         paidBy: "Michael Johnson",
+      },
+   ]
+
+   return (
+      <div className="flex flex-col w-screen h-screen">
+         {/* Upper screen*/}
+        <div className="flex w-full h-full max-h-[151px] py-[40px] items-center">
+           <header className="flex justify-between h-full w-full items-center">
+              <div className="flex items-center ml-[40px]">
+                 <div className="flex">
+                    <h1 className="text-4xl font-normal">School</h1>
+                    <h1 className="text-4xl font-semibold">Money</h1>
+                 </div>
+                 <Input
+                    type="search"
+                    placeholder="Search..."
+                    className="w-[654px] h-[66px] ml-[80px] rounded-lg text-base"
+                 />
               </div>
-            </div>
-          </header>
+              <div className="flex items-center py-[27.5px] mr-[40px]">
+                 <span className="text-lg mr-[22px]">Welcome, Piotr</span>
+                 <Avatar>
+                    <AvatarFallback>P</AvatarFallback>
+                 </Avatar>
+              </div>
+           </header>
         </div>
-        <Sidebar/>
-        <div className="absolute top-[151px] left-[339px]">
-          <section>
-            <h2 className="text-xl font-semibold mb-4">Recent Activities</h2>
-            <div className="flex space-x-4 mb-4">
-              <Button variant="outline">Contributed Fundraisers</Button>
-              <Button variant="outline">Your Fundraisers</Button>
+         {/* Lower screen*/}
+         <div className="flex w-full h-full">
+            {/* Left section*/}
+            <div className="flex flex-col w-full max-w-[339px] items-center h-full">
+               <Sidebar/>
             </div>
-          </section>
+            {/* Right section*/}
+            <div className="flex w-full h-full justify-center items-center">
+               <div className="flex flex-col w-full max-w-[500px] h-full justify-center items-center text-center">
+                  <div className="flex w-full max-w-[500px] h-full max-h-[91px] justify-center items-center mt-5">
+                         <div className="flex flex-col">
+                            <div className="flex items-center">
+                               <h2 className="text-xl font-semibolds">Recent Activities</h2>
+                              <Button variant="outline">Contributed Fundraisers</Button>
+                              <Button variant="outline">Your Fundraisers</Button>
+                            </div>
+                         </div>
+                  </div>
+                  <div className="flex flex-col w-full max-w-[500px] h-full justify-center items-center mt-5">
+                       <div className="flex flex-col">
+                          {activityCards.map((activity, index) => (
+                             <ActivityCard key={index} activity={activity} />
+                          ))}
+                       </div>
+                  </div>
+               </div>
+            </div>
         </div>
       </div>
   );

@@ -1,8 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import React from "react";
 
 export interface Activity {
-  id: number;
   title: string;
   transactionType: string;
   amount: string;
@@ -10,14 +10,14 @@ export interface Activity {
   paidBy: string;
 }
 
-interface RecentActivityCardProps {
+interface ActivityCard {
   activity: Activity;
 }
 
-export const RecentActivityCard: React.FC<RecentActivityCardProps> = ({
+export const ActivityCard: React.FC<ActivityCard> = ({
   activity,
 }) => (
-  <Card className="p-4 flex flex-col space-y-2 shadow-md rounded-lg">
+  <Card className="p-4 flex flex-col">
     <h3 className="text-lg font-semibold">{activity.title}</h3>
     <p>Transaction Type: {activity.transactionType}</p>
     <p>Amount: {activity.amount}</p>

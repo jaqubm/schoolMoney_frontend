@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 
 export const Sidebar = () => (
-  <div className="absolute w-[339px] p-4 bg-white top-[151px] h-full">
+  <div className="flex bg-white w-[339px] h-full">
     <nav>
       {[
         "Home",
