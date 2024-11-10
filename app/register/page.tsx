@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axiosInstance from "@/lib/axiosInstance";
+import axiosInstance from "@/app/api";
 
 export default function Register() {
   const router = useRouter();
