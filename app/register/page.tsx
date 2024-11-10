@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axiosInstance from "@/lib/axiosInstance";
 
 export default function Register() {
   const router = useRouter();
@@ -38,19 +39,12 @@ export default function Register() {
 
   const onSubmit: SubmitHandler<RegisterBody> = async (data) => {
     try {
-      const response = await fetch("/Auth/Register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await axiosInstance.post("/Auth/Register", data);
 
-      if (response.ok) {
+      if (response.status === 200) {
         router.push("/login");
       } else {
-        const errorData = await response.json();
-        console.error("Registration failed:", errorData);
+        console.error("Registration failed:", response.data);
       }
     } catch (error) {
       console.error("Error:", error);
