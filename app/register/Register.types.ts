@@ -1,7 +1,7 @@
 export type RegisterBody = {
   email: string;
   password: string;
-  repeatedPassword: string;
+  passwordConfirm: string;
   name: string;
   surname: string;
   termsAndConditions: boolean;
