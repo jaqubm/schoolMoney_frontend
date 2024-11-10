@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import axiosInstance from "@/lib/axiosInstance";
+import axiosInstance from "@/app/api";
 
 const registerHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { email, password, passwordConfirm, name, surname } = req.body;
