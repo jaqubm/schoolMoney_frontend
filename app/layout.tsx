@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 import React from "react";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +29,7 @@ export default function RootLayout({
           <div className="w-full min-h-[calc(100dvh-4rem)] mx-auto overflow-hidden flex flex-col justify-center items-center">
             {children}
           </div>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

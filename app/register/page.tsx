@@ -3,13 +3,14 @@
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import React from "react";
+import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { RegisterBody } from "@/app/register/Register.types";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { registerSchema } from "@/app/register/validationRules";
 import { clsx } from "clsx";
+import { Spinner } from "@/components/Spinner";
 import {
   Form,
   FormControl,
@@ -21,9 +22,12 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axiosInstance from "@/app/api";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Register() {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -38,22 +42,39 @@ export default function Register() {
   });
 
   const onSubmit: SubmitHandler<RegisterBody> = async (data) => {
+    debugger;
+    setLoading(true);
+
     try {
       const response = await axiosInstance.post("/Auth/Register", data);
 
       if (response.status === 200) {
         router.push("/login");
       } else {
+        toast({
+          title: "Registration failed",
+          description: response.data.message || "An error occurred.",
+        });
         console.error("Registration failed:", response.data);
       }
     } catch (error) {
+      toast({
+        title: "Registration failed",
+        description:
+          (error instanceof Error ? error.message : (error as string)) ||
+          "An unexpected error occurred.",
+        variant: "destructive",
+      });
       console.error("Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="relative h-screen w-screen">
       <div className="flex flex-row h-screen w-full">
+        `
         <div className="relative flex-1 flex items-center justify-start flex-col text-white p-10">
           <div
             className="absolute inset-0 bg-center bg-cover"
@@ -70,7 +91,6 @@ export default function Register() {
             <h1 className="relative z-10 text-5xl font-bold">Fundraising</h1>
           </div>
         </div>
-
         <div className="flex-1 flex items-center justify-center flex-col gap-10">
           <div className="flex flex-col justify-center gap-4">
             <h3 className="font-bold text-2xl">Create an account</h3>
@@ -85,7 +105,11 @@ export default function Register() {
           <div className="w-[395px] flex flex-col justify-center gap-7">
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  const submit = form.handleSubmit(onSubmit);
+                  submit(event);
+                }}
                 className="flex flex-col gap-5"
               >
                 <FormField
@@ -215,8 +239,16 @@ export default function Register() {
                     "font-poppins mt-5 rounded-bl font-semibold bg-blue text-primary shadow",
                     "hover:bg-blueLight",
                   )}
+                  disabled={loading}
                 >
-                  Get Started
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <Spinner />
+                      Loading...
+                    </span>
+                  ) : (
+                    "Get Started"
+                  )}
                 </Button>
               </form>
             </Form>
