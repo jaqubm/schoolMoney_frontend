@@ -59,28 +59,22 @@ const HomePage = () => {
          {/* Lower screen*/}
          <div className="flex w-full h-full">
             {/* Left section*/}
-            <div className="flex flex-col w-full max-w-[339px] items-center h-full">
+            <div className="flex bg-[#fafafa] w-full max-w-[339px] h-full">
                <Sidebar/>
             </div>
             {/* Right section*/}
-            <div className="flex w-full h-full justify-center items-center">
-               <div className="flex flex-col w-full max-w-[500px] h-full justify-center items-center text-center">
-                  <div className="flex w-full max-w-[500px] h-full max-h-[91px] justify-center items-center mt-5">
-                         <div className="flex flex-col">
-                            <div className="flex items-center">
-                               <h2 className="text-xl font-semibolds">Recent Activities</h2>
-                              <Button variant="outline">Contributed Fundraisers</Button>
-                              <Button variant="outline">Your Fundraisers</Button>
-                            </div>
-                         </div>
-                  </div>
-                  <div className="flex flex-col w-full max-w-[500px] h-full justify-center items-center mt-5">
-                       <div className="flex flex-col">
-                          {activityCards.map((activity, index) => (
-                             <ActivityCard key={index} activity={activity} />
-                          ))}
-                       </div>
-                  </div>
+            <div className="flex flex-col w-full h-full pl-[59px]">
+               <div className="flex w-full h-[91px] gap-[30px] items-center">
+                  <h2 className="text-4xl font-normal line-">Recent Activities</h2>
+                  <Button variant="outline" className="text-xl w-[284px]">Contributed Fundraisers</Button>
+                  <Button variant="outline" className="text-xl w-[236px]">Your Fundraisers</Button>
+               </div>
+               <div className="flex flex-col w-full h-full">
+                    <div className="flex flex-col h-full gap-[54px] pt-[34px] pr-[99px]">
+                       {activityCards.map((activity, index) => (
+                          <ActivityCard key={index} activity={activity} />
+                       ))}
+                    </div>
                </div>
             </div>
         </div>
