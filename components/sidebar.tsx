@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 
 export const Sidebar = () => (
-   <nav className="flex flex-col justify-between w-full">
+   <nav className="flex flex-col justify-between w-full h-full">
       <div>
          {[
             "Home",
@@ -11,14 +11,14 @@ export const Sidebar = () => (
             "History",
             "Classes",
          ].map((item) => (
-            <Button key={item} className="w-full h-[98px] text-[28px] font-[600]">
+            <Button key={item} variant="ghost" className="w-full h-[98px] text-[28px] font-[600]">
                {item}
             </Button>
          ))}
       </div>
 
       <div>
-         <Button key="Profile" className="w-full h-[98px] text-[28px] font-[600]">
+         <Button key="Profile" variant="ghost" className="w-full h-[98px] text-[28px] font-[600]">
             Profile
          </Button>
       </div>
