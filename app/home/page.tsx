@@ -1,69 +1,105 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
 import { Sidebar } from "@/components/sidebar";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Activity,
-  RecentActivityCard,
-} from "@/components/recent-activity-card";
+import { Activity, ActivityCard } from "@/components/activity-card";
+
 
 const HomePage = () => {
-  const [activities, setActivities] = useState<Activity[]>([]);
+   const activityCards:Activity[] = [
+      {
+         title: "Payment for School Trip to the Museum",
+         transactionType: "Deposit",
+         amount: "$25",
+         date: "October 20, 2024",
+         paidBy: "John Doe",
+      },
+      {
+         title: "Donation to School Art Program",
+         transactionType: "Donation",
+         amount: "$50",
+         date: "October 15, 2024",
+         paidBy: "Jane Smith",
+      },
+      {
+         title: "Payment for Science Project Materials",
+         transactionType: "Purchase",
+         amount: "$15",
+         date: "October 10, 2024",
+         paidBy: "Michael Johnson",
+      },
+      {
+         title: "Payment for Science Project Materials",
+         transactionType: "Purchase",
+         amount: "$15",
+         date: "October 10, 2024",
+         paidBy: "Michael Johnson",
+      },
+      {
+         title: "Payment for Science Project Materials",
+         transactionType: "Purchase",
+         amount: "$15",
+         date: "October 10, 2024",
+         paidBy: "Michael Johnson",
+      },
+      {
+         title: "Payment for Science Project Materials",
+         transactionType: "Purchase",
+         amount: "$15",
+         date: "October 10, 2024",
+         paidBy: "Michael Johnson",
+      },
+   ]
 
-  useEffect(() => {
-    // Przykładowe pobranie danych za pomocą Axios
-    axios.get("/api/activities").then((response) => {
-      setActivities(response.data);
-    });
-  }, []);
-
-  return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Pasek boczny */}
-      <Sidebar />
-
-      <div className="flex-1 p-6 space-y-6">
-        {/* Górny pasek */}
-        <header className="flex items-center justify-between">
-          <h1 className="text-3xl font-semibold">SchoolMoney</h1>
-          <div className="flex items-center space-x-4">
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="w-64 border rounded-md"
-            />
-            <Button variant="ghost" className="p-2">
-              <span className="material-icons">settings</span>
-            </Button>
-            <div className="flex items-center space-x-2">
-              <span className="text-lg">Welcome, Piotr</span>
-              <Avatar>
-                <AvatarImage src="/avatar.png" alt="Profile Picture" />
-                <AvatarFallback>AV</AvatarFallback>
-              </Avatar>
+   return (
+      <div className="flex flex-col w-screen h-screen">
+         {/* Upper screen*/}
+        <div className="flex w-full h-full max-h-[151px] py-[40px] items-center border">
+           <header className="flex justify-between h-full w-full items-center">
+              <div className="flex items-center ml-[40px]">
+                 <div className="flex">
+                    <h1 className="text-4xl font-normal">School</h1>
+                    <h1 className="text-4xl font-semibold">Money</h1>
+                 </div>
+                 <Input
+                    type="search"
+                    placeholder="Search..."
+                    className="w-[654px] h-[66px] ml-[80px] rounded-lg text-base"
+                 />
+              </div>
+              <div className="flex items-center py-[27.5px] mr-[40px]">
+                 <span className="text-lg mr-[22px]">Welcome, Piotr</span>
+                 <Avatar>
+                    <AvatarFallback>P</AvatarFallback>
+                 </Avatar>
+              </div>
+           </header>
+        </div>
+         {/* Lower screen*/}
+         <div className="flex w-full h-full overflow-hidden">
+            {/* Left section*/}
+            <div className="flex w-full max-w-[339px] h-full border">
+               <Sidebar/>
             </div>
-          </div>
-        </header>
-
-        {/* Główna zawartość */}
-        <section>
-          <h2 className="text-xl font-semibold mb-4">Recent Activities</h2>
-          <div className="flex space-x-4 mb-4">
-            <Button variant="outline">Contributed Fundraisers</Button>
-            <Button variant="outline">Your Fundraisers</Button>
-          </div>
-          <div className="space-y-4">
-            {activities.map((activity) => (
-              <RecentActivityCard key={activity.id} activity={activity} />
-            ))}
-          </div>
-        </section>
+            {/* Right section*/}
+            <div className="flex flex-col w-full h-full pl-[59px] pt-[19px]">
+               <div className="flex w-full h-full min-h-[91px] max-h-[91px] gap-[30px] items-center">
+                  <h2 className="text-4xl font-normal line-">Recent Activities</h2>
+                  <Button variant="outline" className="text-xl w-[284px]">Contributed Fundraisers</Button>
+                  <Button variant="outline" className="text-xl w-[236px]">Your Fundraisers</Button>
+               </div>
+               <div className="flex flex-col w-full h-full items-center overflow-y-auto pr-[59px]">
+                    <div className="flex flex-col w-full max-w-[1423px] gap-[54px] pt-[34px] mb-10">
+                       {activityCards.map((activity, index) => (
+                          <ActivityCard key={index} activity={activity} />
+                       ))}
+                    </div>
+               </div>
+            </div>
+        </div>
       </div>
-    </div>
   );
 };
 
