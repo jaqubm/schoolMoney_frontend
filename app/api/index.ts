@@ -7,19 +7,16 @@ export const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-})
+});
 
 axiosInstance.interceptors.request.use(
-    async (config) => {
-      const accessToken = Cookies.get('access_token');
-
-      if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
-
-      return config
-    },
-    (error) => {
-      return Promise.reject(error)
-    }
-)
-
-export default axiosInstance
+  async (config) => {
+    const accessToken = Cookies.get("access_token");
+    if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+export default axiosInstance;
