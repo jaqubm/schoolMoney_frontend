@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Activity, ActivityCard } from "@/components/activity-card";
+import {Header} from "@/components/Header";
 
 
 const HomePage = () => {
@@ -56,27 +57,20 @@ const HomePage = () => {
    return (
       <div className="flex flex-col w-screen h-screen">
          {/* Upper screen*/}
-        <div className="flex w-full h-full max-h-[151px] py-[40px] items-center border">
-           <header className="flex justify-between h-full w-full items-center">
-              <div className="flex items-center ml-[40px]">
-                 <div className="flex">
-                    <h1 className="text-4xl font-normal">School</h1>
-                    <h1 className="text-4xl font-semibold">Money</h1>
-                 </div>
-                 <Input
-                    type="search"
-                    placeholder="Search..."
-                    className="w-[654px] h-[66px] ml-[80px] rounded-lg text-base"
-                 />
-              </div>
-              <div className="flex items-center py-[27.5px] mr-[40px]">
-                 <span className="text-lg mr-[22px]">Welcome, Piotr</span>
-                 <Avatar>
-                    <AvatarFallback>P</AvatarFallback>
-                 </Avatar>
-              </div>
-           </header>
-        </div>
+         <Header withBorder>
+            <Input
+               type="search"
+               placeholder="Search..."
+               className="w-[654px] h-[66px] rounded-lg text-base"
+            />
+            <div className="flex items-center py-[27.5px] mr-[40px]">
+               <span className="text-lg mr-[22px]">Welcome, Piotr</span>
+               <Avatar>
+                  <AvatarFallback>P</AvatarFallback>
+               </Avatar>
+            </div>
+         </Header>
+
          {/* Lower screen*/}
          <div className="flex w-full h-full overflow-hidden">
             {/* Left section*/}

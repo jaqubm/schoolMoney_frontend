@@ -3,40 +3,65 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import Image from "next/image";
 import { postLogin } from "@/app/api/auth";
 
 import Cookies from 'js-cookie';
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
+import { LoginFormValues, loginSchema } from "./loginValidationRules"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
+import { Header } from "@/components/Header";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
-  const handleLogin = async (event: React.FormEvent) =>
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const handleLogin = async (data: LoginFormValues) =>
   {
-    event.preventDefault();
+    setLoading(true);
     try {
-      const result = await postLogin(email, password);
+      const result = await postLogin(data);
       if (result.data?.Token) {
         Cookies.set('access_token', result.data.Token, { expires: 1, secure: true });
         router.replace("/home");
       }
       else {
-        console.error("Login failed: No token returned.");
+        toast({
+          title: "Login failed: No token returned.",
+          description: "An error occurred.",
+        });
       }
-    } catch (error) {
-      console.error("Login failed", error);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message || "An unexpected error occurred.";
+      toast({
+        title: "Logging in failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
-  }
+    finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex w-screen h-screen">
       {/* Left side with image */}
       <div className="w-1/2 bg-cover bg-center relative">
+        <Header />
         <Image
           src="/login_background.jpg"
           alt="School"
@@ -45,12 +70,6 @@ export default function Login() {
           priority={true}
           className="object-cover opacity-70"
         />
-        <div className="pl-5 flex justify-between">
-          <div className="flex z-0 text-white text-4xl">
-            <h1>School</h1>
-            <h1 className="font-bold">Money</h1>
-          </div>
-        </div>
         <div className="flex flex-col h-screen items-center pt-20">
           <div className="z-0 text-center mb-[350px] font-semibold text-white text-[72px]">
             <h1>Welcome Back!</h1>
@@ -64,44 +83,68 @@ export default function Login() {
         <p className="mb-8 text-gray-600">
           Welcome back! Please login to your account.
         </p>
-        <form onSubmit={handleLogin} className="w-full max-w-sm">
-          <div className="mb-[30px]">
-            <Label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-gray-700"
-            ></Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              required
-              className="w-full"
-            />
-          </div>
-          <div className="mb-[50px]">
-            <Label
-              htmlFor="password"
-              className="block mb-2 text-sm font-medium text-gray-700"
-            ></Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              required
-              className="w-full"
-            />
-          </div>
-          <Button
-            type="submit"
-            className="w-full bg-blue text-white py-2 rounded-lg"
+        <Form {...form}>
+          <form
+             onSubmit={async (event) => {
+               event.preventDefault();
+
+               try {
+                 await form.handleSubmit(handleLogin)(event);
+               }
+               catch (error) {
+                 console.error("Form submission error:", error);
+               }
+             }}
+             className="w-full max-w-sm flex flex-col gap-5"
           >
-            Login
-          </Button>
-        </form>
+            <FormField
+               control={form.control}
+               name="email"
+               render={({ field }) => (
+                  <FormItem>
+                    <div className="flex flex-col gap-2">
+                      <FormControl>
+                        <Input
+                           id="email"
+                           placeholder="Email"
+                           {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+               )}
+            />
+
+            <FormField
+               control={form.control}
+               name="password"
+               render={({ field }) => (
+                  <FormItem>
+                    <div className="flex flex-col gap-2">
+                      <FormControl>
+                        <Input
+                           id="password"
+                           placeholder="Password"
+                           type="password"
+                           {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+               )}
+            />
+
+            <Button
+               type="submit"
+               className="w-full bg-blue text-white py-2 rounded-lg"
+               disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </Button>
+          </form>
+        </Form>
         <p className="mt-4 text-gray-600">
           New User?{" "}
           <a href="/register" className="text-blue hover:underline">
