@@ -12,6 +12,10 @@ const config: Config = {
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        grayLight: "hsl(var(--gray-light))",
+        blue: "hsl(var(--blue))",
+        blueLight: "hsl(var(--blue-light))",
+
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
@@ -50,6 +54,13 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+
+        // "button-bg": "#ffffff",
+        // "button-text": "#000000",
+        // "text-primary": "#ffffff",
+      },
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -61,4 +72,5 @@ const config: Config = {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [require("tailwindcss-animate")],
 };
+
 export default config;
