@@ -5,10 +5,30 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Activity, ActivityCard } from "@/components/activity-card";
-import {Header} from "@/components/Header";
+import { Header } from "@/components/Header";
+import { getUser } from "@/app/api/auth";
+import { useEffect, useState } from "react";
 
 
 const HomePage = () => {
+   const [userName, setUserName] = useState("");
+   const [loadingUser, setLoadingUser] = useState<boolean>(true);
+
+   const fetchUser = async () => {
+      const result = await getUser();
+
+      if (result.success) {
+         setUserName(result.data?.name || "Guest");
+      } else {
+         console.error(result.error);
+      }
+      setLoadingUser(false);
+   };
+
+   useEffect(() => {
+      fetchUser()
+   }, []);
+
    const activityCards:Activity[] = [
       {
          title: "Payment for School Trip to the Museum",
@@ -64,9 +84,11 @@ const HomePage = () => {
                className="w-[654px] h-[66px] rounded-lg text-base"
             />
             <div className="flex items-center py-[27.5px] mr-[40px]">
-               <span className="text-lg mr-[22px]">Welcome, Piotr</span>
+             <span className="text-lg mr-[22px]">
+               {loadingUser ? "Loading..." : `Welcome, ${userName}`}
+             </span>
                <Avatar>
-                  <AvatarFallback>P</AvatarFallback>
+                  <AvatarFallback>{loadingUser ? "..." : userName[0]}</AvatarFallback>
                </Avatar>
             </div>
          </Header>
