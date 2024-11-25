@@ -74,7 +74,6 @@ export default function Register() {
   return (
     <div className="relative h-screen w-screen">
       <div className="flex flex-row h-screen w-full">
-        `
         <div className="relative flex-1 flex items-center justify-start flex-col text-white p-10">
           <div
             className="absolute inset-0 bg-center bg-cover"

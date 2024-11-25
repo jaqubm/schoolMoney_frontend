@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -40,8 +40,9 @@ export default function Login() {
       }
       else {
         toast({
-          title: "Login failed: No token returned.",
+          title: "Login failed: Invalid login details.",
           description: "An error occurred.",
+          variant: "destructive",
         });
       }
     } catch (error: any) {
@@ -56,6 +57,14 @@ export default function Login() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const token = Cookies.get("access_token");
+    if (token) {
+      router.replace("/home");
+    }
+
+  }, [router]);
 
   return (
     <div className="flex w-screen h-screen">

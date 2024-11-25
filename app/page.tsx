@@ -4,6 +4,7 @@ import React from "react";
 import { Header } from "@/components/Header/Header";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 const WelcomePage = () => {
   const router = useRouter();
@@ -13,7 +14,12 @@ const WelcomePage = () => {
       <Header>
         <Button
           variant="default"
-          onClick={() => router.push("/login")}
+          onClick={() => {
+             if (Cookies.get("access_token")) {
+                router.replace("/home");
+             }
+             else router.push("/login");
+          }}
           className="px-4 py-2 btn-secondary"
         >
           Login
