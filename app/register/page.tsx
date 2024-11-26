@@ -45,33 +45,6 @@ export default function Register() {
         router.push("/login");
       },
     });
-    // debugger;
-    // setLoading(true);
-    //
-    // try {
-    //   const response = await axiosInstance.post("/Auth/Register", data);
-    //
-    //   if (response.status === 200) {
-    //     router.push("/login");
-    //   } else {
-    //     toast({
-    //       title: "Registration failed",
-    //       description: response.data.message || "An error occurred.",
-    //     });
-    //     console.error("Registration failed:", response.data);
-    //   }
-    // } catch (error) {
-    //   toast({
-    //     title: "Registration failed",
-    //     description:
-    //       (error instanceof Error ? error.message : (error as string)) ||
-    //       "An unexpected error occurred.",
-    //     variant: "destructive",
-    //   });
-    //   console.error("Error:", error);
-    // } finally {
-    //   setLoading(false);
-    // }
   };
 
   return (
