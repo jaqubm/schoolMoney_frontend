@@ -1,25 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import Image from "next/image";
-import { postLogin } from "@/app/api/auth";
-
-import Cookies from 'js-cookie';
 import { useRouter } from "next/navigation";
 import { LoginFormValues, loginSchema } from "./loginValidationRules"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/Header";
+import { useLoginMutation } from "@/queries/login/login";
+import {Spinner} from "@/components/Spinner";
 
 export default function Login() {
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { toast } = useToast();
+  const { mutate: login, isLoading } = useLoginMutation();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -31,30 +27,11 @@ export default function Login() {
 
   const handleLogin = async (data: LoginFormValues) =>
   {
-    setLoading(true);
-    try {
-      const result = await postLogin(data);
-      if (result.data?.Token) {
-        Cookies.set('access_token', result.data.Token, { expires: 1, secure: true });
+    login(data, {
+      onSuccess: () => {
         router.replace("/home");
-      }
-      else {
-        toast({
-          title: "Login failed: No token returned.",
-          description: "An error occurred.",
-        });
-      }
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || "An unexpected error occurred.";
-      toast({
-        title: "Logging in failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    }
-    finally {
-      setLoading(false);
-    }
+      },
+    });
   };
 
   return (
@@ -139,16 +116,23 @@ export default function Login() {
             <Button
                type="submit"
                className="w-full bg-blue text-white py-2 rounded-lg"
-               disabled={loading}
+               disabled={isLoading}
             >
-              {loading ? "Logging in..." : "Login"}
+              {isLoading ? (
+                 <span className="flex items-center gap-2">
+                   <Spinner />
+                   Logging in..
+                 </span>
+              ) : (
+                 "Login"
+              )}
             </Button>
           </form>
         </Form>
         <p className="mt-4 text-gray-600">
           New User?{" "}
           <a href="/register" className="text-blue hover:underline">
-            Sign in
+            Sign up
           </a>
         </p>
       </div>
