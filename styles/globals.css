@@ -23,7 +23,7 @@
         --primary-foreground: 0 0% 0%;
         --secondary: 222.2 84% 4.9%;
         --secondary-foreground: 0 0% 100%;
-        --gray-light: 0 1% 71%;
+        --gray-light: 0 0% 98%;
         --blue: 204 87% 52%;
         --blue-light: 204 87% 80%;
 
@@ -90,6 +90,8 @@
         @apply bg-background text-foreground;
     }
 }
+
+
 
 .btn-primary { /*blue*/
     @apply font-poppins rounded-2xl font-semibold;
