@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React from "react";
 import { Header } from "@/components/Header";
 import { RegisterBody } from "@/app/register/Register.types";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -21,13 +21,11 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axiosInstance from "@/app/api";
-import { useToast } from "@/hooks/use-toast";
+import { useRegisterMutation } from "@/queries/register/register";
 
 export default function Register() {
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { toast } = useToast();
+  const { mutate: register, isLoading } = useRegisterMutation();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -42,33 +40,11 @@ export default function Register() {
   });
 
   const onSubmit: SubmitHandler<RegisterBody> = async (data) => {
-    debugger;
-    setLoading(true);
-
-    try {
-      const response = await axiosInstance.post("/Auth/Register", data);
-
-      if (response.status === 200) {
+    register(data, {
+      onSuccess: () => {
         router.push("/login");
-      } else {
-        toast({
-          title: "Registration failed",
-          description: response.data.message || "An error occurred.",
-        });
-        console.error("Registration failed:", response.data);
-      }
-    } catch (error) {
-      toast({
-        title: "Registration failed",
-        description:
-          (error instanceof Error ? error.message : (error as string)) ||
-          "An unexpected error occurred.",
-        variant: "destructive",
-      });
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
+      },
+    });
   };
 
   return (
@@ -238,9 +214,9 @@ export default function Register() {
                     "font-poppins mt-5 rounded-bl font-semibold bg-blue text-primary shadow",
                     "hover:bg-blueLight",
                   )}
-                  disabled={loading}
+                  disabled={isLoading}
                 >
-                  {loading ? (
+                  {isLoading ? (
                     <span className="flex items-center gap-2">
                       <Spinner />
                       Loading...
