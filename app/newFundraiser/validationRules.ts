@@ -19,5 +19,5 @@ export const stepSchemas = z.object({
   title: z.string().min(1, "Fundraiser Name is required"),
   description: z.string().min(1, "Fundraiser Description is required"),
   // goalAmount: z.number().positive("Goal must be a positive number"),
-  goalAmount: z.string().min(1, "Fundraiser Name is required"),
+  goalAmount: z.number(),
 });
