@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import Image from "next/image";
-import { postLogin } from "@/app/api/auth";
+import { useLogin } from "@/queries/auth";
 
 import Cookies from 'js-cookie';
 import { useRouter } from "next/navigation";
@@ -20,6 +20,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const loginMutation = useLogin();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -33,9 +34,9 @@ export default function Login() {
   {
     setLoading(true);
     try {
-      const result = await postLogin(data);
-      if (result.data?.Token) {
-        Cookies.set('access_token', result.data.Token, { expires: 1, secure: true });
+      const result = await loginMutation.mutateAsync(data);
+      if (result?.Token) {
+        Cookies.set('access_token', result.Token, { expires: 1, secure: true });
         router.replace("/home");
       }
       else {

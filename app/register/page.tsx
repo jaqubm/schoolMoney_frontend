@@ -21,11 +21,11 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRegisterMutation } from "@/queries/register/register";
+import { useRegister } from "@/queries/auth";
 
 export default function Register() {
   const router = useRouter();
-  const { mutate: register, isLoading } = useRegisterMutation();
+  const registerMutation = useRegister();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -39,12 +39,9 @@ export default function Register() {
     },
   });
 
-  const onSubmit: SubmitHandler<RegisterBody> = async (data) => {
-    register(data, {
-      onSuccess: () => {
-        router.push("/login");
-      },
-    });
+  const onSubmit: SubmitHandler<z.infer<typeof registerSchema>> = async (data) => {
+    await registerMutation.mutateAsync(data);
+    router.push("/login");
   };
 
   return (
@@ -214,9 +211,9 @@ export default function Register() {
                     "font-poppins mt-5 rounded-bl font-semibold bg-blue text-primary shadow",
                     "hover:bg-blueLight",
                   )}
-                  disabled={isLoading}
+                  disabled={registerMutation.isLoading}
                 >
-                  {isLoading ? (
+                  {registerMutation.isLoading ? (
                     <span className="flex items-center gap-2">
                       <Spinner />
                       Loading...

@@ -6,7 +6,3 @@ export type RegisterBody = {
   surname: string;
   termsAndConditions: boolean;
 };
-
-export type RegisterResponse = {
-  message: string;
-};
