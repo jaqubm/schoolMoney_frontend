@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ActivityCard } from "@/components/activity-card";
 import { clsx } from "clsx";
-import { useUserData } from "@/queries/user/user";
+import { useUserData } from "@/queries/user";
 import { useRouter } from "next/navigation";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Stepper } from "@/components/fundraiser/Stepper";
