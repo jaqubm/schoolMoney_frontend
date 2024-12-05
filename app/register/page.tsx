@@ -5,7 +5,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { Header } from "@/components/Header";
-import { RegisterBody } from "@/app/register/Register.types";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { registerSchema } from "@/app/register/validationRules";
