@@ -64,6 +64,10 @@ const FundraisersPage = () => {
     const allFieldsFilled = currentFields.every((field) => {
       const value = getValues(field as keyof typeof formData);
 
+      if (field === "goalAmount") {
+        return typeof value === "number" && !isNaN(value);
+      }
+
       return value !== "" && value !== undefined && value !== 0;
     });
 
@@ -143,7 +147,7 @@ const FundraisersPage = () => {
             </FormProvider>
           </div>
 
-          <div className="flex items-center justify-center pt-8 gap-4">
+          <div className="flex items-center justify-center pt-8 gap-4 pl-14">
             <Button
               onClick={handlePrevStep}
               disabled={currentStep === 0}

@@ -1,20 +1,46 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import React, { useState } from "react";
-import { useClassesData } from "@/queries/classes/classes";
+import React, { useEffect, useState } from "react";
+import {
+  useFetchClassesByName,
+  useFetchClassById,
+} from "@/queries/classes/classes";
 import { Input } from "@/components/ui/input";
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverTrigger,
+// } from "@radix-ui/react-popover";
+// import {
+//   Command,
+//   CommandInput,
+//   CommandList,
+//   CommandItem,
+// } from "@radix-ui/react-command";
 
 const FundraiserStep2Form = () => {
-  const { setValue, register } = useFormContext();
+  const { setValue, register, watch } = useFormContext();
+  const classId = watch("classId");
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
-  const { data: classes, isLoading } = useClassesData(searchTerm);
+  const { data: classes, isLoading } = useFetchClassesByName(searchTerm);
+  const { data: classDetails } = useFetchClassById(classId);
+
+  useEffect(() => {
+    if (classId && classDetails) {
+      console.log("Klasa znaleziona:", classDetails);
+      setSelectedClass(classDetails.name);
+      setValue("classId", classId, { shouldValidate: true });
+    }
+  }, [classId, classDetails]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
     setSelectedClass(null);
+    setValue("classId", "");
   };
 
   const handleClassSelect = (classItem: any) => {
@@ -36,6 +62,7 @@ const FundraiserStep2Form = () => {
             value={selectedClass || searchTerm}
             onChange={handleInputChange}
           />
+
           {searchTerm && (
             <ul className="absolute z-10 w-full bg-white border rounded-md mt-1 max-h-48 overflow-y-auto">
               {isLoading ? (
