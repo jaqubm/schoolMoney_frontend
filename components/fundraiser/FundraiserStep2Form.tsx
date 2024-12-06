@@ -7,17 +7,6 @@ import {
   useFetchClassById,
 } from "@/queries/classes/classes";
 import { Input } from "@/components/ui/input";
-// import {
-//   Popover,
-//   PopoverContent,
-//   PopoverTrigger,
-// } from "@radix-ui/react-popover";
-// import {
-//   Command,
-//   CommandInput,
-//   CommandList,
-//   CommandItem,
-// } from "@radix-ui/react-command";
 
 const FundraiserStep2Form = () => {
   const { setValue, register, watch } = useFormContext();

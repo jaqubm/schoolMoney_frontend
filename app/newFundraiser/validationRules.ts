@@ -50,6 +50,12 @@ export const stepSchemas = [
           "Fundraiser Description can only contain letters, numbers, spaces, and hyphens",
       }),
     goalAmount: z.number().positive("Goal must be a positive number"),
+    imageIndex: z
+      .number()
+      .nullable()
+      .refine((val) => val !== null, {
+        message: "You must select an image for your fundraiser.",
+      }),
   }),
   z.object({
     classId: z.string().min(1, "Class ID is required"),
@@ -57,5 +63,4 @@ export const stepSchemas = [
   validateDateRange,
 ];
 
-export type StepSchema = (typeof stepSchemas)[number]; // Typ kroku formularza
-export type StepValues = z.infer<StepSchema>; // Typ wartości kroku formularza
+export type StepSchema = (typeof stepSchemas)[number];

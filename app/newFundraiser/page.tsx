@@ -17,6 +17,7 @@ import FundraiserStep2Form from "@/components/fundraiser/FundraiserStep2Form";
 import FundraiserStep3Form from "@/components/fundraiser/FundraiserStep3Form";
 import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { useCreateFundraiser } from "@/queries/fundraiser/fundraiser";
 
 const stepComponents = [
   FundraiserStep1Form,
@@ -32,6 +33,7 @@ const FundraisersPage = () => {
   const { data: user } = useUserData();
   const CurrentForm = stepComponents[currentStep];
   const isLastStep = currentStep === stepComponents.length - 1;
+  const createFundraiserMutation = useCreateFundraiser();
 
   const methods = useForm<z.infer<(typeof stepSchemas)[number]>>({
     resolver: zodResolver(stepSchemas[currentStep]),
@@ -68,6 +70,10 @@ const FundraisersPage = () => {
         return typeof value === "number" && !isNaN(value);
       }
 
+      if (field === "imageIndex") {
+        return value !== null && value !== undefined;
+      }
+
       return value !== "" && value !== undefined && value !== 0;
     });
 
@@ -95,11 +101,19 @@ const FundraisersPage = () => {
 
   const handleFinalSubmit = () => {
     const finalData = { ...formData, ...getValues() };
-    console.log("Final Submitted Data:", finalData);
-    toast({
-      title: "Fundraiser Created",
-      description: "Your fundraiser has been successfully created.",
+
+    createFundraiserMutation.mutate(finalData, {
+      onSuccess: () => {
+        router.push("/fundraisers");
+      },
     });
+
+    // toast({
+    //   title: "Fundraiser Created",
+    //   description: "Your fundraiser has been successfully created.",
+    // });
+
+    // router.push("/fundraisers");
   };
 
   return (
