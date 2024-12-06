@@ -19,14 +19,16 @@ const FundraiserStep1Form = () => {
             placeholder="Fundraiser Name"
             className="w-full"
           />
-          {/*{formState.errors.name?.message && (*/}
-          {/*  <p className="text-sm text-red-500 mt-1">*/}
-          {/*    {formState.errors.name.message}*/}
-          {/*  </p>*/}
-          {/*)}*/}
-          <p className="text-xs text-gray-500 mt-1">
-            Give your fundraiser a short and clean name
-          </p>
+          {formState.errors.title?.message &&
+          typeof formState.errors.title.message === "string" ? (
+            <p className="text-xs text-red-500 mt-1">
+              {formState.errors.title.message?.toString()}
+            </p>
+          ) : (
+            <p className="text-xs text-gray-500 mt-1">
+              Give your fundraiser a short and clean name
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col w-[48%]">
@@ -38,14 +40,16 @@ const FundraiserStep1Form = () => {
             placeholder="Fundraiser Description"
             className="w-full resize-none"
           />
-          {/*{formState.errors.description?.message && (*/}
-          {/*  <p className="text-sm text-red-500 mt-1">*/}
-          {/*    {formState.errors.description.message}*/}
-          {/*  </p>*/}
-          {/*)}*/}
-          <p className="text-xs text-gray-500 mt-1">
-            Describe the purpose of the fundraiser and its impact
-          </p>
+          {formState.errors.description?.message &&
+          typeof formState.errors.description.message === "string" ? (
+            <p className="text-xs text-red-500 mt-1">
+              {formState.errors.description.message?.toString()}
+            </p>
+          ) : (
+            <p className="text-xs text-gray-500 mt-1">
+              Describe the purpose of the fundraiser and its impact
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col w-[48%]">
@@ -53,19 +57,20 @@ const FundraiserStep1Form = () => {
             Fundraiser Goal
           </label>
           <Input
-            {...register("goalAmount")}
-            type="number"
+            {...register("goalAmount", { valueAsNumber: true })}
             placeholder="Fundraiser Goal"
             className="w-full"
           />
-          {/*{formState.errors.goal?.message && (*/}
-          {/*  <p className="text-sm text-red-500 mt-1">*/}
-          {/*    {formState.errors.goal.message}*/}
-          {/*  </p>*/}
-          {/*)}*/}
-          <p className="text-xs text-gray-500 mt-1">
-            Set a clear and achievable goal
-          </p>
+          {formState.errors.goalAmount?.message &&
+          typeof formState.errors.goalAmount.message === "string" ? (
+            <p className="text-xs text-red-500 mt-1">
+              {formState.errors.goalAmount.message?.toString()}
+            </p>
+          ) : (
+            <p className="text-xs text-gray-500 mt-1">
+              Set a clear and achievable goal
+            </p>
+          )}
         </div>
 
         {/*<div className="flex flex-col items-center justify-center w-[48%] border-2 border-dashed border-gray-300 rounded-lg h-[120px]">*/}
