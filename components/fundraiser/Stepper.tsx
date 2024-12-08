@@ -2,9 +2,9 @@ import React from "react";
 import { ArrowLongRightIcon } from "@heroicons/react/24/outline";
 
 const steps = [
-  { stepNumber: 1, label: "General" },
-  { stepNumber: 2, label: "Class Association" },
-  { stepNumber: 3, label: "Dates" },
+  { stepNumber: 0, label: "General" },
+  { stepNumber: 1, label: "Class Association" },
+  { stepNumber: 2, label: "Dates" },
 ];
 
 type StepperProps = {
@@ -26,7 +26,7 @@ export const Stepper = ({ currentStep }: StepperProps) => {
                 : "bg-grayLight text-secondary"
             }`}
           >
-            {step.stepNumber}
+            {step.stepNumber + 1}
           </div>
 
           <span
