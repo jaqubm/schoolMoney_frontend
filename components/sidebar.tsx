@@ -59,7 +59,7 @@ export const Sidebar = () => {
   const router = useRouter();
 
   return (
-    <nav className="flex flex-col justify-between w-full h-full bg-grayLight">
+    <nav className="flex flex-col justify-between w-full h-full">
       <div className="flex flex-col space-y-2 w-full">
         {NAV_ITEMS.map(({ name, path, Icon }) => (
           <Button

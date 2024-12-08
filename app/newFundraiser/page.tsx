@@ -107,13 +107,6 @@ const FundraisersPage = () => {
         router.push("/fundraisers");
       },
     });
-
-    // toast({
-    //   title: "Fundraiser Created",
-    //   description: "Your fundraiser has been successfully created.",
-    // });
-
-    // router.push("/fundraisers");
   };
 
   return (
