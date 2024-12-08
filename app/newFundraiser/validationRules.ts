@@ -44,7 +44,7 @@ export const stepSchemas = [
       .trim()
       .min(1, "Fundraiser Description is required")
       .min(3, "Fundraiser Description must be at least 3 characters long")
-      .max(50, "Fundraiser Description cannot exceed 50 characters")
+      .max(200, "Fundraiser Description cannot exceed 50 characters")
       .regex(/^[a-zA-ZĄĆĘŁŃÓŚŹŻąćęłńóśźż0-9\s-]+$/, {
         message:
           "Fundraiser Description can only contain letters, numbers, spaces, and hyphens",
