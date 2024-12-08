@@ -11,7 +11,7 @@ const FundraiserStep3Form = () => {
         <Input {...register("startDate")} type="date" className="w-full" />
         {formState.errors.startDate?.message &&
         typeof formState.errors.startDate.message === "string" ? (
-          <p className="text-xs text-red-500 mt-1">
+          <p className="text-xs text-red mt-1">
             {formState.errors.startDate.message?.toString()}
           </p>
         ) : (
@@ -26,7 +26,7 @@ const FundraiserStep3Form = () => {
         <Input {...register("endDate")} type="date" className="w-full" />
         {formState.errors.endDate?.message &&
         typeof formState.errors.endDate.message === "string" ? (
-          <p className="text-xs text-red-500 mt-1">
+          <p className="text-xs text-red mt-1">
             {formState.errors.endDate.message?.toString()}
           </p>
         ) : (

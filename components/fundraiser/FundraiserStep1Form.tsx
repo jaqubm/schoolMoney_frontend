@@ -67,7 +67,7 @@ const FundraiserStep1Form = () => {
           />
           {formState.errors.title?.message &&
           typeof formState.errors.title.message === "string" ? (
-            <p className="text-xs text-red-500 mt-1">
+            <p className="text-xs text-red mt-1">
               {formState.errors.title.message?.toString()}
             </p>
           ) : (
@@ -88,7 +88,7 @@ const FundraiserStep1Form = () => {
           />
           {formState.errors.description?.message &&
           typeof formState.errors.description.message === "string" ? (
-            <p className="text-xs text-red-500 mt-1">
+            <p className="text-xs text-red mt-1">
               {formState.errors.description.message?.toString()}
             </p>
           ) : (
@@ -109,7 +109,7 @@ const FundraiserStep1Form = () => {
           />
           {formState.errors.goalAmount?.message &&
           typeof formState.errors.goalAmount.message === "string" ? (
-            <p className="text-xs text-red-500 mt-1">
+            <p className="text-xs text-red mt-1">
               {formState.errors.goalAmount.message?.toString()}
             </p>
           ) : (
@@ -202,7 +202,7 @@ const FundraiserStep1Form = () => {
           )}
           {formState.errors.classId?.message &&
           typeof formState.errors.classId.message === "string" ? (
-            <p className="text-xs text-red-500 mt-1">
+            <p className="text-xs text-red mt-1">
               {formState.errors.classId.message?.toString()}
             </p>
           ) : (
