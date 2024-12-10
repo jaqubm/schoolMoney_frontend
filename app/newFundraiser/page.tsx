@@ -4,7 +4,7 @@ import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useUserData } from "@/queries/user/user";
+import { useUserData } from "@/queries/user";
 import { useRouter } from "next/navigation";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Stepper } from "@/components/fundraiser/Stepper";
@@ -17,7 +17,8 @@ import FundraiserStep2Form from "@/components/fundraiser/FundraiserStep2Form";
 import FundraiserStep3Form from "@/components/fundraiser/FundraiserStep3Form";
 import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
-import { useCreateFundraiser } from "@/queries/fundraiser/fundraiser";
+import { useCreateFundraise } from "@/queries/fundraise";
+import { CreateFundraisePayload } from "@/app/fundraise/Fundraise.types";
 
 const stepComponents = [
   FundraiserStep1Form,
@@ -33,7 +34,7 @@ const FundraisersPage = () => {
   const { data: user } = useUserData();
   const CurrentForm = stepComponents[currentStep];
   const isLastStep = currentStep === stepComponents.length - 1;
-  const createFundraiserMutation = useCreateFundraiser();
+  const createFundraiserMutation = useCreateFundraise();
 
   const methods = useForm<z.infer<(typeof stepSchemas)[number]>>({
     resolver: zodResolver(stepSchemas[currentStep]),
@@ -100,7 +101,17 @@ const FundraisersPage = () => {
   };
 
   const handleFinalSubmit = () => {
-    const finalData = { ...formData, ...getValues() };
+    const finalData: CreateFundraisePayload = {
+      title: "",
+      description: "",
+      goalAmount: 0,
+      imageIndex: 0,
+      classId: "",
+      startDate: "",
+      endDate: "",
+      ...formData,
+      ...getValues(),
+    };
 
     createFundraiserMutation.mutate(finalData, {
       onSuccess: () => {

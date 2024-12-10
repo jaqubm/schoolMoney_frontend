@@ -1,4 +1,4 @@
-import axiosInstance from "@/app/api";
+import axiosInstance from "@/queries/axios";
 import { useQuery } from "@tanstack/react-query";
 import { ClassDetailsResponse, ClassSearchResult } from "@/app/classes/classes";
 
