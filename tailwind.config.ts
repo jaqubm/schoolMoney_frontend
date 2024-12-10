@@ -15,6 +15,8 @@ const config: Config = {
         grayLight: "hsl(var(--gray-light))",
         blue: "hsl(var(--blue))",
         blueLight: "hsl(var(--blue-light))",
+        red: "hsl(var(--red))",
+        redLight: "hsl(var(--red-light))",
 
         card: {
           DEFAULT: "hsl(var(--card))",
