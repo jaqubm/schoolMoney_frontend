@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/queries/axios";
 import { toast } from "@/hooks/use-toast";
-import axios from "axios";
 import {
   CreateFundraisePayload,
   UpdateFundraisePayload,
@@ -38,9 +37,9 @@ export const useGetFundraiseById = (fundraiseId: string) => {
 export const useUpdateFundraise = () => {
   return useMutation({
     mutationFn: async ({
-                         fundraiseId,
-                         data,
-                       }: {
+      fundraiseId,
+      data,
+    }: {
       fundraiseId: string;
       data: UpdateFundraisePayload;
     }): Promise<void> => {
