@@ -1,21 +1,27 @@
 "use client";
 
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import Image from "next/image";
+import { useLogin } from "@/queries/auth";
+
+import Cookies from 'js-cookie';
 import { useRouter } from "next/navigation";
 import { LoginFormValues, loginSchema } from "./loginValidationRules"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/Header";
-import { useLoginMutation } from "@/queries/login/login";
 import {Spinner} from "@/components/Spinner";
 
 export default function Login() {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { mutate: login, isLoading } = useLoginMutation();
+  const { toast } = useToast();
+  const loginMutation = useLogin();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -27,12 +33,40 @@ export default function Login() {
 
   const handleLogin = async (data: LoginFormValues) =>
   {
-    login(data, {
-      onSuccess: () => {
+    setLoading(true);
+    try {
+      const result = await loginMutation.mutateAsync(data);
+      if (result?.Token) {
+        Cookies.set('access_token', result.Token, { expires: 1, secure: true });
         router.replace("/home");
-      },
-    });
+      }
+      else {
+        toast({
+          title: "Login failed: Invalid login details.",
+          description: "An error occurred.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message || "An unexpected error occurred.";
+      toast({
+        title: "Logging in failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+    finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    const token = Cookies.get("access_token");
+    if (token) {
+      router.replace("/home");
+    }
+
+  }, [router]);
 
   return (
     <div className="flex w-screen h-screen">
@@ -116,9 +150,9 @@ export default function Login() {
             <Button
                type="submit"
                className="w-full bg-blue text-white py-2 rounded-lg"
-               disabled={isLoading}
+               disabled={loading}
             >
-              {isLoading ? (
+              {loading ? (
                  <span className="flex items-center gap-2">
                    <Spinner />
                    Logging in..

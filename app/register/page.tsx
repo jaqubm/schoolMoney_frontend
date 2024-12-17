@@ -5,7 +5,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { Header } from "@/components/Header";
-import { RegisterBody } from "@/app/register/Register.types";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { registerSchema } from "@/app/register/validationRules";
@@ -21,11 +20,11 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRegisterMutation } from "@/queries/register/register";
+import { useRegister } from "@/queries/auth";
 
 export default function Register() {
   const router = useRouter();
-  const { mutate: register, isLoading } = useRegisterMutation();
+  const registerMutation = useRegister();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -39,18 +38,14 @@ export default function Register() {
     },
   });
 
-  const onSubmit: SubmitHandler<RegisterBody> = async (data) => {
-    register(data, {
-      onSuccess: () => {
-        router.push("/login");
-      },
-    });
+  const onSubmit: SubmitHandler<z.infer<typeof registerSchema>> = async (data) => {
+    await registerMutation.mutateAsync(data);
+    router.push("/login");
   };
 
   return (
     <div className="relative h-screen w-screen">
       <div className="flex flex-row h-screen w-full">
-        `
         <div className="relative flex-1 flex items-center justify-start flex-col text-white p-10">
           <div
             className="absolute inset-0 bg-center bg-cover"
@@ -215,9 +210,9 @@ export default function Register() {
                     "font-poppins mt-5 rounded-bl font-semibold bg-blue text-primary shadow",
                     "hover:bg-blueLight",
                   )}
-                  disabled={isLoading}
+                  disabled={registerMutation.isLoading}
                 >
-                  {isLoading ? (
+                  {registerMutation.isLoading ? (
                     <span className="flex items-center gap-2">
                       <Spinner />
                       Loading...

@@ -5,10 +5,13 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Activity, ActivityCard } from "@/components/activity-card";
-import {Header} from "@/components/Header";
+import { Header } from "@/components/Header";
+import { useUserData } from "@/queries/user";
 
 
 const HomePage = () => {
+   const { data: userData, isLoading: loadingUser } = useUserData();
+
    const activityCards:Activity[] = [
       {
          title: "Payment for School Trip to the Museum",
@@ -64,9 +67,11 @@ const HomePage = () => {
                className="w-[654px] h-[66px] rounded-lg text-base"
             />
             <div className="flex items-center py-[27.5px] mr-[40px]">
-               <span className="text-lg mr-[22px]">Welcome, Piotr</span>
+             <span className="text-lg mr-[22px]">
+               {loadingUser ? "Loading..." : `Welcome, ${userData?.name || "Guest"}`}
+             </span>
                <Avatar>
-                  <AvatarFallback>P</AvatarFallback>
+                  <AvatarFallback>{loadingUser ? "..." : userData?.name?.[0] || "G"}</AvatarFallback>
                </Avatar>
             </div>
          </Header>
