@@ -13,6 +13,7 @@ const config: Config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         grayLight: "hsl(var(--gray-light))",
+        grayMedium: "hsl(var(--gray-medium))",
         blue: "hsl(var(--blue))",
         blueLight: "hsl(var(--blue-light))",
         red: "hsl(var(--red))",

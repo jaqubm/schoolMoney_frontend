@@ -13,13 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { clsx } from "clsx";
-
-const images = [
-  "/images/computers.jpg",
-  "/images/money.jpg",
-  "/images/museum.jpg",
-  "/images/train.jpg",
-];
+import images from "@/public/images";
 
 const FundraiserStep1Form = () => {
   const { register, formState, setValue, getValues } = useFormContext();
