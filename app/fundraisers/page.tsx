@@ -12,16 +12,11 @@ import { useGetFundraises, useUserData } from "@/queries/user";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-//Dodanie filtrowania zbiórek w widoku
-//Stworzenie podstrony na szczegóły zbiórki
-
 const FundraisersPage = () => {
   const router = useRouter();
   const { data: user } = useUserData();
   const { data: fundraises = [] } = useGetFundraises();
-  const [filter, setFilter] = useState<"all" | "created" | "contributed">(
-    "all",
-  );
+  const [filter, setFilter] = useState<"created" | "contributed">("created");
 
   const filteredFundraises = fundraises.filter((fundraise) => {
     if (filter === "created") return fundraise.isTreasurer;
@@ -70,20 +65,21 @@ const FundraisersPage = () => {
               <Button
                 className={clsx(
                   "text-sm border-grayLight border-2 rounded-md hover:bg-grayLight",
-                  filter === "contributed" && "bg-grayLight",
-                )}
-                onClick={() => setFilter("contributed")}
-              >
-                Contributed Fundraisers
-              </Button>
-              <Button
-                className={clsx(
-                  "text-sm border-grayLight border-2 rounded-md hover:bg-grayLight",
                   filter === "created" && "bg-grayLight",
                 )}
                 onClick={() => setFilter("created")}
               >
                 Your Fundraisers
+              </Button>
+
+              <Button
+                className={clsx(
+                  "text-sm border-grayLight border-2 rounded-md hover:bg-grayLight",
+                  filter === "contributed" && "bg-grayLight",
+                )}
+                onClick={() => setFilter("contributed")}
+              >
+                Contributed Fundraisers
               </Button>
             </div>
           </div>
