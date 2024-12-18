@@ -1,16 +1,16 @@
-import { useRouter } from "next/navigation";
-import { useGetFundraises } from "@/queries/user";
-import { FundraiseDetails } from "@/app/user/User.types";
+"use client";
+
+// import { useRouter } from "next/navigation";
+// import { useGetFundraises } from "@/queries/user";
+// import { FundraiseDetails } from "@/app/user/User.types";
 
 const FundraiserDetailsPage = () => {
-  const router = useRouter();
+  // const router = useRouter();
   // const { id } = router.query; // Pobierz ID z dynamicznej ścieżki
-  const { data: fundraises = [] } = useGetFundraises();
-
+  // const { data: fundraises = [] } = useGetFundraises();
   // const fundraiser = fundraises.find(
   //   (f) => f.classId === id,
   // ) as FundraiseDetails;
-
   // if (!fundraiser) {
   //   return <div>Loading...</div>;
   // }
