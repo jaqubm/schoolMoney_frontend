@@ -13,26 +13,47 @@ import {
   BanknotesIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
-import React from "react";
+import React, { useState } from "react";
 import images from "@/public/images";
 import { clsx } from "clsx";
-import { useGetFundraiseById } from "@/queries/fundraise";
+import { useDeleteFundraise, useGetFundraiseById } from "@/queries/fundraise";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 const FundraiserDetailsPage = () => {
   const router = useRouter();
   const { id } = useParams();
   const { data: user } = useUserData();
+  const deleteFundraise = useDeleteFundraise();
+  const [isDialogOpen, setDialogOpen] = useState(false);
   const {
     data: fundraiserDetails,
     isLoading,
     error,
   } = useGetFundraiseById(id as string);
+  const handleDelete = () => {
+    deleteFundraise.mutate(
+      { fundraiseId: id as string },
+      {
+        onSuccess: () => {
+          setDialogOpen(false);
+          router.push("/fundraisers");
+        },
+      },
+    );
+  };
+
   if (isLoading) {
     return <div>Loading fundraiser details...</div>;
   }
@@ -43,6 +64,26 @@ const FundraiserDetailsPage = () => {
 
   return (
     <div className="flex flex-col h-screen w-screen">
+      <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <p>
+              Are you sure you want to delete this fundraiser? This action
+              cannot be undone.
+            </p>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Header withBorder>
         <div className="flex items-center gap-4">
           <span className="text-base">Welcome, {user?.name || "User"}</span>
@@ -77,7 +118,7 @@ const FundraiserDetailsPage = () => {
                   <PencilIcon className="w-5 h-5" />
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => alert("Cancel fundraiser")}>
+                <DropdownMenuItem onClick={() => setDialogOpen(true)}>
                   <TrashIcon className="w-5 h-5" />
                   Cancel
                 </DropdownMenuItem>

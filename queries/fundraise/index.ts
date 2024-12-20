@@ -54,3 +54,22 @@ export const useUpdateFundraise = () => {
     onError: handleError,
   });
 };
+
+export const useDeleteFundraise = () => {
+  return useMutation({
+    mutationFn: async ({
+      fundraiseId,
+    }: {
+      fundraiseId: string;
+    }): Promise<void> => {
+      await axiosInstance.delete(`/Fundraise/Delete/${fundraiseId}`);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Fundraiser deleted",
+        description: "Your fundraiser has been successfully deleted.",
+      });
+    },
+    onError: handleError,
+  });
+};
