@@ -6,16 +6,16 @@ import FundraisersList from "@/components/fundraiser/FundraisersList";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ActivityCard } from "@/components/activity-card";
 import { clsx } from "clsx";
 import { useGetFundraises, useUserData } from "@/queries/user";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Spinner } from "@/components/Spinner";
 
 const FundraisersPage = () => {
   const router = useRouter();
   const { data: user } = useUserData();
-  const { data: fundraises = [] } = useGetFundraises();
+  const { data: fundraises = [], isLoading } = useGetFundraises();
   const [filter, setFilter] = useState<"created" | "contributed">("created");
 
   const filteredFundraises = fundraises.filter((fundraise) => {
@@ -58,7 +58,7 @@ const FundraisersPage = () => {
           <Sidebar />
         </div>
 
-        <div className="flex flex-col w-full h-full">
+        <div className="flex flex-col w-full h-full pl-6 pr-6">
           <div className="flex w-full h-fit justify-start items-center gap-12 p-3 pl-6 pt-6">
             <h2 className="text-2xl font-bold">Fundraisers</h2>
             <div className="flex items-center gap-8">
@@ -85,7 +85,13 @@ const FundraisersPage = () => {
           </div>
 
           <div>
-            <FundraisersList fundraises={filteredFundraises} />
+            {isLoading ? (
+              <div className="flex w-full items-center justify-center">
+                <Spinner size="large" />
+              </div>
+            ) : (
+              <FundraisersList fundraises={filteredFundraises} />
+            )}
           </div>
         </div>
       </div>
