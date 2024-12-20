@@ -23,7 +23,7 @@ export const useCreateFundraise = () => {
   });
 };
 
-export const useGetFundraiseById = (fundraiseId: string) => {
+export const useGetFundraiseById = (fundraiseId: string | string[]) => {
   return useQuery<FundraiseDetails>({
     queryKey: ["fundraise", fundraiseId],
     queryFn: async (): Promise<FundraiseDetails> => {

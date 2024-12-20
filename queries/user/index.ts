@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/queries/axios";
 import { toast } from "@/hooks/use-toast";
-import axios from "axios";
+
 import {
   User,
   Child,
@@ -127,12 +127,12 @@ export const useGetFundraises = () => {
       return response.data;
     },
     onError: handleError,
-    onSuccess: (data) => {
-      toast({
-        title: "Success",
-        description: `Successfully fetched ${data.length} fundraises!`,
-      });
-    },
+    // onSuccess: (data) => {
+    //   toast({
+    //     title: "Success",
+    //     description: `Successfully fetched ${data.length} fundraises!`,
+    //   });
+    // },
   });
 };
 

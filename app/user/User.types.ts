@@ -44,6 +44,7 @@ export type FundraiseDetails = {
   className: string;
   schoolName: string;
   isTreasurer: boolean;
+  fundraiseId: string;
 };
 
 export type TransactionDetails = {
