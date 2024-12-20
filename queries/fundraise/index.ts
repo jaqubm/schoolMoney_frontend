@@ -23,7 +23,7 @@ export const useCreateFundraise = () => {
   });
 };
 
-export const useGetFundraiseById = (fundraiseId: string) => {
+export const useGetFundraiseById = (fundraiseId: string | string[]) => {
   return useQuery<FundraiseDetails>({
     queryKey: ["fundraise", fundraiseId],
     queryFn: async (): Promise<FundraiseDetails> => {
@@ -49,6 +49,25 @@ export const useUpdateFundraise = () => {
       toast({
         title: "Fundraiser updated",
         description: "Your fundraiser has been successfully updated.",
+      });
+    },
+    onError: handleError,
+  });
+};
+
+export const useDeleteFundraise = () => {
+  return useMutation({
+    mutationFn: async ({
+      fundraiseId,
+    }: {
+      fundraiseId: string;
+    }): Promise<void> => {
+      await axiosInstance.delete(`/Fundraise/Delete/${fundraiseId}`);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Fundraiser deleted",
+        description: "Your fundraiser has been successfully deleted.",
       });
     },
     onError: handleError,

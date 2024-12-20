@@ -23,7 +23,7 @@ const FundraiserCard = ({ fundraiser }: { fundraiser: FundraiseDetails }) => {
         <div className="flex justify-end items-center">
           <Button
             variant="default"
-            onClick={() => router.push("/newFundraiser")}
+            onClick={() => router.push(`/fundraise/${fundraiser.fundraiseId}`)}
             className={clsx(
               "font-poppins text-sm w-32 h-6 rounded-bl font-semibold bg-blue text-primary shadow",
               "hover:bg-blueLight",
