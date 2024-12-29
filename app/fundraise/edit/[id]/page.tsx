@@ -18,6 +18,14 @@ import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { clsx } from "clsx";
+import "./edit.styles.css";
 
 type FundraiseFormData = {
   title: string;
@@ -26,7 +34,7 @@ type FundraiseFormData = {
   startDate: string;
   endDate: string;
   classId: string;
-  imageIndex: number;
+  imageIndex: number | null;
 };
 
 type FundraiseBackendData = {
@@ -90,11 +98,15 @@ const EditFundraisePage = () => {
   const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
+  const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
+  const [tempImageId, setTempImageId] = useState<number | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const {
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors, isValid },
   } = useForm<FundraiseFormData>({
     resolver: zodResolver(schema),
@@ -132,10 +144,18 @@ const EditFundraisePage = () => {
     }
   }, [fundraiserDetails, setValue]);
 
+  useEffect(() => {
+    const storedImageId = getValues("imageIndex");
+    if (storedImageId !== undefined && storedImageId !== null) {
+      setSelectedImageId(storedImageId);
+    }
+  }, [getValues]);
+
   const onSubmit = (data: FundraiseFormData) => {
     const backendData: FundraiseBackendData = {
       ...data,
       goalAmount: parseFloat(data.goalAmount),
+      imageIndex: data.imageIndex ? data.imageIndex : 0,
     };
 
     updateFundraise.mutate(
@@ -166,6 +186,24 @@ const EditFundraisePage = () => {
     if (!date) return "";
     const parsedDate = new Date(date);
     return parsedDate.toISOString().split("T")[0]; // YYYY-MM-DD
+  };
+
+  const handleSelectTempImage = (imageId: number) => {
+    setTempImageId(imageId);
+  };
+
+  const handleSubmitImage = () => {
+    if (tempImageId !== null) {
+      setSelectedImageId(tempImageId);
+      setValue("imageIndex", tempImageId, { shouldValidate: true });
+      setIsDialogOpen(false);
+    }
+  };
+
+  const handleDeleteImage = () => {
+    setSelectedImageId(null);
+    setTempImageId(null);
+    setValue("imageIndex", null, { shouldValidate: true });
   };
 
   if (isLoading) {
@@ -222,169 +260,273 @@ const EditFundraisePage = () => {
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex items-start p-6 w-2/3 h-fit gap-6 shadow-lg rounded-md bg-white"
+            className="flex flex-col items-start p-6 w-2/3 h-fit gap-6 shadow-lg rounded-md bg-white"
           >
-            <div className="flex w-[48%] flex-col justify-between gap-6">
-              <div className="flex flex-col">
-                <label className="text-sm font-medium text-secondary mb-1">
-                  Fundraiser Name
-                </label>
-                <Input {...register("title")} />
-                {errors.title ? (
-                  <p className="text-red text-xs mt-1">
-                    {errors.title.message}
-                  </p>
-                ) : (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Give your fundraiser a short and clean name
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col">
-                <label className="text-sm font-medium text-secondary mb-1">
-                  Fundraiser Goal
-                </label>
-                <Input type="text" {...register("goalAmount")} />
-                {errors.goalAmount ? (
-                  <p className="text-red text-xs mt-1">
-                    {errors.goalAmount.message}
-                  </p>
-                ) : (
-                  <p className="text-gray-500 text-xs mt-1">
-                    Set a clear and achievable goal
-                  </p>
-                )}
-              </div>
-              <div className="flex flex-col">
-                <label className="text-sm font-medium text-secondary mb-1">
-                  Fundraiser Description
-                </label>
-                <Textarea
-                  {...register("description", {
-                    required: "Description is required",
-                    minLength: {
-                      value: 10,
-                      message: "Description must be at least 10 characters",
-                    },
-                    pattern: {
-                      value: /^[a-zA-ZÀ-Żà-ż\s]+$/,
-                      message:
-                        "Description can only contain alphabetic characters",
-                    },
-                  })}
-                  className="w-full resize-none"
-                />
-                {errors.description ? (
-                  <p className="text-red text-xs mt-1">
-                    {errors.description.message}
-                  </p>
-                ) : (
-                  <p className="text-gray-500 text-xs mt-1">
-                    Describe the purpose of the fundraiser and its impact
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col w-[48%] justify-between gap-6">
-              <div className="flex flex-col">
-                <label className="text-sm font-medium text-secondary mb-1">
-                  Class Name
-                </label>
-                <div className="relative">
-                  <Input
-                    name="classId"
-                    type="text"
-                    placeholder=""
-                    maxLength={20}
-                    className="w-full p-2 border rounded-md"
-                    value={selectedClass || searchTerm}
-                    onChange={handleInputChange}
-                  />
-                  {errors.classId ? (
+            <div className="flex w-full gap-6">
+              <div className="flex w-[48%] flex-col justify-between gap-6">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-secondary mb-1">
+                    Fundraiser Name
+                  </label>
+                  <Input {...register("title")} />
+                  {errors.title ? (
                     <p className="text-red text-xs mt-1">
-                      {errors.classId.message}
+                      {errors.title.message}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Give your fundraiser a short and clean name
+                    </p>
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-secondary mb-1">
+                    Fundraiser Goal
+                  </label>
+                  <Input type="text" {...register("goalAmount")} />
+                  {errors.goalAmount ? (
+                    <p className="text-red text-xs mt-1">
+                      {errors.goalAmount.message}
                     </p>
                   ) : (
                     <p className="text-gray-500 text-xs mt-1">
-                      Assign this fundraiser to a specific class
+                      Set a clear and achievable goal
                     </p>
                   )}
-
-                  {searchTerm && (
-                    <ul className="absolute z-10 w-full bg-white border rounded-md mt-1 max-h-48 overflow-y-auto">
-                      {isClassesLoading ? (
-                        <li className="p-2 text-gray-500">Loading...</li>
-                      ) : classes && classes.length > 0 ? (
-                        classes.map((classItem: any) => (
-                          <li
-                            key={classItem.classId}
-                            className="p-2 cursor-pointer hover:bg-gray-100"
-                            onClick={() => handleClassSelect(classItem)}
-                          >
-                            {classItem.name} ({classItem.schoolName})
-                          </li>
-                        ))
-                      ) : (
-                        <li className="p-2 text-gray-500">No classes found</li>
-                      )}
-                    </ul>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-secondary mb-1">
+                    Fundraiser Description
+                  </label>
+                  <Textarea
+                    {...register("description", {
+                      required: "Description is required",
+                      minLength: {
+                        value: 10,
+                        message: "Description must be at least 10 characters",
+                      },
+                      pattern: {
+                        value: /^[a-zA-ZÀ-Żà-ż\s]+$/,
+                        message:
+                          "Description can only contain alphabetic characters",
+                      },
+                    })}
+                    className="w-full resize-none"
+                  />
+                  {errors.description ? (
+                    <p className="text-red text-xs mt-1">
+                      {errors.description.message}
+                    </p>
+                  ) : (
+                    <p className="text-gray-500 text-xs mt-1">
+                      Describe the purpose of the fundraiser and its impact
+                    </p>
                   )}
                 </div>
               </div>
-              <div className="flex flex-col">
-                <label className="text-sm font-medium text-secondary mb-1">
-                  Start Date
+
+              <div className="flex flex-col w-[48%] gap-6">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-secondary mb-1">
+                    Class Name
+                  </label>
+                  <div className="relative">
+                    <Input
+                      name="classId"
+                      type="text"
+                      placeholder=""
+                      maxLength={20}
+                      className="w-full p-2 border rounded-md"
+                      value={selectedClass || searchTerm}
+                      onChange={handleInputChange}
+                    />
+                    {errors.classId ? (
+                      <p className="text-red text-xs mt-1">
+                        {errors.classId.message}
+                      </p>
+                    ) : (
+                      <p className="text-gray-500 text-xs mt-1">
+                        Assign this fundraiser to a specific class
+                      </p>
+                    )}
+
+                    {searchTerm && (
+                      <ul className="absolute z-10 w-full bg-white border rounded-md mt-1 max-h-48 overflow-y-auto">
+                        {isClassesLoading ? (
+                          <li className="p-2 text-gray-500">Loading...</li>
+                        ) : classes && classes.length > 0 ? (
+                          classes.map((classItem: any) => (
+                            <li
+                              key={classItem.classId}
+                              className="p-2 cursor-pointer hover:bg-gray-100"
+                              onClick={() => handleClassSelect(classItem)}
+                            >
+                              {classItem.name} ({classItem.schoolName})
+                            </li>
+                          ))
+                        ) : (
+                          <li className="p-2 text-gray-500">
+                            No classes found
+                          </li>
+                        )}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-secondary mb-1">
+                    Start Date
+                  </label>
+                  <Input
+                    type="date"
+                    {...register("startDate", {
+                      required: "Start date is required",
+                    })}
+                    // className="w-full"
+                  />
+                  {errors.startDate ? (
+                    <p className="text-red text-xs mt-1">
+                      {errors.startDate.message}
+                    </p>
+                  ) : (
+                    <p className="text-gray-500 text-xs mt-1">
+                      {"Select the starting date for your fundraiser"}
+                    </p>
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-secondary mb-1">
+                    End Date
+                  </label>
+                  <Input
+                    type="date"
+                    {...register("endDate", {
+                      required: "End date is required",
+                      validate: (value) =>
+                        new Date(value) > new Date() ||
+                        "End date must be in the future",
+                    })}
+                    className="w-full"
+                  />
+                  {errors.endDate ? (
+                    <p className="text-red text-xs mt-1">
+                      {errors.endDate.message}
+                    </p>
+                  ) : (
+                    <p className="text-gray-500 text-xs mt-1">
+                      {"Select the ending date for your fundraiser"}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex flex-col w-full">
+                <label className="justify-start text-sm font-medium text-secondary mb-1">
+                  Fundraiser Image
                 </label>
-                <Input
-                  type="date"
-                  {...register("startDate", {
-                    required: "Start date is required",
-                  })}
-                  className="w-full"
-                />
-                {errors.startDate && (
-                  <p className="text-red text-xs mt-1">
-                    {errors.startDate.message}
-                  </p>
+
+                {selectedImageId !== null ? (
+                  <div className="flex items-center justify-start gap-4 border-2 border-dashed border-gray-200 h-20 p-3">
+                    <img
+                      src={images[selectedImageId]}
+                      alt={`Selected image ${selectedImageId}`}
+                      className="w-12 h-12 rounded-full"
+                    />
+                    <Button
+                      onClick={handleDeleteImage}
+                      className={clsx(
+                        "border font-poppins bg-red text-primary",
+                        "hover:bg-redLight",
+                      )}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-start gap-4 border-2 border-dashed border-gray-200 h-20 p-3">
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                      {selectedImageId === null && (
+                        <DialogTrigger asChild>
+                          <Button
+                            className={clsx(
+                              "border font-poppins bg-blue text-primary",
+                              "hover:bg-blueLight",
+                            )}
+                            onClick={() => setIsDialogOpen(true)}
+                          >
+                            Select Image
+                          </Button>
+                        </DialogTrigger>
+                      )}
+
+                      <DialogContent className="max-w-lg mx-auto">
+                        <DialogHeader>
+                          <h2 className="text-lg font-bold font-poppins">
+                            Select an Image
+                          </h2>
+                        </DialogHeader>
+                        {tempImageId !== null && (
+                          <div className="mb-4">
+                            <img
+                              src={images[tempImageId]}
+                              alt={`Selected image ${tempImageId}`}
+                              className="w-[500px] h-[300px] object-cover rounded-md"
+                            />
+                          </div>
+                        )}
+
+                        <div className="flex justify-center gap-2 mb-4">
+                          {images.map((image, index) => (
+                            <img
+                              key={index}
+                              src={image}
+                              alt={`Image ${index}`}
+                              className={`w-16 h-16 rounded-md cursor-pointer border ${
+                                tempImageId === index
+                                  ? "border-blue-500"
+                                  : "border-gray-300"
+                              }`}
+                              onClick={() => handleSelectTempImage(index)}
+                            />
+                          ))}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+
+                    <div className="flex gap-2 justify-center">
+                      <Button
+                        onClick={handleSubmitImage}
+                        className={clsx(
+                          "border font-poppins bg-blue text-primary",
+                          "hover:bg-blueLight",
+                        )}
+                      >
+                        Submit
+                      </Button>
+                    </div>
+                  </div>
                 )}
               </div>
-              <div className="flex flex-col">
-                <label className="text-sm font-medium text-secondary mb-1">
-                  End Date
-                </label>
-                <Input
-                  type="date"
-                  {...register("endDate", {
-                    required: "End date is required",
-                    validate: (value) =>
-                      new Date(value) > new Date() ||
-                      "End date must be in the future",
-                  })}
-                  className="w-full"
-                />
-                {errors.endDate && (
-                  <p className="text-red text-xs mt-1">
-                    {errors.endDate.message}
-                  </p>
-                )}
-              </div>
+
+              <Button
+                type="submit"
+                disabled={!isValid}
+                className={`${
+                  isValid
+                    ? "bg-blue text-white hover:bg-blueLight"
+                    : "bg-grayLight text-secondary cursor-not-allowed"
+                } px-6 py-2 rounded-md`}
+              >
+                Submit
+              </Button>
             </div>
           </form>
 
-          <div className="flex items-center justify-center pt-8">
-            <Button
-              type="submit"
-              disabled={!isValid}
-              className={`${
-                isValid
-                  ? "bg-blue text-white hover:bg-blueLight"
-                  : "bg-grayLight text-secondary cursor-not-allowed"
-              } px-6 py-2 rounded-md`}
-            >
-              Submit
-            </Button>
-          </div>
+          {/*<div className="flex items-center justify-center pt-8">*/}
+          {/*  */}
+          {/*</div>*/}
         </div>
       </div>
     </div>
