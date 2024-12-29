@@ -114,7 +114,13 @@ const FundraiserDetailsPage = () => {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-48">
-                <DropdownMenuItem onClick={() => alert("Edit fundraiser")}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    debugger;
+
+                    router.push(`/fundraise/edit/${id}`);
+                  }}
+                >
                   <PencilIcon className="w-5 h-5" />
                   Edit
                 </DropdownMenuItem>
