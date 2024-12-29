@@ -15,24 +15,100 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useFetchClassesByName } from "@/queries/classes/classes";
 import { toast } from "@/hooks/use-toast";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
+type FundraiseFormData = {
+  title: string;
+  description: string;
+  goalAmount: string;
+  startDate: string;
+  endDate: string;
+  classId: string;
+  imageIndex: number;
+};
+
+type FundraiseBackendData = {
+  title: string;
+  description: string;
+  goalAmount: number;
+  startDate: string;
+  endDate: string;
+  classId: string;
+  imageIndex: number;
+};
+
+const schema = z
+  .object({
+    title: z
+      .string()
+      .min(6, "Title must be at least 6 characters long.")
+      .regex(
+        /^[a-zA-Z\u00C0-\u017F\s]+$/,
+        "Only letters and spaces are allowed.",
+      ),
+    description: z
+      .string()
+      .min(10, "Description must be at least 10 characters long.")
+      .regex(
+        /^[a-zA-Z\u00C0-\u017F\s]+$/,
+        "Only letters and spaces are allowed.",
+      ),
+    goalAmount: z
+      .string()
+      .regex(/^\d+$/, "Goal amount must be a number.")
+      .refine((value) => Number(value) > 0, {
+        message: "Goal amount must be greater than zero.",
+      })
+      .refine((value) => Number(value) <= 10000, {
+        message: "Goal amount must not exceed 10,000.",
+      }),
+    startDate: z.string().min(1, "Start date is required."),
+    endDate: z.string().min(1, "End date is required."),
+    classId: z.string().min(1, "Class name is required."),
+    imageIndex: z.number().min(0),
+  })
+  .superRefine((data, ctx) => {
+    const startDate = new Date(data.startDate);
+    const endDate = new Date(data.endDate);
+    // const today = new Date();
+
+    if (endDate <= startDate) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["endDate"],
+        message: "End date must be after the start date.",
+      });
+    }
+  });
 
 const EditFundraisePage = () => {
   const router = useRouter();
   const { id } = useParams();
   const { data: user } = useUserData();
-
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    goalAmount: 0,
-    startDate: "",
-    endDate: "",
-    imageIndex: 0,
-    classId: "",
-  });
   const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors, isValid },
+  } = useForm<FundraiseFormData>({
+    resolver: zodResolver(schema),
+    mode: "onChange",
+    defaultValues: {
+      title: "",
+      description: "",
+      goalAmount: "",
+      startDate: "",
+      endDate: "",
+      classId: "",
+      imageIndex: 0,
+    },
+  });
 
   const updateFundraise = useUpdateFundraise();
   const {
@@ -45,57 +121,28 @@ const EditFundraisePage = () => {
 
   useEffect(() => {
     if (fundraiserDetails) {
-      setFormData({
-        title: fundraiserDetails.title,
-        description: fundraiserDetails.description,
-        goalAmount: fundraiserDetails.goalAmount,
-        startDate: fundraiserDetails.startDate,
-        endDate: fundraiserDetails.endDate,
-        imageIndex: fundraiserDetails.imageIndex,
-        classId: fundraiserDetails.classId,
-      });
+      setValue("title", fundraiserDetails.title);
+      setValue("description", fundraiserDetails.description);
+      setValue("goalAmount", fundraiserDetails.goalAmount.toString());
+      setValue("startDate", formatDate(fundraiserDetails.startDate));
+      setValue("endDate", formatDate(fundraiserDetails.endDate));
+      setValue("classId", fundraiserDetails.classId);
+
       setSelectedClass(fundraiserDetails.className);
     }
-  }, [fundraiserDetails]);
+  }, [fundraiserDetails, setValue]);
 
-  const validateForm = () => {
-    const titleRegex = /^[a-zA-ZÀ-Żà-ż\s]+$/;
-    const descriptionRegex = /^[a-zA-ZÀ-Żà-ż\s]+$/;
-
-    const isTitleValid =
-      formData.title.trim().length >= 6 && titleRegex.test(formData.title);
-    const isDescriptionValid =
-      formData.description.trim().length >= 10 &&
-      descriptionRegex.test(formData.description);
-    const isGoalValid =
-      !isNaN(Number(formData.goalAmount)) && Number(formData.goalAmount) > 0;
-    const isDateValid =
-      new Date(formData.startDate) < new Date(formData.endDate);
-    const isClassSelected = selectedClass !== null;
-
-    return (
-      isTitleValid &&
-      isDescriptionValid &&
-      isGoalValid &&
-      isDateValid &&
-      isClassSelected
-    );
-  };
-
-  useEffect(() => {
-    setIsSubmitEnabled(validateForm());
-  }, [formData, selectedClass]);
-
-  const handleSubmit = () => {
-    if (!isSubmitEnabled) return;
+  const onSubmit = (data: FundraiseFormData) => {
+    const backendData: FundraiseBackendData = {
+      ...data,
+      goalAmount: parseFloat(data.goalAmount),
+    };
 
     updateFundraise.mutate(
-      { fundraiseId: id as string, data: formData },
+      { fundraiseId: id as string, data: backendData },
       {
         onSuccess: () => {
-          toast({
-            title: "Fundraiser updated successfully",
-          });
+          toast({ title: "Fundraiser updated successfully" });
           router.push(`/fundraise/${id}`);
         },
       },
@@ -106,19 +153,13 @@ const EditFundraisePage = () => {
     const value = e.target.value;
     setSearchTerm(value);
     setSelectedClass(null);
+    setValue("classId", "");
   };
 
   const handleClassSelect = (classItem: any) => {
-    setFormData((prev) => ({ ...prev, classId: classItem.classId }));
+    setValue("classId", classItem.classId, { shouldValidate: true });
     setSelectedClass(classItem.name);
     setSearchTerm("");
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const formatDate = (date: string): string => {
@@ -179,52 +220,69 @@ const EditFundraisePage = () => {
             </div>
           </div>
 
-          <div className="flex items-start p-6 w-2/3 h-fit gap-6 shadow-lg rounded-md bg-white">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex items-start p-6 w-2/3 h-fit gap-6 shadow-lg rounded-md bg-white"
+          >
             <div className="flex w-[48%] flex-col justify-between gap-6">
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-secondary mb-1">
                   Fundraiser Name
                 </label>
-                <Input
-                  name="title"
-                  value={formData.title}
-                  maxLength={15}
-                  onChange={handleChange}
-                  className="w-full"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Give your fundraiser a short and clean name
-                </p>
+                <Input {...register("title")} />
+                {errors.title ? (
+                  <p className="text-red text-xs mt-1">
+                    {errors.title.message}
+                  </p>
+                ) : (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Give your fundraiser a short and clean name
+                  </p>
+                )}
               </div>
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-secondary mb-1">
                   Fundraiser Goal
                 </label>
-                <Input
-                  name="goalAmount"
-                  value={formData.goalAmount}
-                  onChange={handleChange}
-                  className="w-full"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Set a clear and achievable goal
-                </p>
+                <Input type="text" {...register("goalAmount")} />
+                {errors.goalAmount ? (
+                  <p className="text-red text-xs mt-1">
+                    {errors.goalAmount.message}
+                  </p>
+                ) : (
+                  <p className="text-gray-500 text-xs mt-1">
+                    Set a clear and achievable goal
+                  </p>
+                )}
               </div>
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-secondary mb-1">
                   Fundraiser Description
                 </label>
                 <Textarea
-                  name="description"
-                  placeholder=""
-                  maxLength={50}
-                  value={formData.description}
-                  onChange={handleChange}
+                  {...register("description", {
+                    required: "Description is required",
+                    minLength: {
+                      value: 10,
+                      message: "Description must be at least 10 characters",
+                    },
+                    pattern: {
+                      value: /^[a-zA-ZÀ-Żà-ż\s]+$/,
+                      message:
+                        "Description can only contain alphabetic characters",
+                    },
+                  })}
                   className="w-full resize-none"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Describe the purpose of the fundraiser and its impact
-                </p>
+                {errors.description ? (
+                  <p className="text-red text-xs mt-1">
+                    {errors.description.message}
+                  </p>
+                ) : (
+                  <p className="text-gray-500 text-xs mt-1">
+                    Describe the purpose of the fundraiser and its impact
+                  </p>
+                )}
               </div>
             </div>
 
@@ -233,80 +291,93 @@ const EditFundraisePage = () => {
                 <label className="text-sm font-medium text-secondary mb-1">
                   Class Name
                 </label>
-                <Input
-                  name="className"
-                  type="text"
-                  placeholder=""
-                  maxLength={20}
-                  className="w-full p-2 border rounded-md"
-                  value={selectedClass || searchTerm}
-                  onChange={handleInputChange}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Assign this fundraiser to a specific class{" "}
-                </p>
+                <div className="relative">
+                  <Input
+                    name="classId"
+                    type="text"
+                    placeholder=""
+                    maxLength={20}
+                    className="w-full p-2 border rounded-md"
+                    value={selectedClass || searchTerm}
+                    onChange={handleInputChange}
+                  />
+                  {errors.classId ? (
+                    <p className="text-red text-xs mt-1">
+                      {errors.classId.message}
+                    </p>
+                  ) : (
+                    <p className="text-gray-500 text-xs mt-1">
+                      Assign this fundraiser to a specific class
+                    </p>
+                  )}
 
-                {searchTerm && (
-                  <ul className="absolute z-10 w-full bg-white border rounded-md mt-1 max-h-48 overflow-y-auto">
-                    {isClassesLoading ? (
-                      <li className="p-2 text-gray-500">Loading...</li>
-                    ) : classes && classes.length > 0 ? (
-                      classes.map((classItem: any) => (
-                        <li
-                          key={classItem.classId}
-                          className="p-2 cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleClassSelect(classItem)}
-                        >
-                          {classItem.name} ({classItem.schoolName})
-                        </li>
-                      ))
-                    ) : (
-                      <li className="p-2 text-gray-500">No classes found</li>
-                    )}
-                  </ul>
-                )}
+                  {searchTerm && (
+                    <ul className="absolute z-10 w-full bg-white border rounded-md mt-1 max-h-48 overflow-y-auto">
+                      {isClassesLoading ? (
+                        <li className="p-2 text-gray-500">Loading...</li>
+                      ) : classes && classes.length > 0 ? (
+                        classes.map((classItem: any) => (
+                          <li
+                            key={classItem.classId}
+                            className="p-2 cursor-pointer hover:bg-gray-100"
+                            onClick={() => handleClassSelect(classItem)}
+                          >
+                            {classItem.name} ({classItem.schoolName})
+                          </li>
+                        ))
+                      ) : (
+                        <li className="p-2 text-gray-500">No classes found</li>
+                      )}
+                    </ul>
+                  )}
+                </div>
               </div>
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-secondary mb-1">
                   Start Date
                 </label>
                 <Input
-                  name="startDate"
-                  placeholder=""
                   type="date"
-                  value={formatDate(formData.startDate)}
-                  onChange={handleChange}
+                  {...register("startDate", {
+                    required: "Start date is required",
+                  })}
                   className="w-full"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Select the starting date for your fundraiser{" "}
-                </p>
+                {errors.startDate && (
+                  <p className="text-red text-xs mt-1">
+                    {errors.startDate.message}
+                  </p>
+                )}
               </div>
               <div className="flex flex-col">
                 <label className="text-sm font-medium text-secondary mb-1">
                   End Date
                 </label>
                 <Input
-                  name="endDate"
-                  placeholder=""
                   type="date"
-                  value={formatDate(formData.endDate)}
-                  onChange={handleChange}
-                  className="w-full resize-none"
+                  {...register("endDate", {
+                    required: "End date is required",
+                    validate: (value) =>
+                      new Date(value) > new Date() ||
+                      "End date must be in the future",
+                  })}
+                  className="w-full"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Select the ending date for your fundraiser{" "}
-                </p>
+                {errors.endDate && (
+                  <p className="text-red text-xs mt-1">
+                    {errors.endDate.message}
+                  </p>
+                )}
               </div>
             </div>
-          </div>
+          </form>
 
           <div className="flex items-center justify-center pt-8">
             <Button
-              onClick={handleSubmit}
-              disabled={!isSubmitEnabled}
+              type="submit"
+              disabled={!isValid}
               className={`${
-                isSubmitEnabled
+                isValid
                   ? "bg-blue text-white hover:bg-blueLight"
                   : "bg-grayLight text-secondary cursor-not-allowed"
               } px-6 py-2 rounded-md`}
