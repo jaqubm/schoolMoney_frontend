@@ -47,7 +47,7 @@ export const StaticImagePicker = ({
         Fundraiser Image
       </label>
 
-      {imageIndex !== null ? (
+      {imageIndex != null ? (
         <div className="flex items-center justify-between gap-4 border-2 border-dashed border-gray-200 h-20 p-3">
           <img
             src={images[imageIndex]}
