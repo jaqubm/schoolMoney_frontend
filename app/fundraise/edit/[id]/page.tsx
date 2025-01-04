@@ -10,7 +10,6 @@ import { Sidebar } from "@/components/sidebar";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { useUserData } from "@/queries/user";
-import images from "@/public/images";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useFetchClassesByName } from "@/queries/classes/classes";
@@ -18,14 +17,8 @@ import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { clsx } from "clsx";
 import "./edit.styles.css";
+import { StaticImagePicker } from "@/components/fundraiser/StaticImagePicker";
 
 type FundraiseFormData = {
   title: string;
@@ -52,6 +45,7 @@ const schema = z
     title: z
       .string()
       .min(6, "Title must be at least 6 characters long.")
+      .max(40, "Title must be maximum 40 characters long")
       .regex(
         /^[a-zA-Z\u00C0-\u017F\s]+$/,
         "Only letters and spaces are allowed.",
@@ -59,6 +53,7 @@ const schema = z
     description: z
       .string()
       .min(10, "Description must be at least 10 characters long.")
+      .max(140, "Title must be maximum 140 characters long")
       .regex(
         /^[a-zA-Z\u00C0-\u017F\s]+$/,
         "Only letters and spaces are allowed.",
@@ -80,7 +75,6 @@ const schema = z
   .superRefine((data, ctx) => {
     const startDate = new Date(data.startDate);
     const endDate = new Date(data.endDate);
-    // const today = new Date();
 
     if (endDate <= startDate) {
       ctx.addIssue({
@@ -95,10 +89,8 @@ const EditFundraisePage = () => {
   const router = useRouter();
   const { id } = useParams();
   const { data: user } = useUserData();
-  const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
-  const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
   const [tempImageId, setTempImageId] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -110,7 +102,7 @@ const EditFundraisePage = () => {
     formState: { errors, isValid },
   } = useForm<FundraiseFormData>({
     resolver: zodResolver(schema),
-    mode: "onChange",
+    mode: "all",
     defaultValues: {
       title: "",
       description: "",
@@ -139,17 +131,11 @@ const EditFundraisePage = () => {
       setValue("startDate", formatDate(fundraiserDetails.startDate));
       setValue("endDate", formatDate(fundraiserDetails.endDate));
       setValue("classId", fundraiserDetails.classId);
+      setValue("imageIndex", fundraiserDetails.imageIndex);
 
       setSelectedClass(fundraiserDetails.className);
     }
   }, [fundraiserDetails, setValue]);
-
-  useEffect(() => {
-    const storedImageId = getValues("imageIndex");
-    if (storedImageId !== undefined && storedImageId !== null) {
-      setSelectedImageId(storedImageId);
-    }
-  }, [getValues]);
 
   const onSubmit = (data: FundraiseFormData) => {
     const backendData: FundraiseBackendData = {
@@ -188,39 +174,26 @@ const EditFundraisePage = () => {
     return parsedDate.toISOString().split("T")[0]; // YYYY-MM-DD
   };
 
-  const handleSelectTempImage = (imageId: number) => {
-    setTempImageId(imageId);
-  };
+  const handleImage = (imageValue: number | null) => {
+    setTempImageId(imageValue);
+    setValue("imageIndex", tempImageId, { shouldValidate: true });
 
-  const handleSubmitImage = () => {
     if (tempImageId !== null) {
-      setSelectedImageId(tempImageId);
-      setValue("imageIndex", tempImageId, { shouldValidate: true });
       setIsDialogOpen(false);
     }
   };
 
-  const handleDeleteImage = () => {
-    setSelectedImageId(null);
-    setTempImageId(null);
-    setValue("imageIndex", null, { shouldValidate: true });
-  };
-
   if (isLoading) {
-    return <div>Loading fundraiser details...</div>;
+    return (
+      <div className="flex w-full items-center justify-center flex-col gap-4">
+        <h3>Loading fundraiser details...</h3>
+        <Spinner size="large" show className="text-black" />
+      </div>
+    );
   }
 
   if (error || !fundraiserDetails) {
     return <div>Error fetching fundraiser details.</div>;
-  }
-  const imageSrc = images[fundraiserDetails.imageIndex] || images[0];
-
-  if (isLoading) {
-    return (
-      <div className="flex w-full items-center justify-center">
-        <Spinner size="large" />
-      </div>
-    );
   }
 
   return (
@@ -421,112 +394,31 @@ const EditFundraisePage = () => {
               </div>
             </div>
 
-            <div>
-              <div className="flex flex-col w-full">
-                <label className="justify-start text-sm font-medium text-secondary mb-1">
-                  Fundraiser Image
-                </label>
-
-                {selectedImageId !== null ? (
-                  <div className="flex items-center justify-start gap-4 border-2 border-dashed border-gray-200 h-20 p-3">
-                    <img
-                      src={images[selectedImageId]}
-                      alt={`Selected image ${selectedImageId}`}
-                      className="w-12 h-12 rounded-full"
-                    />
-                    <Button
-                      onClick={handleDeleteImage}
-                      className={clsx(
-                        "border font-poppins bg-red text-primary",
-                        "hover:bg-redLight",
-                      )}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-start gap-4 border-2 border-dashed border-gray-200 h-20 p-3">
-                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                      {selectedImageId === null && (
-                        <DialogTrigger asChild>
-                          <Button
-                            className={clsx(
-                              "border font-poppins bg-blue text-primary",
-                              "hover:bg-blueLight",
-                            )}
-                            onClick={() => setIsDialogOpen(true)}
-                          >
-                            Select Image
-                          </Button>
-                        </DialogTrigger>
-                      )}
-
-                      <DialogContent className="max-w-lg mx-auto">
-                        <DialogHeader>
-                          <h2 className="text-lg font-bold font-poppins">
-                            Select an Image
-                          </h2>
-                        </DialogHeader>
-                        {tempImageId !== null && (
-                          <div className="mb-4">
-                            <img
-                              src={images[tempImageId]}
-                              alt={`Selected image ${tempImageId}`}
-                              className="w-[500px] h-[300px] object-cover rounded-md"
-                            />
-                          </div>
-                        )}
-
-                        <div className="flex justify-center gap-2 mb-4">
-                          {images.map((image, index) => (
-                            <img
-                              key={index}
-                              src={image}
-                              alt={`Image ${index}`}
-                              className={`w-16 h-16 rounded-md cursor-pointer border ${
-                                tempImageId === index
-                                  ? "border-blue-500"
-                                  : "border-gray-300"
-                              }`}
-                              onClick={() => handleSelectTempImage(index)}
-                            />
-                          ))}
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-
-                    <div className="flex gap-2 justify-center">
-                      <Button
-                        onClick={handleSubmitImage}
-                        className={clsx(
-                          "border font-poppins bg-blue text-primary",
-                          "hover:bg-blueLight",
-                        )}
-                      >
-                        Submit
-                      </Button>
-                    </div>
-                  </div>
-                )}
+            <div className="flex gap-6 justify-between items-end w-full">
+              <div className="flex-1">
+                <StaticImagePicker
+                  imageIndex={getValues("imageIndex")}
+                  onChange={handleImage}
+                  isDialogOpen={isDialogOpen}
+                  setIsDialogOpen={setIsDialogOpen}
+                />
               </div>
 
-              <Button
-                type="submit"
-                disabled={!isValid}
-                className={`${
-                  isValid
-                    ? "bg-blue text-white hover:bg-blueLight"
-                    : "bg-grayLight text-secondary cursor-not-allowed"
-                } px-6 py-2 rounded-md`}
-              >
-                Submit
-              </Button>
+              <div className="flex flex-1 justify-end items-center">
+                <Button
+                  type="submit"
+                  disabled={!isValid}
+                  className={`${
+                    isValid
+                      ? "bg-blue text-white hover:bg-blueLight"
+                      : "bg-grayLight text-secondary cursor-not-allowed"
+                  } px-6 py-2 rounded-md w-1/4`}
+                >
+                  Submit
+                </Button>
+              </div>
             </div>
           </form>
-
-          {/*<div className="flex items-center justify-center pt-8">*/}
-          {/*  */}
-          {/*</div>*/}
         </div>
       </div>
     </div>
