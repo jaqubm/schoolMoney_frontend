@@ -116,8 +116,6 @@ const FundraiserDetailsPage = () => {
               <DropdownMenuContent className="w-48">
                 <DropdownMenuItem
                   onClick={() => {
-                    debugger;
-
                     router.push(`/fundraise/edit/${id}`);
                   }}
                 >
@@ -178,6 +176,9 @@ const FundraiserDetailsPage = () => {
                       "rounded-bl text-sm bg-blue text-primary shadow px-6",
                       "hover:bg-blueLight",
                     )}
+                    onClick={() => {
+                      router.push(`/fundraise/donate/${id}`);
+                    }}
                   >
                     Donate
                   </Button>
