@@ -16,7 +16,11 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import images from "@/public/images";
 import { clsx } from "clsx";
-import { useDeleteFundraise, useGetFundraiseById } from "@/queries/fundraise";
+import {
+  useDeleteFundraise,
+  useGetFundraiseById,
+  useWithdrawFromFundraise,
+} from "@/queries/fundraise";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -30,25 +34,43 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
 
 const FundraiserDetailsPage = () => {
   const router = useRouter();
   const { id } = useParams();
   const { data: user } = useUserData();
   const deleteFundraise = useDeleteFundraise();
-  const [isDialogOpen, setDialogOpen] = useState(false);
+  const withdrawFromFundraise = useWithdrawFromFundraise();
+
+  const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false);
+  const [isWithdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
+
   const {
     data: fundraiserDetails,
     isLoading,
     error,
   } = useGetFundraiseById(id as string);
+
   const handleDelete = () => {
     deleteFundraise.mutate(
       { fundraiseId: id as string },
       {
         onSuccess: () => {
-          setDialogOpen(false);
+          setDeletionDialogOpen(false);
           router.push("/fundraisers");
+        },
+      },
+    );
+  };
+
+  const handleWithdraw = () => {
+    withdrawFromFundraise.mutate(
+      { fundraiseId: id as string },
+      {
+        onSuccess: () => {
+          toast({ title: "All funds withdrawn successfully" });
+          setWithdrawDialogOpen(false);
         },
       },
     );
@@ -64,7 +86,7 @@ const FundraiserDetailsPage = () => {
 
   return (
     <div className="flex flex-col h-screen w-screen">
-      <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog open={isDeletionDialogOpen} onOpenChange={setDeletionDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
@@ -74,11 +96,35 @@ const FundraiserDetailsPage = () => {
             </p>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => setDialogOpen(false)}>
+            <Button
+              variant="secondary"
+              onClick={() => setDeletionDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button variant="destructive" onClick={handleDelete}>
               Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isWithdrawDialogOpen} onOpenChange={setWithdrawDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Withdrawal</DialogTitle>
+            <p>
+              Are you sure you want to withdraw all funds from this fundraiser?
+            </p>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="secondary"
+              onClick={() => setWithdrawDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="default" onClick={handleWithdraw}>
+              Confirm
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -122,11 +168,11 @@ const FundraiserDetailsPage = () => {
                   <PencilIcon className="w-5 h-5" />
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setDialogOpen(true)}>
+                <DropdownMenuItem onClick={() => setDeletionDialogOpen(true)}>
                   <TrashIcon className="w-5 h-5" />
                   Cancel
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => alert("Withdraw funds")}>
+                <DropdownMenuItem onClick={() => setWithdrawDialogOpen(true)}>
                   <BanknotesIcon className="w-5 h-5" />
                   Withdraw Funds
                 </DropdownMenuItem>

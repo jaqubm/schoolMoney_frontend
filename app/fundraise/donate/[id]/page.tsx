@@ -70,8 +70,6 @@ const DonateFundraisePage = () => {
       amount: parseFloat(data.amount),
       destinationAccountNumber: fundraiserDetails.accountNumber,
     };
-    debugger;
-    console.log(fundraiserDetails.accountNumber);
 
     donateFundraise.mutate(backendData, {
       onSuccess: () => {
