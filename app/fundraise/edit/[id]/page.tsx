@@ -7,7 +7,6 @@ import { Spinner } from "@/components/Spinner";
 import { Header } from "@/components/Header";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sidebar } from "@/components/sidebar";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { useUserData } from "@/queries/user";
 import { Input } from "@/components/ui/input";
@@ -19,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import "./edit.styles.css";
 import { StaticImagePicker } from "@/components/fundraiser/StaticImagePicker";
+import PageHeader from "@/components/PageHeader/PageHeader";
 
 type FundraiseFormData = {
   title: string;
@@ -213,23 +213,10 @@ const EditFundraisePage = () => {
         </div>
 
         <div className="flex flex-col w-full h-full items-center overflow-y-auto">
-          <div className="flex flex-col w-full h-fit p-3 pr-4 pl-6 pb-6 pt-6">
-            <div className="flex justify-start items-center gap-4">
-              <button
-                onClick={() => router.back()}
-                className="flex items-center gap-4 text-secondary"
-              >
-                <ArrowLeftIcon className="w-5 h-5" />
-              </button>
-
-              <div className="text-lg text-secondary">Edit Fundraiser</div>
-            </div>
-            <div>
-              <div className="text-xs text-grayMedium pl-9 pt-1">
-                Update your fundraiser &#34;{fundraiserDetails?.title}&#34;
-              </div>
-            </div>
-          </div>
+          <PageHeader
+            title={"Edit Fundraiser"}
+            subtitle={`Update your fundraiser "${fundraiserDetails.title}"`}
+          ></PageHeader>
 
           <form
             onSubmit={handleSubmit(onSubmit)}
