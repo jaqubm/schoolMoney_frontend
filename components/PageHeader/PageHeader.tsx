@@ -21,7 +21,7 @@ const PageHeader = ({ title, subtitle, children }: PageHeaderProps) => {
           <ArrowLeftIcon className="w-5 h-5" />
         </button>
 
-        <div className="text-lg text-secondary">{title}</div>
+        <div className="text-lg font-semibold text-secondary">{title}</div>
 
         <div>{children}</div>
       </div>
