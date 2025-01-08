@@ -5,8 +5,11 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sidebar } from "@/components/sidebar";
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import { useUserData } from "@/queries/user";
-import { useGetFundraiseById } from "@/queries/fundraise";
+import { useGetFundraises, useUserData } from "@/queries/user";
+import {
+  useGetFundraiseById,
+  useGetTransactionHistory,
+} from "@/queries/fundraise";
 import { Spinner } from "@/components/Spinner";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import { DocumentArrowDownIcon } from "@heroicons/react/24/outline";
@@ -15,46 +18,23 @@ import TransactionReport from "@/components/TransactionReport/TransactionReport"
 import TransactionFilter, {
   option,
 } from "@/components/TransactionFilter/TransactionFilter";
-
-const transactions = [
-  {
-    id: 0,
-    date: "2025-01-01",
-    type: "Deposit",
-    amount: 300.0,
-    name: "John",
-    surname: "Doe",
-  },
-  {
-    id: 1,
-    date: "2025-03-01",
-    type: "Withdrawal",
-    amount: 100.0,
-    name: "John",
-    surname: "Doe",
-  },
-  {
-    id: 2,
-    date: "2025-23-01",
-    type: "Withdrawal",
-    amount: 100.0,
-    name: "Kuba",
-    surname: "Doe",
-  },
-  {
-    id: 3,
-    date: "2025-03-03",
-    type: "Withdrawal",
-    amount: 100.0,
-    name: "Dżon",
-    surname: "Doł",
-  },
-];
+import { TransactionHistoryData } from "@/components/TransactionHistoryData";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const FundraiserTransactionHistoryPage = () => {
   const { id } = useParams();
   const { data: user } = useUserData();
-  const { data: fundraiserDetails, isLoading, error } = useGetFundraiseById(id);
+  const {
+    data: fundraiserDetails,
+    isLoading: isFundraiserLoading,
+    error: fundraiserError,
+  } = useGetFundraiseById(id);
+  const {
+    data: transactions = [],
+    isLoading: isTransactionLoading,
+    error: transactionError,
+  } = useGetTransactionHistory(id);
+
   const filterOptions = [
     { label: "Deposit", value: "Deposit" },
     { label: "Withdrawal", value: "Withdrawal" },
@@ -63,15 +43,16 @@ const FundraiserTransactionHistoryPage = () => {
   const [selectedFilters, setSelectedFilters] =
     useState<option[]>(filterOptions);
 
-  const filteredTransactions = transactions.filter((transaction) =>
-    selectedFilters.some((filter) => filter.value === transaction.type),
-  );
+  if (
+    fundraiserError ||
+    transactionError ||
+    !fundraiserDetails ||
+    !transactions
+  ) {
+    return <div>Error fetching details.</div>;
+  }
 
-  const handleFilterChange = (filters: option[]) => {
-    setSelectedFilters(filters);
-  };
-
-  if (isLoading) {
+  if (isFundraiserLoading || isTransactionLoading) {
     return (
       <div className="flex w-full items-center justify-center flex-col gap-4">
         <h3>Loading details...</h3>
@@ -80,9 +61,15 @@ const FundraiserTransactionHistoryPage = () => {
     );
   }
 
-  if (error || !fundraiserDetails) {
-    return <div>Error fetching details.</div>;
-  }
+  const filteredTransactions = Array.isArray(transactions)
+    ? transactions.filter((transaction) =>
+        selectedFilters.some((filter) => filter.value === transaction.type),
+      )
+    : [];
+
+  const handleFilterChange = (filters: option[]) => {
+    setSelectedFilters(filters);
+  };
 
   function sanitizeFileName(title: string) {
     return title
@@ -136,16 +123,10 @@ const FundraiserTransactionHistoryPage = () => {
             )}
           </PageHeader>
 
-          <div className="flex flex-col w-full h-full justify-start items-start gap-4 p-3 pr-4 pl-14 pb-8">
-            <ul>
-              {filteredTransactions.map((transaction) => (
-                <li key={transaction.id}>
-                  {transaction.date} - {transaction.type} - $
-                  {transaction.amount.toFixed(2)} - {transaction.name}{" "}
-                  {transaction.surname}
-                </li>
-              ))}
-            </ul>
+          <div className="flex flex-col w-full h-full justify-start items-center gap-4 p-3 pr-14 pl-14 pt-11">
+            <ScrollArea className="w-full h-full p-3 pr-14 pl-14 pt-11">
+              <TransactionHistoryData data={filteredTransactions} />
+            </ScrollArea>
           </div>
         </div>
       </div>

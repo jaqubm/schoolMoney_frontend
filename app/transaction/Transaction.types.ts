@@ -1,3 +1,5 @@
+import { ColumnDef } from "@tanstack/table-core";
+
 export type WithdrawPayload = {
   amount: number;
   destinationAccountNumber: string;
@@ -32,7 +34,7 @@ export type Transaction = {
 };
 
 export type Transactions = {
-  transactions: Transaction[];
+  transactions: TransactionDetails[];
 };
 
 export enum TransactionFilterOption {

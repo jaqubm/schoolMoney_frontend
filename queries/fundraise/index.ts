@@ -7,6 +7,7 @@ import {
   FundraiseDetails,
 } from "@/app/fundraise/Fundraise.types";
 import { handleError } from "@/utils/handleError";
+import { TransactionDetails } from "@/app/transaction/Transaction.types";
 
 export const useCreateFundraise = () => {
   return useMutation({
@@ -69,6 +70,19 @@ export const useDeleteFundraise = () => {
         title: "Fundraiser deleted",
         description: "Your fundraiser has been successfully deleted.",
       });
+    },
+    onError: handleError,
+  });
+};
+
+export const useGetTransactionHistory = (fundraiseId: string | string[]) => {
+  return useQuery<TransactionDetails[]>({
+    queryKey: ["fundraise", fundraiseId],
+    queryFn: async (): Promise<TransactionDetails[]> => {
+      const response = await axiosInstance.get(
+        `/Fundraise/GetTransactionHistory/${fundraiseId}`,
+      );
+      return response.data;
     },
     onError: handleError,
   });

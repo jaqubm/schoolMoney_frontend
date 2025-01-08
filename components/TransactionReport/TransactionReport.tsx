@@ -15,8 +15,7 @@ const TransactionReport = ({ transactions }: Transactions) => (
       {transactions.map((transaction, index) => (
         <Text key={index} style={styles.text}>
           {transaction.date} - {transaction.type} - $
-          {transaction.amount.toFixed(2)} - {transaction.name}{" "}
-          {transaction.surname}
+          {transaction.amount.toFixed(2)} - {transaction.sourceAccountNumber}
         </Text>
       ))}
     </Page>
