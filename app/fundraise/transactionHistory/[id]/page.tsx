@@ -55,6 +55,15 @@ const FundraiserTransactionHistoryPage = () => {
     // Logika filtrowania transakcji
   };
 
+  function sanitizeFileName(title: string) {
+    return title
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]/gi, "_")
+      .toLowerCase();
+  }
+  const sanitizedTitle = sanitizeFileName(fundraiserDetails.title);
+
   return (
     <div className="flex flex-col h-screen w-screen">
       <Header withBorder>
@@ -86,7 +95,7 @@ const FundraiserTransactionHistoryPage = () => {
                 </button>
                 <PDFDownloadLink
                   document={<TransactionReport transactions={transactions} />}
-                  fileName="transaction_report.pdf"
+                  fileName={`${sanitizedTitle}_transaction_report.pdf`}
                 >
                   <button className="p-2 rounded hover:bg-gray-200">
                     <DocumentArrowDownIcon className="w-6 h-6 text-secondary" />
