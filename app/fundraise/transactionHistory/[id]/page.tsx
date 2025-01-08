@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sidebar } from "@/components/sidebar";
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import { useGetFundraises, useUserData } from "@/queries/user";
+import { useUserData } from "@/queries/user";
 import {
   useGetFundraiseById,
   useGetTransactionHistory,
