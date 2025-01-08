@@ -188,6 +188,9 @@ const FundraiserDetailsPage = () => {
                       "rounded-bl text-sm bg-blue text-primary shadow px-6",
                       "hover:bg-blueLight",
                     )}
+                    onClick={() => {
+                      router.push(`/fundraise/transactionHistory/${id}`);
+                    }}
                   >
                     See history
                   </Button>
