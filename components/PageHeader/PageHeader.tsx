@@ -12,7 +12,7 @@ const PageHeader = ({ title, subtitle, children }: PageHeaderProps) => {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col w-full h-fit p-3 pr-4 pl-6 pb-8 pt-6">
+    <div className="flex flex-col w-full h-fit p-3 pr-4 pl-6 pb-4 pt-6">
       <div className="flex justify-between items-center">
         <div className="flex justify-start items-center gap-4">
           <button

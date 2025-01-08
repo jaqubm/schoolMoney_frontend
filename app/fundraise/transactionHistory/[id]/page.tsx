@@ -3,23 +3,73 @@
 import { Header } from "@/components/Header";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sidebar } from "@/components/sidebar";
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import { useUserData } from "@/queries/user";
 import { useGetFundraiseById } from "@/queries/fundraise";
 import { Spinner } from "@/components/Spinner";
 import PageHeader from "@/components/PageHeader/PageHeader";
-import {
-  DocumentArrowDownIcon,
-  AdjustmentsHorizontalIcon,
-} from "@heroicons/react/24/outline";
+import { DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import TransactionReport from "@/components/TransactionReport/TransactionReport";
+import TransactionFilter, {
+  option,
+} from "@/components/TransactionFilter/TransactionFilter";
+
+const transactions = [
+  {
+    id: 0,
+    date: "2025-01-01",
+    type: "Deposit",
+    amount: 300.0,
+    name: "John",
+    surname: "Doe",
+  },
+  {
+    id: 1,
+    date: "2025-03-01",
+    type: "Withdrawal",
+    amount: 100.0,
+    name: "John",
+    surname: "Doe",
+  },
+  {
+    id: 2,
+    date: "2025-23-01",
+    type: "Withdrawal",
+    amount: 100.0,
+    name: "Kuba",
+    surname: "Doe",
+  },
+  {
+    id: 3,
+    date: "2025-03-03",
+    type: "Withdrawal",
+    amount: 100.0,
+    name: "Dżon",
+    surname: "Doł",
+  },
+];
 
 const FundraiserTransactionHistoryPage = () => {
   const { id } = useParams();
   const { data: user } = useUserData();
   const { data: fundraiserDetails, isLoading, error } = useGetFundraiseById(id);
+  const filterOptions = [
+    { label: "Deposit", value: "Deposit" },
+    { label: "Withdrawal", value: "Withdrawal" },
+  ];
+
+  const [selectedFilters, setSelectedFilters] =
+    useState<option[]>(filterOptions);
+
+  const filteredTransactions = transactions.filter((transaction) =>
+    selectedFilters.some((filter) => filter.value === transaction.type),
+  );
+
+  const handleFilterChange = (filters: option[]) => {
+    setSelectedFilters(filters);
+  };
 
   if (isLoading) {
     return (
@@ -33,27 +83,6 @@ const FundraiserTransactionHistoryPage = () => {
   if (error || !fundraiserDetails) {
     return <div>Error fetching details.</div>;
   }
-
-  const transactions = [
-    {
-      date: "2025-01-01",
-      type: "Deposit",
-      amount: 300.0,
-      name: "John",
-      surname: "Doe",
-    },
-    {
-      date: "2025-03-01",
-      type: "Withdrawal",
-      amount: 100.0,
-      name: "John",
-      surname: "Doe",
-    },
-  ];
-
-  const handleFilterClick = () => {
-    // Logika filtrowania transakcji
-  };
 
   function sanitizeFileName(title: string) {
     return title
@@ -87,23 +116,37 @@ const FundraiserTransactionHistoryPage = () => {
           >
             {transactions.length > 0 && (
               <div className="flex gap-4">
-                <button
-                  onClick={handleFilterClick}
-                  className="p-2 rounded hover:bg-gray-200"
-                >
-                  <AdjustmentsHorizontalIcon className="w-6 h-6 text-secondary" />
-                </button>
+                <TransactionFilter
+                  title="Filter"
+                  selectedOptions={selectedFilters}
+                  onFilterChange={handleFilterChange}
+                  options={filterOptions}
+                ></TransactionFilter>
                 <PDFDownloadLink
-                  document={<TransactionReport transactions={transactions} />}
+                  document={
+                    <TransactionReport transactions={filteredTransactions} />
+                  }
                   fileName={`${sanitizedTitle}_transaction_report.pdf`}
                 >
                   <button className="p-2 rounded hover:bg-gray-200">
-                    <DocumentArrowDownIcon className="w-6 h-6 text-secondary" />
+                    <DocumentArrowDownIcon className="size-6 text-secondary" />
                   </button>
                 </PDFDownloadLink>
               </div>
             )}
           </PageHeader>
+
+          <div className="flex flex-col w-full h-full justify-start items-start gap-4 p-3 pr-4 pl-14 pb-8">
+            <ul>
+              {filteredTransactions.map((transaction) => (
+                <li key={transaction.id}>
+                  {transaction.date} - {transaction.type} - $
+                  {transaction.amount.toFixed(2)} - {transaction.name}{" "}
+                  {transaction.surname}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>

@@ -1,17 +1,6 @@
 import React from "react";
 import { Document, Page, Text, StyleSheet } from "@react-pdf/renderer";
-
-type Transaction = {
-  date: string;
-  type: string;
-  amount: number;
-  name: string;
-  surname: string;
-};
-
-type Transactions = {
-  transactions: Transaction[];
-};
+import { Transactions } from "@/app/transaction/Transaction.types";
 
 const styles = StyleSheet.create({
   page: { padding: 30 },
