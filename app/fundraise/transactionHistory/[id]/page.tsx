@@ -9,11 +9,16 @@ import { useUserData } from "@/queries/user";
 import { useGetFundraiseById } from "@/queries/fundraise";
 import { Spinner } from "@/components/Spinner";
 import PageHeader from "@/components/PageHeader/PageHeader";
+import {
+  DocumentArrowDownIcon,
+  AdjustmentsHorizontalIcon,
+} from "@heroicons/react/24/outline";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import TransactionReport from "@/components/TransactionReport/TransactionReport";
 
 const FundraiserTransactionHistoryPage = () => {
   const { id } = useParams();
   const { data: user } = useUserData();
-
   const { data: fundraiserDetails, isLoading, error } = useGetFundraiseById(id);
 
   if (isLoading) {
@@ -28,6 +33,27 @@ const FundraiserTransactionHistoryPage = () => {
   if (error || !fundraiserDetails) {
     return <div>Error fetching details.</div>;
   }
+
+  const transactions = [
+    {
+      date: "2025-01-01",
+      type: "Deposit",
+      amount: 300.0,
+      name: "John",
+      surname: "Doe",
+    },
+    {
+      date: "2025-03-01",
+      type: "Withdrawal",
+      amount: 100.0,
+      name: "John",
+      surname: "Doe",
+    },
+  ];
+
+  const handleFilterClick = () => {
+    // Logika filtrowania transakcji
+  };
 
   return (
     <div className="flex flex-col h-screen w-screen">
@@ -49,7 +75,26 @@ const FundraiserTransactionHistoryPage = () => {
           <PageHeader
             title={`${fundraiserDetails?.title} - Transaction History`}
             subtitle={`${fundraiserDetails.className} ${fundraiserDetails.schoolName}`}
-          ></PageHeader>
+          >
+            {transactions.length > 0 && (
+              <div className="flex gap-4">
+                <button
+                  onClick={handleFilterClick}
+                  className="p-2 rounded hover:bg-gray-200"
+                >
+                  <AdjustmentsHorizontalIcon className="w-6 h-6 text-secondary" />
+                </button>
+                <PDFDownloadLink
+                  document={<TransactionReport transactions={transactions} />}
+                  fileName="transaction_report.pdf"
+                >
+                  <button className="p-2 rounded hover:bg-gray-200">
+                    <DocumentArrowDownIcon className="w-6 h-6 text-secondary" />
+                  </button>
+                </PDFDownloadLink>
+              </div>
+            )}
+          </PageHeader>
         </div>
       </div>
     </div>
