@@ -82,13 +82,16 @@ const HomePage = () => {
             <div className="flex w-full max-w-[339px] h-full border">
                <Sidebar/>
             </div>
-            {/* Right section*/}
+            {/* Right section */}
             <div className="flex flex-col w-full h-full pl-[59px] pt-[19px]">
+               {/* Recent activities bar */}
                <div className="flex w-full h-full min-h-[91px] max-h-[91px] gap-[30px] items-center">
-                  <h2 className="text-4xl font-normal line-">Recent Activities</h2>
+                  <h2 className="text-4xl font-normal">Recent Activities</h2>
                   <Button variant="outline" className="text-xl w-[284px]">Contributed Fundraisers</Button>
                   <Button variant="outline" className="text-xl w-[236px]">Your Fundraisers</Button>
                </div>
+
+               {/* Activities history */}
                <div className="flex flex-col w-full h-full items-center overflow-y-auto pr-[59px]">
                     <div className="flex flex-col w-full max-w-[1423px] gap-[54px] pt-[34px] mb-10">
                        {activityCards.map((activity, index) => (
