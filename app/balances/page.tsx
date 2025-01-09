@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { useUserData } from "@/queries/user";
 import { ActivityCard } from "@/components/activity-card";
+import {useRouter} from "next/navigation";
 
 const BalancesPage = () => {
+	const router = useRouter();
 	const { data: userData, isLoading: loadingUser } = useUserData();
 
 	const transactionHistory = [
@@ -76,7 +78,10 @@ const BalancesPage = () => {
 					{/* Balances bar */}
 					<div className="flex w-full h-full min-h-[91px] max-h-[91px] gap-[30px] items-center">
 						<h2 className="text-4xl font-normal">Balances</h2>
-						<Button variant="outline" className="text-xl w-[284px]">Make a deposit</Button>
+						<Button
+							onClick={() => router.push("/balances/deposit")}
+							variant="outline"
+							className="text-xl w-[284px]">Make a deposit</Button>
 						<Button variant="outline" className="text-xl w-[236px]">Withdraw funds</Button>
 					</div>
 
