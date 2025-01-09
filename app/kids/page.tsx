@@ -10,16 +10,8 @@ import { Header } from "@/components/Header";
 import { useUserData } from "@/queries/user";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import {registerKidSchema} from "@/app/kids/kidRegistrationRules";
 
-const registerKidSchema = z.object({
-	firstName: z.string().min(1, "First name is required"),
-	lastName: z.string().min(1, "Last name is required"),
-	school: z.string().min(1, "School is required"),
-	class: z.string().min(1, "Class is required"),
-	dateOfBirth: z.string().min(1, "Date of Birth is required"),
-	terms: z.boolean().refine((val) => val, "You must accept the terms and conditions"),
-});
 
 export default function RegisterKidPage() {
 	const { data: userData, isLoading } = useUserData();
@@ -37,6 +29,7 @@ export default function RegisterKidPage() {
 
 	const onSubmit = (values: any) => {
 		console.log("Kid Registration Data:", values);
+		//TODO: zapytanie dotyczące rejestracji dziecka
 	};
 
 	return (
@@ -54,7 +47,7 @@ export default function RegisterKidPage() {
 			</Header>
 
 			{/* Main Content */}
-			<div className="flex w-full h-full overflow-hidden">
+			<div className="flex w-full h-full">
 				{/* Sidebar */}
 				<div className="flex w-full max-w-[339px] h-full border">
 					<Sidebar />
