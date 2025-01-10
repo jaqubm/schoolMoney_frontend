@@ -1,98 +1,102 @@
-"use client";
+'use client'
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Sidebar } from "@/components/sidebar";
-import { Header } from "@/components/Header";
-import { useUserData, useUpdateUser } from "@/queries/user";
-import { useUpdatePassword } from "@/queries/auth";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { updateUserSchema, updatePasswordSchema } from "./profileValidation";
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Sidebar } from '@/components/sidebar'
+import { Header } from '@/components/Header'
+import { useUserData, useUpdateUser } from '@/queries/user'
+import { useUpdatePassword } from '@/queries/auth'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { updateUserSchema, updatePasswordSchema } from './profileValidation'
+import { PencilIcon } from '@heroicons/react/24/outline'
 import {
     Form,
     FormControl,
     FormField,
     FormItem,
     FormMessage,
-} from "@/components/ui/form";
-import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+} from '@/components/ui/form'
+import { useToast } from '@/hooks/use-toast'
+import { useState } from 'react'
 
 export default function ProfilePage() {
-    const { data: userData, isLoading: loadingUser } = useUserData();
-    const { mutate: updateUser } = useUpdateUser();
-    const { mutate: updatePassword } = useUpdatePassword();
-    const { toast } = useToast();
+    const { data: userData, isLoading: loadingUser } = useUserData()
+    const { mutate: updateUser } = useUpdateUser()
+    const { mutate: updatePassword } = useUpdatePassword()
+    const { toast } = useToast()
 
-    const [editableFields, setEditableFields] = useState<Record<string, boolean>>({
+    const [editableFields, setEditableFields] = useState<
+        Record<string, boolean>
+    >({
         name: false,
         surname: false,
         email: false,
-    });
+    })
 
     const toggleFieldEditable = (field: string) => {
-        setEditableFields((prev) => ({ ...prev, [field]: true }));
-    };
+        setEditableFields((prev) => ({ ...prev, [field]: true }))
+    }
 
     const userForm = useForm({
         resolver: zodResolver(updateUserSchema),
         defaultValues: {
-            email: userData?.email || "",
-            name: userData?.name || "",
-            surname: userData?.surname || "",
+            email: userData?.email || '',
+            name: userData?.name || '',
+            surname: userData?.surname || '',
         },
-    });
+    })
 
     const passwordForm = useForm({
         resolver: zodResolver(updatePasswordSchema),
         defaultValues: {
-            oldPassword: "",
-            newPassword: "",
-            newPasswordConfirm: "",
+            oldPassword: '',
+            newPassword: '',
+            newPasswordConfirm: '',
         },
-    });
+    })
 
     const handleUserUpdate = (data: any) => {
         updateUser(data, {
             onSuccess: () => {
                 toast({
-                    title: "Success",
-                    description: "User data updated successfully.",
-                });
+                    title: 'Success',
+                    description: 'User data updated successfully.',
+                })
             },
             onError: (error: any) => {
                 toast({
-                    title: "Error",
+                    title: 'Error',
                     description:
-                        error.response?.data?.message || "Failed to update user.",
-                    variant: "destructive",
-                });
+                        error.response?.data?.message ||
+                        'Failed to update user.',
+                    variant: 'destructive',
+                })
             },
-        });
-    };
+        })
+    }
 
     const handlePasswordChange = (data: any) => {
         updatePassword(data, {
             onSuccess: () => {
                 toast({
-                    title: "Success",
-                    description: "Password updated successfully.",
-                });
-                passwordForm.reset();
+                    title: 'Success',
+                    description: 'Password updated successfully.',
+                })
+                passwordForm.reset()
             },
             onError: (error: any) => {
                 toast({
-                    title: "Error",
+                    title: 'Error',
                     description:
-                        error.response?.data?.message || "Failed to update password.",
-                    variant: "destructive",
-                });
+                        error.response?.data?.message ||
+                        'Failed to update password.',
+                    variant: 'destructive',
+                })
             },
-        });
-    };
+        })
+    }
 
     return (
         <div className="flex flex-col w-screen h-screen">
@@ -103,14 +107,14 @@ export default function ProfilePage() {
                     className="w-[654px] h-[66px] rounded-lg text-base"
                 />
                 <div className="flex items-center py-[27.5px] mr-[40px]">
-          <span className="text-lg mr-[22px]">
-            {loadingUser
-                ? "Loading..."
-                : `Welcome, ${userData?.name || "Guest"}`}
-          </span>
+                    <span className="text-lg mr-[22px]">
+                        {loadingUser
+                            ? 'Loading...'
+                            : `Welcome, ${userData?.name || 'Guest'}`}
+                    </span>
                     <Avatar>
                         <AvatarFallback>
-                            {userData?.name?.[0]?.toUpperCase() || "?"}
+                            {userData?.name?.[0]?.toUpperCase() || '?'}
                         </AvatarFallback>
                     </Avatar>
                 </div>
@@ -121,58 +125,78 @@ export default function ProfilePage() {
                     <Sidebar />
                 </div>
                 <div className="flex flex-col items-center justify-center w-full h-full px-4 overflow-y-auto">
-                    <h2 className="text-4xl font-semibold mb-6">Your Profile</h2>
+                    <h2 className="text-4xl font-semibold mb-6">
+                        Your Profile
+                    </h2>
                     <div className="flex flex-col gap-10 w-full max-w-4xl">
                         <div className="border p-6 rounded-lg shadow-md w-full">
                             <Form {...userForm}>
                                 <form
-                                    onSubmit={userForm.handleSubmit(handleUserUpdate)}
+                                    onSubmit={userForm.handleSubmit(
+                                        handleUserUpdate
+                                    )}
                                     className="flex flex-col gap-4 w-full"
                                 >
                                     <FormField
                                         control={userForm.control}
                                         name="name"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem className="relative">
                                                 <FormControl>
                                                     <Input
                                                         {...field}
                                                         placeholder="First Name"
-                                                        readOnly={!editableFields.name}
+                                                        readOnly={
+                                                            !editableFields.name
+                                                        }
                                                         className={`${
-                                                            editableFields.name ? "" : "text-gray-500"
+                                                            editableFields.name
+                                                                ? ''
+                                                                : 'text-gray-500'
                                                         }`}
                                                     />
                                                 </FormControl>
                                                 {!editableFields.name && (
                                                     <PencilIcon
                                                         className="w-5 h-5 text-gray-500 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                                                        onClick={() => toggleFieldEditable("name")}
+                                                        onClick={() =>
+                                                            toggleFieldEditable(
+                                                                'name'
+                                                            )
+                                                        }
                                                     />
                                                 )}
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                     <FormField
                                         control={userForm.control}
                                         name="surname"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem className="relative">
                                                 <FormControl>
                                                     <Input
                                                         {...field}
                                                         placeholder="Last Name"
-                                                        readOnly={!editableFields.surname}
+                                                        readOnly={
+                                                            !editableFields.surname
+                                                        }
                                                         className={`${
-                                                            editableFields.surname ? "" : "text-gray-500"
+                                                            editableFields.surname
+                                                                ? ''
+                                                                : 'text-gray-500'
                                                         }`}
                                                     />
                                                 </FormControl>
                                                 {!editableFields.surname && (
                                                     <PencilIcon
                                                         className="w-5 h-5 text-gray-500 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                                                        onClick={() => toggleFieldEditable("surname")}
+                                                        onClick={() =>
+                                                            toggleFieldEditable(
+                                                                'surname'
+                                                            )
+                                                        }
                                                     />
                                                 )}
                                             </FormItem>
@@ -181,25 +205,33 @@ export default function ProfilePage() {
                                     <FormField
                                         control={userForm.control}
                                         name="email"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem className="relative">
                                                 <FormControl>
                                                     <Input
                                                         {...field}
                                                         placeholder="Email Address"
-                                                        readOnly={!editableFields.email}
+                                                        readOnly={
+                                                            !editableFields.email
+                                                        }
                                                         className={`${
-                                                            editableFields.email ? "" : "text-gray-500"
+                                                            editableFields.email
+                                                                ? ''
+                                                                : 'text-gray-500'
                                                         }`}
                                                     />
                                                 </FormControl>
                                                 {!editableFields.email && (
                                                     <PencilIcon
                                                         className="w-5 h-5 text-gray-500 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                                                        onClick={() => toggleFieldEditable("email")}
+                                                        onClick={() =>
+                                                            toggleFieldEditable(
+                                                                'email'
+                                                            )
+                                                        }
                                                     />
                                                 )}
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
@@ -213,13 +245,15 @@ export default function ProfilePage() {
                         <div className="border p-6 rounded-lg shadow-md w-full">
                             <Form {...passwordForm}>
                                 <form
-                                    onSubmit={passwordForm.handleSubmit(handlePasswordChange)}
+                                    onSubmit={passwordForm.handleSubmit(
+                                        handlePasswordChange
+                                    )}
                                     className="flex flex-col gap-4 w-full"
                                 >
                                     <FormField
                                         control={passwordForm.control}
                                         name="oldPassword"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormControl>
                                                     <Input
@@ -228,14 +262,14 @@ export default function ProfilePage() {
                                                         placeholder="Old Password"
                                                     />
                                                 </FormControl>
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                     <FormField
                                         control={passwordForm.control}
                                         name="newPassword"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormControl>
                                                     <Input
@@ -244,14 +278,14 @@ export default function ProfilePage() {
                                                         placeholder="New Password"
                                                     />
                                                 </FormControl>
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                     <FormField
                                         control={passwordForm.control}
                                         name="newPasswordConfirm"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormControl>
                                                     <Input
@@ -260,7 +294,7 @@ export default function ProfilePage() {
                                                         placeholder="Confirm Password"
                                                     />
                                                 </FormControl>
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
@@ -274,5 +308,5 @@ export default function ProfilePage() {
                 </div>
             </div>
         </div>
-    );
+    )
 }

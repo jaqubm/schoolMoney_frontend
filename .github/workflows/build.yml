@@ -1,36 +1,35 @@
 name: Build Test
 
 on:
-  pull_request:
-    types: [ opened, synchronize, reopened ]
-    branches:
-      - main
+    pull_request:
+        types: [opened, synchronize, reopened]
+        branches:
+            - main
 
 env:
-  NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+    NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
 
 jobs:
-  build:
+    build:
+        runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [21.x]
 
-    strategy:
-      matrix:
-        node-version: [21.x]
+        steps:
+            - uses: actions/checkout@v4
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'npm'
 
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+            - name: Install yarn
+              run: npm install yarn
 
-      - name: Install yarn
-        run: npm install yarn
+            - name: Install dependencies
+              run: yarn
 
-      - name: Install dependencies
-        run: yarn
-
-      - name: Build website
-        run: yarn build
+            - name: Build website
+              run: yarn build

@@ -1,8 +1,8 @@
 const images = [
-  "/images/computers.jpg",
-  "/images/money.jpg",
-  "/images/museum.jpg",
-  "/images/train.jpg",
-];
+    '/images/computers.jpg',
+    '/images/money.jpg',
+    '/images/museum.jpg',
+    '/images/train.jpg',
+]
 
-export default images;
+export default images
