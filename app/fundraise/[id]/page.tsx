@@ -36,18 +36,21 @@ const FundraiserDetailsPage = () => {
   const { id } = useParams();
   const { data: user } = useUserData();
   const deleteFundraise = useDeleteFundraise();
-  const [isDialogOpen, setDialogOpen] = useState(false);
+
+  const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false);
+
   const {
     data: fundraiserDetails,
     isLoading,
     error,
   } = useGetFundraiseById(id as string);
+
   const handleDelete = () => {
     deleteFundraise.mutate(
       { fundraiseId: id as string },
       {
         onSuccess: () => {
-          setDialogOpen(false);
+          setDeletionDialogOpen(false);
           router.push("/fundraisers");
         },
       },
@@ -64,7 +67,7 @@ const FundraiserDetailsPage = () => {
 
   return (
     <div className="flex flex-col h-screen w-screen">
-      <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog open={isDeletionDialogOpen} onOpenChange={setDeletionDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
@@ -74,7 +77,10 @@ const FundraiserDetailsPage = () => {
             </p>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => setDialogOpen(false)}>
+            <Button
+              variant="secondary"
+              onClick={() => setDeletionDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button variant="destructive" onClick={handleDelete}>
@@ -122,11 +128,15 @@ const FundraiserDetailsPage = () => {
                   <PencilIcon className="w-5 h-5" />
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setDialogOpen(true)}>
+                <DropdownMenuItem onClick={() => setDeletionDialogOpen(true)}>
                   <TrashIcon className="w-5 h-5" />
                   Cancel
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => alert("Withdraw funds")}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    router.push(`/fundraise/withdraw/${id}`);
+                  }}
+                >
                   <BanknotesIcon className="w-5 h-5" />
                   Withdraw Funds
                 </DropdownMenuItem>
