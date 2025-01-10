@@ -7,16 +7,18 @@ import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useUserData } from "@/queries/user";
-import { useGetFundraiseById } from "@/queries/fundraise";
+import {
+  useGetFundraiseById,
+  useWithdrawFromFundraise,
+} from "@/queries/fundraise";
 import { Spinner } from "@/components/Spinner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "@/hooks/use-toast";
-import { useTransfer } from "@/queries/transaction";
 import PaymentForm from "@/components/fundraiser/PaymentForm";
 
-type DonateFundraiserData = {
+type WithdrawFromFundraiserData = {
   amount: string;
 };
 
@@ -32,14 +34,15 @@ const schema = z.object({
     }),
 });
 
-const DonateFundraisePage = () => {
+const WithdrawFromFundraisePage = () => {
   const router = useRouter();
   const { id } = useParams();
   const { data: user } = useUserData();
-  const donateFundraise = useTransfer();
+
+  const withdrawFromFundraise = useWithdrawFromFundraise();
   const { data: fundraiserDetails, isLoading, error } = useGetFundraiseById(id);
 
-  const { handleSubmit, control } = useForm<DonateFundraiserData>({
+  const { handleSubmit, control } = useForm<WithdrawFromFundraiserData>({
     resolver: zodResolver(schema),
     mode: "all",
     defaultValues: {
@@ -60,15 +63,16 @@ const DonateFundraisePage = () => {
     return <div>Error fetching fundraiser details.</div>;
   }
 
-  const onSubmit = (data: DonateFundraiserData) => {
+  const onSubmit = (data: WithdrawFromFundraiserData) => {
     const backendData = {
       amount: parseFloat(data.amount),
       destinationAccountNumber: fundraiserDetails.accountNumber,
+      fundraiseId: id as string,
     };
 
-    donateFundraise.mutate(backendData, {
+    withdrawFromFundraise.mutate(backendData, {
       onSuccess: () => {
-        toast({ title: "Fundraiser donated successfully" });
+        toast({ title: "Fundraiser withdrawal successful" });
         router.push(`/fundraise/${id}`);
       },
     });
@@ -100,11 +104,13 @@ const DonateFundraisePage = () => {
                 <ArrowLeftIcon className="w-5 h-5" />
               </button>
 
-              <div className="text-lg text-secondary">Donate Fundraiser</div>
+              <div className="text-lg text-secondary">
+                Withdraw Funds from Fundraiser
+              </div>
             </div>
             <div>
               <div className="text-xs text-grayMedium pl-9 pt-1">
-                Donate to &#34;{fundraiserDetails?.title}&#34; fundraiser
+                Withdraw from &#34;{fundraiserDetails?.title}&#34; fundraiser
               </div>
             </div>
           </div>
@@ -114,7 +120,7 @@ const DonateFundraisePage = () => {
             className="flex flex-col items-start p-6 w-fit h-fit gap-6 shadow-lg rounded-md bg-white"
           >
             <PaymentForm
-              hintMessage={"Enter the amount you want to donate"}
+              hintMessage={"Enter the amount you want to withdraw"}
               control={control}
               name={"amount"}
               placeholder={"Amount"}
@@ -126,4 +132,4 @@ const DonateFundraisePage = () => {
   );
 };
 
-export default DonateFundraisePage;
+export default WithdrawFromFundraisePage;

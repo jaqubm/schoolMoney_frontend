@@ -16,11 +16,7 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import images from "@/public/images";
 import { clsx } from "clsx";
-import {
-  useDeleteFundraise,
-  useGetFundraiseById,
-  useWithdrawFromFundraise,
-} from "@/queries/fundraise";
+import { useDeleteFundraise, useGetFundraiseById } from "@/queries/fundraise";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -34,17 +30,14 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { toast } from "@/hooks/use-toast";
 
 const FundraiserDetailsPage = () => {
   const router = useRouter();
   const { id } = useParams();
   const { data: user } = useUserData();
   const deleteFundraise = useDeleteFundraise();
-  const withdrawFromFundraise = useWithdrawFromFundraise();
 
   const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false);
-  const [isWithdrawDialogOpen, setWithdrawDialogOpen] = useState(false);
 
   const {
     data: fundraiserDetails,
@@ -59,18 +52,6 @@ const FundraiserDetailsPage = () => {
         onSuccess: () => {
           setDeletionDialogOpen(false);
           router.push("/fundraisers");
-        },
-      },
-    );
-  };
-
-  const handleWithdraw = () => {
-    withdrawFromFundraise.mutate(
-      { fundraiseId: id as string },
-      {
-        onSuccess: () => {
-          toast({ title: "All funds withdrawn successfully" });
-          setWithdrawDialogOpen(false);
         },
       },
     );
@@ -104,27 +85,6 @@ const FundraiserDetailsPage = () => {
             </Button>
             <Button variant="destructive" onClick={handleDelete}>
               Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <Dialog open={isWithdrawDialogOpen} onOpenChange={setWithdrawDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Withdrawal</DialogTitle>
-            <p>
-              Are you sure you want to withdraw all funds from this fundraiser?
-            </p>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="secondary"
-              onClick={() => setWithdrawDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button variant="default" onClick={handleWithdraw}>
-              Confirm
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -172,7 +132,11 @@ const FundraiserDetailsPage = () => {
                   <TrashIcon className="w-5 h-5" />
                   Cancel
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setWithdrawDialogOpen(true)}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    router.push(`/fundraise/withdraw/${id}`);
+                  }}
+                >
                   <BanknotesIcon className="w-5 h-5" />
                   Withdraw Funds
                 </DropdownMenuItem>
