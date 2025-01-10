@@ -84,7 +84,7 @@ const FundraisersPage = () => {
             </div>
           </div>
 
-          <div>
+          <div className="overflow-y-auto">
             {isLoading ? (
               <div className="flex w-full items-center justify-center">
                 <Spinner size="large" />

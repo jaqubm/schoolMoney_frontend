@@ -24,10 +24,24 @@ const PaymentForm = <Fields extends FieldValues>({
   return (
     <div className="flex flex-col w-fit h-fit gap-6 justify-center items-center">
       <div className="flex flex-col">
+        <div className=""></div>
         <label className="text-sm font-medium text-secondary mb-1">
           Amount
         </label>
-        <Input {...field} placeholder={placeholder} />
+        {/*label*/}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <span className="text-gray-500 dark:text-gray-400 text-sm font-semibold">
+              PLN
+            </span>
+          </div>
+
+          <Input
+            className="pl-12 border border-gray-300 dark:border-gray-600"
+            {...field}
+            placeholder={placeholder}
+          />
+        </div>
         {error ? (
           <p className="text-red text-xs mt-1">{error}</p>
         ) : (

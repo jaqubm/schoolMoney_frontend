@@ -210,10 +210,10 @@ const FundraiserDetailsPage = () => {
               <div className="flex w-full h-fit justify-around">
                 <div className="flex flex-col w-fit h-fit items-center justify-center">
                   <p className="text-base font-bold">
-                    ${fundraiserDetails.raisedAmount} raised
+                    {fundraiserDetails.raisedAmount} PLN raised
                   </p>
                   <p className="text-sm text-grayMedium">
-                    of ${fundraiserDetails.goalAmount} goal
+                    of {fundraiserDetails.goalAmount} PLN goal
                   </p>
                 </div>
 
