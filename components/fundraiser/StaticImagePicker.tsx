@@ -8,6 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 type StaticImagePickerProps = {
   imageIndex: number | null;
@@ -49,10 +50,17 @@ export const StaticImagePicker = ({
 
       {imageIndex != null ? (
         <div className="flex items-center justify-between gap-4 border-2 border-dashed border-gray-200 h-20 p-3">
-          <img
+          {/*<img*/}
+          {/*  src={images[imageIndex]}*/}
+          {/*  alt={`Selected image ${imageIndex}`}*/}
+          {/*  className="w-12 h-12 rounded-full"*/}
+          {/*/>*/}
+          <Image
             src={images[imageIndex]}
             alt={`Selected image ${imageIndex}`}
             className="w-12 h-12 rounded-full"
+            width={48}
+            height={48}
           />
           <Button
             type={"button"}
@@ -87,17 +95,19 @@ export const StaticImagePicker = ({
               </DialogHeader>
               {localValue !== null && (
                 <div className="mb-4">
-                  <img
+                  <Image
                     src={images[localValue]}
                     alt={`Selected image ${localValue}`}
                     className="w-[500px] h-[300px] object-cover rounded-md"
+                    width={462}
+                    height={300}
                   />
                 </div>
               )}
 
               <div className="flex justify-center gap-2 mb-4">
                 {images.map((image, index) => (
-                  <img
+                  <Image
                     key={index}
                     src={image}
                     alt={`Image ${index}`}
@@ -107,6 +117,8 @@ export const StaticImagePicker = ({
                         : "border-transparent"
                     }`}
                     onClick={() => setLocalValue(index)}
+                    width={64}
+                    height={64}
                   />
                 ))}
               </div>
