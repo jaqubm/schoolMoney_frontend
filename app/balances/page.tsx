@@ -90,6 +90,7 @@ const BalancesPage = () => {
                         <Button
                             variant="outline"
                             className="text-xl w-[236px] bg-blue"
+                            onClick={() => router.push('/balances/withdraw')}
                         >
                             Withdraw funds
                         </Button>

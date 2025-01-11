@@ -8,52 +8,54 @@ import { Input } from '@/components/ui/input';
 import { useUserData } from '@/queries/user';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useDeposit } from '@/queries/transaction';
+import { useWithdraw } from '@/queries/transaction';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/hooks/use-toast';
 import React from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import {
-    depositSchema,
-    DepositFormValues,
-} from '@/app/balances/deposit/depositValidationRules';
+    withdrawSchema,
+    WithdrawFormValues,
+} from '@/app/balances/withdraw/withdrawValidationRules';
 
-export default function DepositScreen() {
+export default function WithdrawScreen() {
     const router = useRouter();
     const { data: userData, isLoading: loadingUser } = useUserData();
-    const { mutate: makeDeposit, isLoading: depositLoading } = useDeposit();
+    const { mutate: makeWithdraw, isLoading: withdrawLoading } = useWithdraw();
 
-    const form = useForm<DepositFormValues>({
-        resolver: zodResolver(depositSchema),
+    const form = useForm<WithdrawFormValues>({
+        resolver: zodResolver(withdrawSchema),
         defaultValues: {
             title: '',
             amount: 0,
-            description: '',
+            recipient: '',
+            accountNumber: '',
         },
     });
 
-    const handleDeposit = async () => {
+    const handleWithdraw = async () => {
         const isValid = await form.trigger();
         if (isValid) {
             const data = form.getValues();
-            makeDeposit(
+            makeWithdraw(
                 {
                     amount: data.amount,
-                    sourceAccountNumber: '', // Empty account number, it generates randomly on backend
+                    destinationAccountNumber: data.accountNumber,
                 },
                 {
                     onSuccess: () => {
                         toast({
-                            title: 'Deposit successful',
-                            description: 'Your deposit was successfully made.',
+                            title: 'Withdrawal successful',
+                            description:
+                                'The funds have been successfully withdrawn.',
                         });
                         router.push('/balances');
                     },
                     onError: () => {
                         toast({
-                            title: 'Deposit failed',
+                            title: 'Withdrawal failed',
                             description:
-                                'There was an error making your deposit.',
+                                'There was an error processing your withdrawal.',
                             variant: 'destructive',
                         });
                     },
@@ -62,7 +64,7 @@ export default function DepositScreen() {
         } else {
             toast({
                 title: 'Validation Error',
-                description: 'Please fill all required fields.',
+                description: 'Please fill all required fields correctly.',
                 variant: 'destructive',
             });
         }
@@ -93,7 +95,7 @@ export default function DepositScreen() {
                     <Sidebar />
                 </div>
 
-                {/* Deposit Section */}
+                {/* Withdraw Section */}
                 <div className="flex flex-col w-full h-full px-16 py-10">
                     <div className="flex items-center gap-4">
                         <button
@@ -102,7 +104,7 @@ export default function DepositScreen() {
                         >
                             <ArrowLeftIcon className="w-5 h-5" />
                             <span className="text-lg font-bold">
-                                Make a deposit
+                                Withdraw funds
                             </span>
                         </button>
                     </div>
@@ -113,7 +115,7 @@ export default function DepositScreen() {
                             <div className="flex flex-col w-full max-w-80">
                                 <label
                                     htmlFor="title"
-                                    className="text-gray-500"
+                                    className="text-gray-500 mb-1"
                                 >
                                     Title
                                 </label>
@@ -133,7 +135,7 @@ export default function DepositScreen() {
                             <div className="flex flex-col w-full max-w-80">
                                 <label
                                     htmlFor="amount"
-                                    className="text-gray-500"
+                                    className="text-gray-500 mb-1"
                                 >
                                     Amount
                                 </label>
@@ -152,23 +154,46 @@ export default function DepositScreen() {
                                 )}
                             </div>
 
-                            {/* Description Field */}
-                            <div className="flex flex-col w-full">
+                            {/* Recipient Field */}
+                            <div className="flex flex-col w-full max-w-80">
                                 <label
-                                    htmlFor="description"
-                                    className="text-gray-500"
+                                    htmlFor="recipient"
+                                    className="text-gray-500 mb-1"
                                 >
-                                    Description
+                                    To recipient
                                 </label>
                                 <Input
-                                    id="description"
-                                    placeholder="Description"
-                                    {...form.register('description')}
+                                    id="recipient"
+                                    placeholder="Recipient"
+                                    {...form.register('recipient')}
                                 />
-                                {form.formState.errors.description && (
-                                    <span className="text-red-500 text-sm">
+                                {form.formState.errors.recipient && (
+                                    <span className="text-red text-sm">
                                         {
-                                            form.formState.errors.description
+                                            form.formState.errors.recipient
+                                                .message
+                                        }
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Account Number Field */}
+                            <div className="flex flex-col w-full max-w-80">
+                                <label
+                                    htmlFor="accountNumber"
+                                    className="text-gray-500 mb-1"
+                                >
+                                    To account number
+                                </label>
+                                <Input
+                                    id="accountNumber"
+                                    placeholder="Account number"
+                                    {...form.register('accountNumber')}
+                                />
+                                {form.formState.errors.accountNumber && (
+                                    <span className="text-red text-sm">
+                                        {
+                                            form.formState.errors.accountNumber
                                                 .message
                                         }
                                     </span>
@@ -180,13 +205,13 @@ export default function DepositScreen() {
                     {/* Submit Button */}
                     <div className="mt-6 flex justify-center">
                         <Button
-                            onClick={handleDeposit}
+                            onClick={handleWithdraw}
                             className="bg-blue text-white px-6 py-2 rounded-lg hover:bg-blueLight"
-                            disabled={depositLoading}
+                            disabled={withdrawLoading}
                         >
-                            {depositLoading
+                            {withdrawLoading
                                 ? 'Processing...'
-                                : 'Make a deposit'}
+                                : 'Withdraw funds'}
                         </Button>
                     </div>
                 </div>
