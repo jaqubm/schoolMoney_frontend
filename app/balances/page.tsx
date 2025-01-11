@@ -4,51 +4,20 @@ import { Sidebar } from '@/components/sidebar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
-import { useUserData } from '@/queries/user';
-import { ActivityCard } from '@/components/activity-card';
+import { useGetTransactionHistory, useUserData } from '@/queries/user';
 import { useRouter } from 'next/navigation';
+import { BalancesCard } from '@/components/balances-card';
 
 const BalancesPage = () => {
     const router = useRouter();
     const { data: userData, isLoading: loadingUser } = useUserData();
-
-    const transactionHistory = [
-        {
-            title: 'Payment for School Trip to the Museum',
-            transactionType: 'Deposit',
-            amount: '$50',
-            date: 'October 20, 2024',
-            paidBy: 'John Doe',
-        },
-        {
-            title: 'Payment for School Trip to the Museum',
-            transactionType: 'Deposit',
-            amount: '$50',
-            date: 'October 20, 2024',
-            paidBy: 'John Doe',
-        },
-        {
-            title: 'Payment for School Trip to the Museum',
-            transactionType: 'Deposit',
-            amount: '$50',
-            date: 'October 20, 2024',
-            paidBy: 'John Doe',
-        },
-        {
-            title: 'Payment for School Trip to the Museum',
-            transactionType: 'Deposit',
-            amount: '$50',
-            date: 'October 20, 2024',
-            paidBy: 'John Doe',
-        },
-        {
-            title: 'Payment for School Trip to the Museum',
-            transactionType: 'Deposit',
-            amount: '$50',
-            date: 'October 20, 2024',
-            paidBy: 'John Doe',
-        },
-    ];
+    const { data: transactions, isLoading: loadingTransactions } =
+        useGetTransactionHistory();
+    const sortedTransactions = transactions?.slice().sort((a, b) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return dateB - dateA;
+    });
 
     return (
         <div className="flex flex-col w-screen h-screen">
@@ -83,13 +52,13 @@ const BalancesPage = () => {
                         <Button
                             onClick={() => router.push('/balances/deposit')}
                             variant="outline"
-                            className="text-xl w-[284px] bg-blue"
+                            className="text-xl w-full max-w-80 bg-blue hover:bg-blueLight"
                         >
                             Make a deposit
                         </Button>
                         <Button
                             variant="outline"
-                            className="text-xl w-[236px] bg-blue"
+                            className="text-xl w-full max-w-80 bg-blue hover:bg-blueLight"
                             onClick={() => router.push('/balances/withdraw')}
                         >
                             Withdraw funds
@@ -97,20 +66,26 @@ const BalancesPage = () => {
                     </div>
 
                     {/* Balances overview */}
-                    <div className="flex gap-10 mb-8">
+                    <div className="flex gap-10 mb-8 mr-8">
                         <div className="flex-1 border rounded-lg p-6">
                             <h3 className="text-gray-500 text-sm mb-2">
                                 Parent's bill
                             </h3>
                             <p className="text-2xl font-bold">
-                                12 1234 1234 1234 1234 1234
+                                {userData?.account.accountNumber
+                                    ? userData.account.accountNumber
+                                          .replace(/(.{4})/g, '$1 ')
+                                          .trim()
+                                    : 'No account number available'}
                             </p>
                         </div>
                         <div className="flex-1 border rounded-lg p-6">
                             <h3 className="text-gray-500 text-sm mb-2">
                                 Balance
                             </h3>
-                            <p className="text-2xl font-bold">$150.00</p>
+                            <p className="text-2xl font-bold">
+                                ${userData?.account.balance}
+                            </p>
                         </div>
                     </div>
 
@@ -120,12 +95,30 @@ const BalancesPage = () => {
                     </h3>
                     <div className="flex flex-col w-full h-full items-center overflow-y-auto pr-[59px]">
                         <div className="flex flex-col w-full max-w-[1423px] gap-[54px] pt-[34px] mb-10">
-                            {transactionHistory.map((transaction, index) => (
-                                <ActivityCard
-                                    key={index}
-                                    activity={transaction}
-                                />
-                            ))}
+                            {loadingTransactions ? (
+                                <p>Loading transactions...</p>
+                            ) : sortedTransactions &&
+                              sortedTransactions.length > 0 ? (
+                                sortedTransactions.map((transaction, index) => (
+                                    <BalancesCard
+                                        key={index}
+                                        balanceCard={{
+                                            transactionId:
+                                                transaction.transactionId,
+                                            amount: transaction.amount,
+                                            date: transaction.date,
+                                            type: transaction.type,
+                                            status: transaction.status,
+                                            sourceAccountNumber:
+                                                transaction.sourceAccountNumber,
+                                            destinationAccountNumber:
+                                                transaction.destinationAccountNumber,
+                                        }}
+                                    />
+                                ))
+                            ) : (
+                                <p>No transactions available.</p>
+                            )}
                         </div>
                     </div>
                 </div>

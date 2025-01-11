@@ -108,52 +108,59 @@ export default function DepositScreen() {
                     </div>
 
                     <div className="flex p-8 w-full h-full max-h-80 max-w-3xl mx-auto border mt-3 rounded-lg">
-                        <form className="flex justify-evenly items-center content-around h-full w-full flex-wrap">
-                            {/* Title Field */}
-                            <div className="flex flex-col w-full max-w-80">
-                                <label
-                                    htmlFor="title"
-                                    className="text-gray-500"
-                                >
-                                    Title
-                                </label>
-                                <Input
-                                    id="title"
-                                    placeholder="Title"
-                                    {...form.register('title')}
-                                />
-                                {form.formState.errors.title && (
-                                    <span className="text-red text-sm">
-                                        {form.formState.errors.title.message}
-                                    </span>
-                                )}
-                            </div>
+                        <form className="flex justify-evenly items-center content-around h-full w-full flex-wrap gap-2">
+                            <div className="flex w-full gap-4">
+                                {/* Title Field */}
+                                <div className="w-full">
+                                    <label
+                                        htmlFor="title"
+                                        className="text-gray-500"
+                                    >
+                                        Title
+                                    </label>
+                                    <Input
+                                        id="title"
+                                        placeholder="Title"
+                                        {...form.register('title')}
+                                    />
+                                    {form.formState.errors.title && (
+                                        <span className="text-red text-sm">
+                                            {
+                                                form.formState.errors.title
+                                                    .message
+                                            }
+                                        </span>
+                                    )}
+                                </div>
 
-                            {/* Amount Field */}
-                            <div className="flex flex-col w-full max-w-80">
-                                <label
-                                    htmlFor="amount"
-                                    className="text-gray-500"
-                                >
-                                    Amount
-                                </label>
-                                <Input
-                                    id="amount"
-                                    type="number"
-                                    placeholder="Amount"
-                                    {...form.register('amount', {
-                                        valueAsNumber: true,
-                                    })}
-                                />
-                                {form.formState.errors.amount && (
-                                    <span className="text-red text-sm">
-                                        {form.formState.errors.amount.message}
-                                    </span>
-                                )}
+                                {/* Amount Field */}
+                                <div className="w-full">
+                                    <label
+                                        htmlFor="amount"
+                                        className="text-gray-500"
+                                    >
+                                        Amount
+                                    </label>
+                                    <Input
+                                        id="amount"
+                                        type="number"
+                                        {...form.register('amount', {
+                                            valueAsNumber: true,
+                                        })}
+                                    />
+                                    {form.formState.errors.amount && (
+                                        <span className="text-red text-sm">
+                                            {
+                                                form.formState.errors.amount
+                                                    .message
+                                            }
+                                        </span>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Description Field */}
-                            <div className="flex flex-col w-full">
+                            <div className="w-full">
                                 <label
                                     htmlFor="description"
                                     className="text-gray-500"

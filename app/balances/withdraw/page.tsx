@@ -142,7 +142,6 @@ export default function WithdrawScreen() {
                                 <Input
                                     id="amount"
                                     type="number"
-                                    placeholder="Amount"
                                     {...form.register('amount', {
                                         valueAsNumber: true,
                                     })}
