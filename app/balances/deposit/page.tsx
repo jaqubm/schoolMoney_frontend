@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useUserData } from '@/queries/user';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDeposit } from '@/queries/transaction';
 import { useRouter } from 'next/navigation';
@@ -32,29 +32,40 @@ const DepositPage = () => {
         },
     });
 
-    const handleDeposit: SubmitHandler<DepositFormValues> = (data) => {
-        makeDeposit(
-            {
-                amount: data.amount,
-                sourceAccountNumber: '12 1234 1234 1234 1234', // Example account number, replace dynamically if necessary
-            },
-            {
-                onSuccess: () => {
-                    toast({
-                        title: 'Deposit successful',
-                        description: 'Your deposit was successfully made.',
-                    });
-                    router.push('/balances'); // Redirect to balances page
+    const handleDeposit = async () => {
+        const isValid = await form.trigger();
+        if (isValid) {
+            const data = form.getValues();
+            makeDeposit(
+                {
+                    amount: data.amount,
+                    sourceAccountNumber: '', // Empty account number, it generates randomly on backend
                 },
-                onError: () => {
-                    toast({
-                        title: 'Deposit failed',
-                        description: 'There was an error making your deposit.',
-                        variant: 'destructive',
-                    });
-                },
-            }
-        );
+                {
+                    onSuccess: () => {
+                        toast({
+                            title: 'Deposit successful',
+                            description: 'Your deposit was successfully made.',
+                        });
+                        router.push('/balances');
+                    },
+                    onError: () => {
+                        toast({
+                            title: 'Deposit failed',
+                            description:
+                                'There was an error making your deposit.',
+                            variant: 'destructive',
+                        });
+                    },
+                }
+            );
+        } else {
+            toast({
+                title: 'Validation Error',
+                description: 'Please fill all required fields.',
+                variant: 'destructive',
+            });
+        }
     };
 
     return (
@@ -96,11 +107,8 @@ const DepositPage = () => {
                         </button>
                     </div>
 
-                    <form
-                        onSubmit={form.handleSubmit(handleDeposit)}
-                        className="shadow-md rounded-lg p-8 w-full max-w-3xl mx-auto"
-                    >
-                        <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col justify-evenly rounded-lg p-8 w-full h-full max-h-80 max-w-3xl mx-auto border mt-3">
+                        <form className="grid grid-cols-2 gap-4">
                             {/* Title Field */}
                             <div className="flex flex-col">
                                 <label
@@ -115,7 +123,7 @@ const DepositPage = () => {
                                     {...form.register('title')}
                                 />
                                 {form.formState.errors.title && (
-                                    <span className="text-red-500 text-sm">
+                                    <span className="text-red text-sm">
                                         {form.formState.errors.title.message}
                                     </span>
                                 )}
@@ -138,46 +146,49 @@ const DepositPage = () => {
                                     })}
                                 />
                                 {form.formState.errors.amount && (
-                                    <span className="text-red-500 text-sm">
+                                    <span className="text-red text-sm">
                                         {form.formState.errors.amount.message}
                                     </span>
                                 )}
                             </div>
-                        </div>
 
-                        {/* Description Field */}
-                        <div className="flex flex-col mt-4">
-                            <label
-                                htmlFor="description"
-                                className="text-gray-500"
-                            >
-                                Description
-                            </label>
-                            <Input
-                                id="description"
-                                placeholder="Description"
-                                {...form.register('description')}
-                            />
-                            {form.formState.errors.description && (
-                                <span className="text-red-500 text-sm">
-                                    {form.formState.errors.description.message}
-                                </span>
-                            )}
-                        </div>
+                            {/* Description Field */}
+                            <div className="col-span-2 flex flex-col mt-4">
+                                <label
+                                    htmlFor="description"
+                                    className="text-gray-500"
+                                >
+                                    Description
+                                </label>
+                                <Input
+                                    id="description"
+                                    placeholder="Description"
+                                    {...form.register('description')}
+                                />
+                                {form.formState.errors.description && (
+                                    <span className="text-red-500 text-sm">
+                                        {
+                                            form.formState.errors.description
+                                                .message
+                                        }
+                                    </span>
+                                )}
+                            </div>
+                        </form>
+                    </div>
 
-                        {/* Submit Button */}
-                        <div className="mt-6 flex justify-center">
-                            <Button
-                                type="submit"
-                                className="bg-blue-500 text-white px-6 py-2 rounded-lg"
-                                disabled={depositLoading}
-                            >
-                                {depositLoading
-                                    ? 'Processing...'
-                                    : 'Make a deposit'}
-                            </Button>
-                        </div>
-                    </form>
+                    {/* Submit Button */}
+                    <div className="mt-6 flex justify-center">
+                        <Button
+                            onClick={handleDeposit}
+                            className="bg-blue text-white px-6 py-2 rounded-lg hover:bg-blueLight"
+                            disabled={depositLoading}
+                        >
+                            {depositLoading
+                                ? 'Processing...'
+                                : 'Make a deposit'}
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

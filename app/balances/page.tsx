@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import { Sidebar } from '@/components/sidebar'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Header } from '@/components/Header'
-import { useUserData } from '@/queries/user'
-import { ActivityCard } from '@/components/activity-card'
-import { useRouter } from 'next/navigation'
+import { Sidebar } from '@/components/sidebar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Header } from '@/components/Header';
+import { useUserData } from '@/queries/user';
+import { ActivityCard } from '@/components/activity-card';
+import { useRouter } from 'next/navigation';
 
 const BalancesPage = () => {
-    const router = useRouter()
-    const { data: userData, isLoading: loadingUser } = useUserData()
+    const router = useRouter();
+    const { data: userData, isLoading: loadingUser } = useUserData();
 
     const transactionHistory = [
         {
@@ -48,7 +48,7 @@ const BalancesPage = () => {
             date: 'October 20, 2024',
             paidBy: 'John Doe',
         },
-    ]
+    ];
 
     return (
         <div className="flex flex-col w-screen h-screen">
@@ -83,11 +83,14 @@ const BalancesPage = () => {
                         <Button
                             onClick={() => router.push('/balances/deposit')}
                             variant="outline"
-                            className="text-xl w-[284px]"
+                            className="text-xl w-[284px] bg-blue"
                         >
                             Make a deposit
                         </Button>
-                        <Button variant="outline" className="text-xl w-[236px]">
+                        <Button
+                            variant="outline"
+                            className="text-xl w-[236px] bg-blue"
+                        >
                             Withdraw funds
                         </Button>
                     </div>
@@ -127,7 +130,7 @@ const BalancesPage = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default BalancesPage
+export default BalancesPage;
