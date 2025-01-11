@@ -104,7 +104,7 @@ const DonateFundraisePage = () => {
               hintMessage={"Enter the amount you want to donate"}
               control={control}
               name={"amount"}
-              placeholder={"Amount"}
+              placeholder={"Enter amount"}
             />
           </form>
         </div>

@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import images from "@/public/images";
 import { clsx } from "clsx";
+import Image from "next/image";
 import { useDeleteFundraise, useGetFundraiseById } from "@/queries/fundraise";
 import {
   DropdownMenu,
@@ -146,8 +147,11 @@ const FundraiserDetailsPage = () => {
 
           <div className="flex w-full h-full">
             <div className="flex-1 h-full pl-6 pr-6 pb-20">
-              <img
+              <Image
+                alt="fundraiser Image"
                 src={imageSrc}
+                width={560}
+                height={560}
                 className="h-full w-full object-cover rounded-lg"
               />
             </div>
@@ -210,10 +214,10 @@ const FundraiserDetailsPage = () => {
               <div className="flex w-full h-fit justify-around">
                 <div className="flex flex-col w-fit h-fit items-center justify-center">
                   <p className="text-base font-bold">
-                    ${fundraiserDetails.raisedAmount} raised
+                    {fundraiserDetails.raisedAmount} PLN raised
                   </p>
                   <p className="text-sm text-grayMedium">
-                    of ${fundraiserDetails.goalAmount} goal
+                    of {fundraiserDetails.goalAmount} PLN goal
                   </p>
                 </div>
 

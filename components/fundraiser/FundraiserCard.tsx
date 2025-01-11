@@ -1,35 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { FundraiseDetails } from "@/app/user/User.types";
 import { useRouter } from "next/navigation";
 import images from "@/public/images";
 import { Button } from "@/components/ui/button";
 import { clsx } from "clsx";
-import { Spinner } from "@/components/Spinner";
+import Image from "next/image";
 
 const FundraiserCard = ({ fundraiser }: { fundraiser: FundraiseDetails }) => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
   const imageSrc = images[fundraiser.imageIndex] || images[0];
-
-  const handleImageLoad = () => {
-    setIsLoading(false);
-  };
 
   return (
     <div className="border rounded-lg p-4 shadow-md flex gap-7 w-full ">
       <div className="relative w-32 h-28 rounded-full overflow-hidden flex items-center">
-        {isLoading && (
-          <div className="absolute flex items-center justify-center w-full h-full">
-            <Spinner size="small" />
-          </div>
-        )}
-        <img
+        <Image
+          alt="fundraiser Image"
           src={imageSrc}
-          className={clsx("w-full h-full object-cover", isLoading && "hidden")}
-          onLoad={handleImageLoad}
-          alt="Fundraiser"
+          width={111}
+          height={111}
+          className="w-full h-full object-cover"
         />
       </div>
       <div className="flex flex-col w-full">

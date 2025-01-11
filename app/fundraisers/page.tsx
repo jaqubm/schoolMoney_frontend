@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { clsx } from "clsx";
 import { useGetFundraises, useUserData } from "@/queries/user";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Spinner } from "@/components/Spinner";
 
 const FundraisersPage = () => {
@@ -17,12 +17,27 @@ const FundraisersPage = () => {
   const { data: user } = useUserData();
   const { data: fundraises = [], isLoading } = useGetFundraises();
   const [filter, setFilter] = useState<"created" | "contributed">("created");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedFundraiser, setSelectedFundraiser] = useState<string | null>(
+    null,
+  );
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setSelectedFundraiser(null);
+  };
 
   const filteredFundraises = fundraises.filter((fundraise) => {
-    if (filter === "created") return fundraise.isTreasurer;
-    if (filter === "contributed") return !fundraise.isTreasurer;
+    const matchesFilter =
+      (filter === "created" && fundraise.isTreasurer) ||
+      (filter === "contributed" && !fundraise.isTreasurer);
 
-    return true;
+    const matchesSearchTerm = fundraise.title
+      .toLowerCase()
+      .startsWith(searchTerm.toLowerCase());
+
+    return matchesFilter && matchesSearchTerm;
   });
 
   return (
@@ -30,8 +45,10 @@ const FundraisersPage = () => {
       <Header withBorder>
         <Input
           type="search"
-          placeholder="Search..."
+          placeholder="Search for the fundraiser..."
           className="w-full max-w-[600px] h-12 px-4 text-base rounded-lg border border-gray-300 "
+          value={selectedFundraiser || searchTerm}
+          onChange={handleInputChange}
         />
 
         <Button
@@ -84,7 +101,7 @@ const FundraisersPage = () => {
             </div>
           </div>
 
-          <div>
+          <div className="overflow-y-auto">
             {isLoading ? (
               <div className="flex w-full items-center justify-center">
                 <Spinner size="large" />
