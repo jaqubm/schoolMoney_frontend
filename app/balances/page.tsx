@@ -69,7 +69,7 @@ const BalancesPage = () => {
                     <div className="flex gap-10 mb-8 mr-8">
                         <div className="flex-1 border rounded-lg p-6">
                             <h3 className="text-gray-500 text-sm mb-2">
-                                Parent's bill
+                                Parent&#39;s bill
                             </h3>
                             <p className="text-2xl font-bold">
                                 {userData?.account.accountNumber
