@@ -7,6 +7,7 @@ export type Child = {
   childId: string;
   name: string;
   className: string;
+  schoolName: string;
 };
 
 export type User = {
