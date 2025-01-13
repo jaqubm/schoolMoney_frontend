@@ -1,13 +1,13 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/queries/axios";
 import { toast } from "@/hooks/use-toast";
-import axios from "axios";
 import {
   CreateFundraisePayload,
   UpdateFundraisePayload,
   FundraiseDetails,
 } from "@/app/fundraise/Fundraise.types";
 import { handleError } from "@/utils/handleError";
+import { TransactionDetails } from "@/app/transaction/Transaction.types";
 
 export const useCreateFundraise = () => {
   return useMutation({
@@ -24,7 +24,7 @@ export const useCreateFundraise = () => {
   });
 };
 
-export const useGetFundraiseById = (fundraiseId: string) => {
+export const useGetFundraiseById = (fundraiseId: string | string[]) => {
   return useQuery<FundraiseDetails>({
     queryKey: ["fundraise", fundraiseId],
     queryFn: async (): Promise<FundraiseDetails> => {
@@ -38,9 +38,9 @@ export const useGetFundraiseById = (fundraiseId: string) => {
 export const useUpdateFundraise = () => {
   return useMutation({
     mutationFn: async ({
-                         fundraiseId,
-                         data,
-                       }: {
+      fundraiseId,
+      data,
+    }: {
       fundraiseId: string;
       data: UpdateFundraisePayload;
     }): Promise<void> => {
@@ -51,6 +51,57 @@ export const useUpdateFundraise = () => {
         title: "Fundraiser updated",
         description: "Your fundraiser has been successfully updated.",
       });
+    },
+    onError: handleError,
+  });
+};
+
+export const useDeleteFundraise = () => {
+  return useMutation({
+    mutationFn: async ({
+      fundraiseId,
+    }: {
+      fundraiseId: string;
+    }): Promise<void> => {
+      await axiosInstance.delete(`/Fundraise/Delete/${fundraiseId}`);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Fundraiser deleted",
+        description: "Your fundraiser has been successfully deleted.",
+      });
+    },
+    onError: handleError,
+  });
+};
+
+export const useWithdrawFromFundraise = () => {
+  return useMutation({
+    mutationFn: async ({
+      fundraiseId,
+    }: {
+      fundraiseId: string;
+    }): Promise<void> => {
+      await axiosInstance.post(`/Fundraise/Withdraw/${fundraiseId}`);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Withdrawal successful",
+        description: "The amount has been successfully withdrawn.",
+      });
+    },
+    onError: handleError,
+  });
+};
+
+export const useGetTransactionHistory = (fundraiseId: string | string[]) => {
+  return useQuery<TransactionDetails[]>({
+    queryKey: ["fundraise", fundraiseId],
+    queryFn: async (): Promise<TransactionDetails[]> => {
+      const response = await axiosInstance.get(
+        `/Fundraise/GetTransactionHistory/${fundraiseId}`,
+      );
+      return response.data;
     },
     onError: handleError,
   });

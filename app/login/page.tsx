@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/Header";
+import {Spinner} from "@/components/Spinner";
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
@@ -151,14 +152,21 @@ export default function Login() {
                className="w-full bg-blue text-white py-2 rounded-lg"
                disabled={loading}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? (
+                 <span className="flex items-center gap-2">
+                   <Spinner />
+                   Logging in..
+                 </span>
+              ) : (
+                 "Login"
+              )}
             </Button>
           </form>
         </Form>
         <p className="mt-4 text-gray-600">
           New User?{" "}
           <a href="/register" className="text-blue hover:underline">
-            Sign in
+            Sign up
           </a>
         </p>
       </div>
