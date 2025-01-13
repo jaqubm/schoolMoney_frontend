@@ -3,17 +3,17 @@ import FundraiserCard from "@/components/fundraiser/FundraiserCard";
 import { FundraiseDetails } from "@/app/user/User.types";
 
 const FundraisersList = ({
-    fundraises,
+  fundraises,
 }: {
-    fundraises: FundraiseDetails[]
+  fundraises: FundraiseDetails[];
 }) => {
-    return (
-        <div className="flex flex-col gap-4 p-4">
-            {fundraises.map((fundraise) => (
-                <FundraiserCard key={fundraise.title} fundraiser={fundraise} />
-            ))}
-        </div>
-    )
-}
+  return (
+    <div className="flex flex-col gap-4 p-4">
+      {fundraises.map((fundraise) => (
+        <FundraiserCard key={fundraise.title} fundraiser={fundraise} />
+      ))}
+    </div>
+  );
+};
 
-export default FundraisersList
+export default FundraisersList;
