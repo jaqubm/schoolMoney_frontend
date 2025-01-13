@@ -45,7 +45,7 @@ const FundraisersPage = () => {
       <Header withBorder>
         <Input
           type="search"
-          placeholder="Search for the fundraiser..."
+          placeholder="Search..."
           className="w-full max-w-[600px] h-12 px-4 text-base rounded-lg border border-gray-300 "
           value={selectedFundraiser || searchTerm}
           onChange={handleInputChange}

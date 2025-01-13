@@ -15,10 +15,9 @@ const WelcomePage = () => {
         <Button
           variant="default"
           onClick={() => {
-             if (Cookies.get("access_token")) {
-                router.replace("/home");
-             }
-             else router.push("/login");
+            if (Cookies.get("access_token")) {
+              router.replace("/home");
+            } else router.push("/login");
           }}
           className="px-4 py-2 btn-secondary"
         >

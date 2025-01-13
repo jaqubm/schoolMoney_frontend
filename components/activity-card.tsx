@@ -14,9 +14,7 @@ interface ActivityCard {
   activity: Activity;
 }
 
-export const ActivityCard: React.FC<ActivityCard> = ({
-  activity,
-}) => (
+export const ActivityCard: React.FC<ActivityCard> = ({ activity }) => (
   <Card className="p-4 flex flex-col w-full h-full">
     <h3 className="text-lg font-semibold">{activity.title}</h3>
     <p>Transaction Type: {activity.transactionType}</p>

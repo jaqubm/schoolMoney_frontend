@@ -1,21 +1,27 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import Image from "next/image";
 import { useLogin } from "@/queries/auth";
 
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import { LoginFormValues, loginSchema } from "./loginValidationRules"
+import { LoginFormValues, loginSchema } from "./loginValidationRules";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/Header";
-import {Spinner} from "@/components/Spinner";
+import { Spinner } from "@/components/Spinner";
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
@@ -31,16 +37,17 @@ export default function Login() {
     },
   });
 
-  const handleLogin = async (data: LoginFormValues) =>
-  {
+  const handleLogin = async (data: LoginFormValues) => {
     setLoading(true);
     try {
       const result = await loginMutation.mutateAsync(data);
       if (result?.Token) {
-        Cookies.set('access_token', result.Token, { expires: 1, secure: true });
+        Cookies.set("access_token", result.Token, {
+          expires: 1,
+          secure: true,
+        });
         router.replace("/home");
-      }
-      else {
+      } else {
         toast({
           title: "Login failed: Invalid login details.",
           description: "An error occurred.",
@@ -48,14 +55,16 @@ export default function Login() {
         });
       }
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || "An unexpected error occurred.";
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "An unexpected error occurred.";
       toast({
         title: "Logging in failed",
         description: errorMessage,
         variant: "destructive",
       });
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -65,7 +74,6 @@ export default function Login() {
     if (token) {
       router.replace("/home");
     }
-
   }, [router]);
 
   return (
@@ -96,69 +104,64 @@ export default function Login() {
         </p>
         <Form {...form}>
           <form
-             onSubmit={async (event) => {
-               event.preventDefault();
+            onSubmit={async (event) => {
+              event.preventDefault();
 
-               try {
-                 await form.handleSubmit(handleLogin)(event);
-               }
-               catch (error) {
-                 console.error("Form submission error:", error);
-               }
-             }}
-             className="w-full max-w-sm flex flex-col gap-5"
+              try {
+                await form.handleSubmit(handleLogin)(event);
+              } catch (error) {
+                console.error("Form submission error:", error);
+              }
+            }}
+            className="w-full max-w-sm flex flex-col gap-5"
           >
             <FormField
-               control={form.control}
-               name="email"
-               render={({ field }) => (
-                  <FormItem>
-                    <div className="flex flex-col gap-2">
-                      <FormControl>
-                        <Input
-                           id="email"
-                           placeholder="Email"
-                           {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-               )}
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex flex-col gap-2">
+                    <FormControl>
+                      <Input id="email" placeholder="Email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
             />
 
             <FormField
-               control={form.control}
-               name="password"
-               render={({ field }) => (
-                  <FormItem>
-                    <div className="flex flex-col gap-2">
-                      <FormControl>
-                        <Input
-                           id="password"
-                           placeholder="Password"
-                           type="password"
-                           {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-               )}
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex flex-col gap-2">
+                    <FormControl>
+                      <Input
+                        id="password"
+                        placeholder="Password"
+                        type="password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
             />
 
             <Button
-               type="submit"
-               className="w-full bg-blue text-white py-2 rounded-lg"
-               disabled={loading}
+              type="submit"
+              className="w-full bg-blue text-white py-2 rounded-lg"
+              disabled={loading}
             >
               {loading ? (
-                 <span className="flex items-center gap-2">
-                   <Spinner />
-                   Logging in..
-                 </span>
+                <span className="flex items-center gap-2">
+                  <Spinner />
+                  Logging in..
+                </span>
               ) : (
-                 "Login"
+                "Login"
               )}
             </Button>
           </form>
