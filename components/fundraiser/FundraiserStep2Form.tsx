@@ -19,7 +19,6 @@ const FundraiserStep2Form = () => {
 
     useEffect(() => {
         if (classId && classDetails) {
-            console.log('Klasa znaleziona:', classDetails)
             setSelectedClass(classDetails.name)
             setValue('classId', classId, { shouldValidate: true })
         }

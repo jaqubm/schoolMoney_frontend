@@ -77,6 +77,25 @@ export const useDeleteFundraise = () => {
     })
 }
 
+export const useWithdrawFromFundraise = () => {
+  return useMutation({
+    mutationFn: async ({
+      fundraiseId,
+    }: {
+      fundraiseId: string;
+    }): Promise<void> => {
+      await axiosInstance.post(`/Fundraise/Withdraw/${fundraiseId}`);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Withdrawal successful",
+        description: "The amount has been successfully withdrawn.",
+      });
+    },
+    onError: handleError,
+  });
+};
+
 export const useGetTransactionHistory = (fundraiseId: string | string[]) => {
     return useQuery<TransactionDetails[]>({
         queryKey: ['fundraise', fundraiseId],

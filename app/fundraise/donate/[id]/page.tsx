@@ -12,9 +12,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from '@/hooks/use-toast'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { useTransfer } from '@/queries/transaction'
+import { useTransfer } from "@/queries/transaction";
+import PaymentForm from "@/components/fundraiser/PaymentForm";
 import PageHeader from '@/components/PageHeader/PageHeader'
 
 type DonateFundraiserData = {
@@ -45,9 +44,8 @@ const DonateFundraisePage = () => {
     } = useGetFundraiseById(id)
 
     const {
-        register,
         handleSubmit,
-        formState: { errors, isValid },
+        control,
     } = useForm<DonateFundraiserData>({
         resolver: zodResolver(schema),
         mode: 'all',
@@ -109,46 +107,21 @@ const DonateFundraisePage = () => {
                         subtitle={`Donate to "${fundraiserDetails.title}" fundraiser`}
                     ></PageHeader>
 
-                    <form
-                        onSubmit={handleSubmit(onSubmit)}
-                        className="flex flex-col items-start p-6 w-fit h-fit gap-6 shadow-lg rounded-md bg-white"
-                    >
-                        <div className="flex flex-col w-fit h-fit gap-6 justify-center items-center">
-                            <div className="flex flex-col">
-                                <label className="text-sm font-medium text-secondary mb-1">
-                                    Amount
-                                </label>
-                                <Input {...register('amount')} />
-                                {errors.amount ? (
-                                    <p className="text-red text-xs mt-1">
-                                        {errors.amount.message}
-                                    </p>
-                                ) : (
-                                    <p className="text-xs text-gray-500 mt-1">
-                                        Enter the amount you want to donate{' '}
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="flex w-full justify-center items-center">
-                                <Button
-                                    type="submit"
-                                    disabled={!isValid}
-                                    className={`${
-                                        isValid
-                                            ? 'bg-blue text-white hover:bg-blueLight'
-                                            : 'bg-grayLight text-secondary cursor-not-allowed'
-                                    } px-6 py-2 rounded-md w-1/4`}
-                                >
-                                    Submit
-                                </Button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col items-start p-6 w-fit h-fit gap-6 shadow-lg rounded-md bg-white"
+          >
+            <PaymentForm
+              hintMessage={"Enter the amount you want to donate"}
+              control={control}
+              name={"amount"}
+              placeholder={"Enter amount"}
+            />
+          </form>
         </div>
-    )
-}
+      </div>
+    </div>
+  );
+};
 
 export default DonateFundraisePage

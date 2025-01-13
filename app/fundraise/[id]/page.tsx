@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import React, { useState } from 'react'
 import images from '@/public/images'
 import { clsx } from 'clsx'
+import Image from "next/image";
 import { useDeleteFundraise, useGetFundraiseById } from '@/queries/fundraise'
 import {
     DropdownMenu,
@@ -36,7 +37,7 @@ const FundraiserDetailsPage = () => {
     const { id } = useParams()
     const { data: user } = useUserData()
     const deleteFundraise = useDeleteFundraise()
-    const [isDialogOpen, setDialogOpen] = useState(false)
+    const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false)
     const {
         data: fundraiserDetails,
         isLoading,
@@ -47,7 +48,7 @@ const FundraiserDetailsPage = () => {
             { fundraiseId: id as string },
             {
                 onSuccess: () => {
-                    setDialogOpen(false)
+                    setDeletionDialogOpen(false)
                     router.push('/fundraisers')
                 },
             }
@@ -64,7 +65,7 @@ const FundraiserDetailsPage = () => {
 
     return (
         <div className="flex flex-col h-screen w-screen">
-            <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+            <Dialog open={isDeletionDialogOpen} onOpenChange={setDeletionDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Confirm Deletion</DialogTitle>
@@ -76,7 +77,7 @@ const FundraiserDetailsPage = () => {
                     <DialogFooter>
                         <Button
                             variant="secondary"
-                            onClick={() => setDialogOpen(false)}
+                            onClick={() => setDeletionDialogOpen(false)}
                         >
                             Cancel
                         </Button>
@@ -130,13 +131,13 @@ const FundraiserDetailsPage = () => {
                                     Edit
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                    onClick={() => setDialogOpen(true)}
+                                    onClick={() => setDeletionDialogOpen(true)}
                                 >
                                     <TrashIcon className="w-5 h-5" />
                                     Cancel
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                    onClick={() => alert('Withdraw funds')}
+                                    onClick={() => router.push(`/fundraise/withdraw/${id}`)}
                                 >
                                     <BanknotesIcon className="w-5 h-5" />
                                     Withdraw Funds
@@ -147,8 +148,11 @@ const FundraiserDetailsPage = () => {
 
                     <div className="flex w-full h-full">
                         <div className="flex-1 h-full pl-6 pr-6 pb-20">
-                            <img
+                            <Image
+                                alt="fundraiser Image"
                                 src={imageSrc}
+                                width={560}
+                                height={560}
                                 className="h-full w-full object-cover rounded-lg"
                             />
                         </div>
@@ -219,10 +223,10 @@ const FundraiserDetailsPage = () => {
                             <div className="flex w-full h-fit justify-around">
                                 <div className="flex flex-col w-fit h-fit items-center justify-center">
                                     <p className="text-base font-bold">
-                                        ${fundraiserDetails.raisedAmount} raised
+                                        {fundraiserDetails.raisedAmount} PLN raised
                                     </p>
                                     <p className="text-sm text-grayMedium">
-                                        of ${fundraiserDetails.goalAmount} goal
+                                        of {fundraiserDetails.goalAmount} PLN goal
                                     </p>
                                 </div>
 

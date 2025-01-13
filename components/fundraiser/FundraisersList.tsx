@@ -1,8 +1,6 @@
-import React from 'react'
-import { useQuery } from '@tanstack/react-query'
-
-import FundraiserCard from '@/components/fundraiser/FundraiserCard'
-import { FundraiseDetails } from '@/app/user/User.types'
+import React from "react";
+import FundraiserCard from "@/components/fundraiser/FundraiserCard";
+import { FundraiseDetails } from "@/app/user/User.types";
 
 const FundraisersList = ({
     fundraises,
