@@ -87,7 +87,7 @@ const KidsProfilesPage = () => {
               userData.children.map((child) => (
                 <div
                   key={child.childId}
-                  className="flex flex-col items-center justify-center border rounded-lg h-full max-h-[576px] min-w-[576px] shadow-md bg-amber-300"
+                  className="flex flex-col items-center justify-center border rounded-lg h-full max-h-[576px] min-w-[576px] shadow-md"
                 >
                   <Avatar className="w-52 h-52">
                     <AvatarFallback className={"text-4xl"}>
