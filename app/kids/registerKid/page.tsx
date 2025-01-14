@@ -26,6 +26,8 @@ import {
 } from "@/app/kids/registerKid/kidRegistrationRules";
 import { toast } from "@/hooks/use-toast";
 import { CreateChildPayload } from "@/app/user/User.types";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import React from "react";
 
 export default function RegisterKidPage() {
   const router = useRouter();
@@ -94,7 +96,13 @@ export default function RegisterKidPage() {
 
         {/* Right Section */}
         <div className="flex flex-col w-full h-full px-16 py-10">
-          <h2 className="text-4xl font-semibold mb-6">Register your kid</h2>
+          <button
+            className="flex items-center gap-4 text-secondary hover:text-gray-800 mb-6"
+            onClick={() => router.back()}
+          >
+            <ArrowLeftIcon className="w-5 h-5" />
+            <span className="text-xl font-bold">Register your kid</span>
+          </button>
 
           {/* Registration Form */}
           <div className="flex w-full h-full gap-10 justify-center">
