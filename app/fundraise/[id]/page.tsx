@@ -37,15 +37,12 @@ const FundraiserDetailsPage = () => {
   const { id } = useParams();
   const { data: user } = useUserData();
   const deleteFundraise = useDeleteFundraise();
-
   const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false);
-
   const {
     data: fundraiserDetails,
     isLoading,
     error,
   } = useGetFundraiseById(id as string);
-
   const handleDelete = () => {
     deleteFundraise.mutate(
       { fundraiseId: id as string },
@@ -134,9 +131,7 @@ const FundraiserDetailsPage = () => {
                   Cancel
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => {
-                    router.push(`/fundraise/withdraw/${id}`);
-                  }}
+                  onClick={() => router.push(`/fundraise/withdraw/${id}`)}
                 >
                   <BanknotesIcon className="w-5 h-5" />
                   Withdraw Funds

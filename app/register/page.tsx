@@ -38,7 +38,9 @@ export default function Register() {
     },
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof registerSchema>> = async (data) => {
+  const onSubmit: SubmitHandler<z.infer<typeof registerSchema>> = async (
+    data,
+  ) => {
     await registerMutation.mutateAsync(data);
     router.push("/login");
   };
@@ -49,7 +51,9 @@ export default function Register() {
         <div className="relative flex-1 flex items-center justify-start flex-col text-white p-10">
           <div
             className="absolute inset-0 bg-center bg-cover"
-            style={{ backgroundImage: "url('/assets/mama_z_corka.jpeg')" }}
+            style={{
+              backgroundImage: "url('/assets/mama_z_corka.jpeg')",
+            }}
           >
             <Header />
           </div>

@@ -1,4 +1,4 @@
 export type ApiStatusResponse = {
-    apiStatus: string;
-    databaseConnectionStatus: string;
+  apiStatus: string;
+  databaseConnectionStatus: string;
 };

@@ -94,15 +94,12 @@
     }
 }
 
-
-
-.btn-primary { /*blue*/
+.btn-primary {
+    /*blue*/
     @apply font-poppins rounded-2xl font-semibold;
     background-color: hsl(var(--button-primary-bg));
     color: hsl(var(--button-primary-text));
-
 }
-
 
 .btn-secondary {
     @apply font-poppins rounded-2xl font-semibold;

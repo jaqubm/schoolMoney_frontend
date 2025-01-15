@@ -5,7 +5,9 @@ export const registerSchema = z
     name: z
       .string()
       .min(1, { message: "First name is required" })
-      .min(3, { message: "First name must be at least 3 characters long" })
+      .min(3, {
+        message: "First name must be at least 3 characters long",
+      })
       .max(20, { message: "First name cannot exceed 20 characters" })
       .regex(/^[A-Z][a-zA-Z]*$/, {
         message:

@@ -84,10 +84,10 @@ export const Sidebar = () => {
 
       <div className="w-full space-y-2">
         <Button
-            key="Logout"
-            variant="ghost"
-            className={BUTTON_STYLE + " text-red"}
-            onClick={handleLogout}
+          key="Logout"
+          variant="ghost"
+          className={BUTTON_STYLE + " text-red"}
+          onClick={handleLogout}
         >
           <div className="flex justify-center items-center h-1/2">
             <UserIcon className="w-full h-full rotate-180" />
@@ -96,10 +96,10 @@ export const Sidebar = () => {
         </Button>
 
         <Button
-            key="Profile"
-            variant="ghost"
-            className={BUTTON_STYLE}
-            onClick={() => router.push("/profile")}
+          key="Profile"
+          variant="ghost"
+          className={BUTTON_STYLE}
+          onClick={() => router.push("/profile")}
         >
           <div className="flex justify-center items-center h-1/2">
             <UserIcon className="w-full h-full" />
