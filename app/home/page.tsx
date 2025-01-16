@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Activity, ActivityCard } from "@/components/activity-card";
 import { Header } from "@/components/Header";
 import { useUserData } from "@/queries/user";
+import React from "react";
 
 const HomePage = () => {
   const { data: userData, isLoading: loadingUser } = useUserData();
@@ -15,42 +16,42 @@ const HomePage = () => {
     {
       title: "Payment for School Trip to the Museum",
       transactionType: "Deposit",
-      amount: "$25",
+      amount: "25",
       date: "October 20, 2024",
       paidBy: "John Doe",
     },
     {
       title: "Donation to School Art Program",
       transactionType: "Donation",
-      amount: "$50",
+      amount: "50",
       date: "October 15, 2024",
       paidBy: "Jane Smith",
     },
     {
       title: "Payment for Science Project Materials",
       transactionType: "Purchase",
-      amount: "$15",
+      amount: "15",
       date: "October 10, 2024",
       paidBy: "Michael Johnson",
     },
     {
       title: "Payment for Science Project Materials",
       transactionType: "Purchase",
-      amount: "$15",
+      amount: "15",
       date: "October 10, 2024",
       paidBy: "Michael Johnson",
     },
     {
       title: "Payment for Science Project Materials",
       transactionType: "Purchase",
-      amount: "$15",
+      amount: "15",
       date: "October 10, 2024",
       paidBy: "Michael Johnson",
     },
     {
       title: "Payment for Science Project Materials",
       transactionType: "Purchase",
-      amount: "$15",
+      amount: "15",
       date: "October 10, 2024",
       paidBy: "Michael Johnson",
     },
@@ -73,7 +74,10 @@ const HomePage = () => {
           </span>
           <Avatar>
             <AvatarFallback>
-              {loadingUser ? "..." : userData?.name?.[0] || "G"}
+              {loadingUser
+                ? "..."
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
             </AvatarFallback>
           </Avatar>
         </div>
@@ -90,10 +94,10 @@ const HomePage = () => {
           {/* Recent activities bar */}
           <div className="flex w-full h-full min-h-[91px] max-h-[91px] gap-[30px] items-center">
             <h2 className="text-4xl font-normal">Recent Activities</h2>
-            <Button variant="outline" className="text-xl w-[284px]">
+            <Button className="text-sm border-grayLight border-2 rounded-md hover:bg-grayLight">
               Contributed Fundraisers
             </Button>
-            <Button variant="outline" className="text-xl w-[236px]">
+            <Button className="text-sm border-grayLight border-2 rounded-md hover:bg-grayLight">
               Your Fundraisers
             </Button>
           </div>

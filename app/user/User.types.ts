@@ -66,7 +66,7 @@ export type UpdateUserPayload = {
 
 export type CreateChildPayload = {
   name: string;
-  classId: string;
+  classId: string | null;
 };
 
 export type UpdateChildPayload = {

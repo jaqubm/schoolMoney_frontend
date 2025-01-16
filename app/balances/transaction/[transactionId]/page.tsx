@@ -40,7 +40,10 @@ const TransactionDetailsPage = () => {
           </span>
           <Avatar>
             <AvatarFallback>
-              {loadingUser ? "..." : userData?.name?.[0] || "G"}
+              {loadingUser
+                ? "..."
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
             </AvatarFallback>
           </Avatar>
         </div>
@@ -68,7 +71,7 @@ const TransactionDetailsPage = () => {
             </div>
             <div className="flex flex-col justify-evenly items-start h-full w-full">
               <p>
-                <strong>Amount:</strong> ${transaction.amount}
+                <strong>Amount:</strong> {transaction.amount} PLN
               </p>
               <p>
                 <strong>Date:</strong>{" "}

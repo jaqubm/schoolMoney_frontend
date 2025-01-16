@@ -14,7 +14,7 @@ import { Spinner } from "@/components/Spinner";
 
 const FundraisersPage = () => {
   const router = useRouter();
-  const { data: user } = useUserData();
+  const { data: userData, isLoading: loadingUser } = useUserData();
   const { data: fundraises = [], isLoading } = useGetFundraises();
   const [filter, setFilter] = useState<"created" | "contributed">("created");
   const [searchTerm, setSearchTerm] = useState("");
@@ -46,26 +46,21 @@ const FundraisersPage = () => {
         <Input
           type="search"
           placeholder="Search..."
-          className="w-full max-w-[600px] h-12 px-4 text-base rounded-lg border border-gray-300 "
-          value={selectedFundraiser || searchTerm}
-          onChange={handleInputChange}
+          className="w-[654px] h-[66px] rounded-lg text-base"
         />
-
-        <Button
-          variant="default"
-          onClick={() => router.push("/newFundraiser")}
-          className={clsx(
-            "font-poppins text-base w-72 rounded-bl font-semibold bg-blue text-primary shadow",
-            "hover:bg-blueLight",
-          )}
-        >
-          Start Fundraiser
-        </Button>
-
-        <div className="flex items-center gap-4">
-          <span className="text-base">Welcome, {user?.name || "User"}</span>
+        <div className="flex items-center py-[27.5px] mr-[40px]">
+          <span className="text-lg mr-[22px]">
+            {loadingUser
+              ? "Loading..."
+              : `Welcome, ${userData?.name || "Guest"}`}
+          </span>
           <Avatar>
-            <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+            <AvatarFallback>
+              {loadingUser
+                ? "..."
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
+            </AvatarFallback>
           </Avatar>
         </div>
       </Header>
@@ -97,6 +92,17 @@ const FundraisersPage = () => {
                 onClick={() => setFilter("contributed")}
               >
                 Contributed Fundraisers
+              </Button>
+
+              <Button
+                variant="default"
+                onClick={() => router.push("/newFundraiser")}
+                className={clsx(
+                  "font-poppins text-base w-72 rounded-bl font-semibold bg-blue text-white shadow",
+                  "hover:bg-blueLight",
+                )}
+              >
+                Start Fundraiser
               </Button>
             </div>
           </div>

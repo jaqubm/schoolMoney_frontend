@@ -18,7 +18,7 @@ export const ActivityCard: React.FC<ActivityCard> = ({ activity }) => (
   <Card className="p-4 flex flex-col w-full h-full">
     <h3 className="text-lg font-semibold">{activity.title}</h3>
     <p>Transaction Type: {activity.transactionType}</p>
-    <p>Amount: {activity.amount}</p>
+    <p>Amount: {activity.amount} PLN</p>
     <p>Date: {activity.date}</p>
     <p>Paid by: {activity.paidBy}</p>
     <Button variant="outline" className="self-end">

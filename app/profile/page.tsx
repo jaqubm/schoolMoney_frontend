@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export default function ProfilePage() {
   const { data: userData, isLoading: loadingUser } = useUserData();
@@ -99,11 +99,6 @@ export default function ProfilePage() {
   return (
     <div className="flex flex-col w-screen h-screen">
       <Header withBorder>
-        <Input
-          type="search"
-          placeholder="Search..."
-          className="w-[654px] h-[66px] rounded-lg text-base"
-        />
         <div className="flex items-center py-[27.5px] mr-[40px]">
           <span className="text-lg mr-[22px]">
             {loadingUser
@@ -112,7 +107,10 @@ export default function ProfilePage() {
           </span>
           <Avatar>
             <AvatarFallback>
-              {userData?.name?.[0]?.toUpperCase() || "?"}
+              {loadingUser
+                ? "..."
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
             </AvatarFallback>
           </Avatar>
         </div>

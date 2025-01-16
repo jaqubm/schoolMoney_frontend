@@ -31,7 +31,10 @@ const BalancesPage = () => {
           </span>
           <Avatar>
             <AvatarFallback>
-              {loadingUser ? "..." : userData?.name?.[0] || "G"}
+              {loadingUser
+                ? "..."
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
             </AvatarFallback>
           </Avatar>
         </div>
@@ -52,13 +55,13 @@ const BalancesPage = () => {
             <Button
               onClick={() => router.push("/balances/deposit")}
               variant="outline"
-              className="text-xl w-full max-w-80 bg-blue hover:bg-blueLight"
+              className="font-poppins text-base w-72 rounded-bl font-semibold bg-blue text-white shadow hover:bg-blueLight"
             >
               Make a deposit
             </Button>
             <Button
               variant="outline"
-              className="text-xl w-full max-w-80 bg-blue hover:bg-blueLight"
+              className="font-poppins text-base w-72 rounded-bl font-semibold bg-blue text-white shadow hover:bg-blueLight"
               onClick={() => router.push("/balances/withdraw")}
             >
               Withdraw funds
@@ -79,7 +82,9 @@ const BalancesPage = () => {
             </div>
             <div className="flex-1 border rounded-lg p-6">
               <h3 className="text-gray-500 text-sm mb-2">Balance</h3>
-              <p className="text-2xl font-bold">${userData?.account.balance}</p>
+              <p className="text-2xl font-bold">
+                {userData?.account.balance} PLN
+              </p>
             </div>
           </div>
 

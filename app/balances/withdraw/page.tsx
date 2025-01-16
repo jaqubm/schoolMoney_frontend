@@ -76,11 +76,14 @@ export default function WithdrawScreen() {
           <span className="text-lg mr-[22px]">
             {loadingUser
               ? "Loading..."
-              : `Welcome, ${userData?.name || "User"}`}
+              : `Welcome, ${userData?.name || "Guest"}`}
           </span>
           <Avatar>
             <AvatarFallback>
-              {loadingUser ? "..." : userData?.name?.[0] || "U"}
+              {loadingUser
+                ? "..."
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
             </AvatarFallback>
           </Avatar>
         </div>
@@ -127,7 +130,7 @@ export default function WithdrawScreen() {
               {/* Amount Field */}
               <div className="flex flex-col w-full max-w-80">
                 <label htmlFor="amount" className="text-gray-500 mb-1">
-                  Amount
+                  Amount [PLN]
                 </label>
                 <Input
                   id="amount"
@@ -183,7 +186,7 @@ export default function WithdrawScreen() {
           <div className="mt-6 flex justify-center">
             <Button
               onClick={handleWithdraw}
-              className="bg-blue text-white px-6 py-2 rounded-lg hover:bg-blueLight"
+              className="font-poppins text-base w-72 rounded-bl font-semibold bg-blue text-white shadow hover:bg-blueLight"
               disabled={withdrawLoading}
             >
               {withdrawLoading ? "Processing..." : "Withdraw funds"}
