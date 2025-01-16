@@ -88,7 +88,7 @@ const schema = z
 const EditFundraisePage = () => {
   const router = useRouter();
   const { id } = useParams();
-  const { data: user } = useUserData();
+  const { data: userData, isLoading: loadingUser } = useUserData();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [tempImageId, setTempImageId] = useState<number | null>(null);
@@ -199,10 +199,19 @@ const EditFundraisePage = () => {
   return (
     <div className="flex flex-col h-screen w-screen">
       <Header withBorder>
-        <div className="flex items-center gap-4">
-          <span className="text-base">Welcome, {user?.name || "User"}</span>
+        <div className="flex items-center py-[27.5px] mr-[40px]">
+          <span className="text-lg mr-[22px]">
+            {loadingUser
+              ? "Loading..."
+              : `Welcome, ${userData?.name || "Guest"}`}
+          </span>
           <Avatar>
-            <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+            <AvatarFallback>
+              {loadingUser
+                ? "..."
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
+            </AvatarFallback>
           </Avatar>
         </div>
       </Header>

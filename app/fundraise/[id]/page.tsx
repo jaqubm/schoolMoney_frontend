@@ -35,7 +35,7 @@ import {
 const FundraiserDetailsPage = () => {
   const router = useRouter();
   const { id } = useParams();
-  const { data: user } = useUserData();
+  const { data: userData, isLoading: loadingUser } = useUserData();
   const deleteFundraise = useDeleteFundraise();
   const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false);
   const {
@@ -89,10 +89,19 @@ const FundraiserDetailsPage = () => {
       </Dialog>
 
       <Header withBorder>
-        <div className="flex items-center gap-4">
-          <span className="text-base">Welcome, {user?.name || "User"}</span>
+        <div className="flex items-center py-[27.5px] mr-[40px]">
+          <span className="text-lg mr-[22px]">
+            {loadingUser
+              ? "Loading..."
+              : `Welcome, ${userData?.name || "Guest"}`}
+          </span>
           <Avatar>
-            <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+            <AvatarFallback>
+              {loadingUser
+                ? "..."
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
+            </AvatarFallback>
           </Avatar>
         </div>
       </Header>
@@ -169,20 +178,25 @@ const FundraiserDetailsPage = () => {
                 </p>
                 <div className="flex gap-4">
                   <Avatar>
-                    <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+                    <AvatarFallback>
+                      {loadingUser
+                        ? "..."
+                        : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                          "G"}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex-col">
                     <p className="text-sm">
-                      {user?.name} {user?.surname}
+                      {userData?.name} {userData?.surname}
                     </p>
-                    <p className="text-grayMedium text-xs">{user?.email}</p>
+                    <p className="text-grayMedium text-xs">{userData?.email}</p>
                   </div>
                 </div>
 
                 <div className="w-full h-fit justify-start items-center mt-10 flex gap-4">
                   <Button
                     className={clsx(
-                      "rounded-bl text-sm bg-blue text-primary shadow px-6",
+                      "rounded-bl text-sm bg-blue text-white shadow px-6",
                       "hover:bg-blueLight",
                     )}
                     onClick={() => {
@@ -194,7 +208,7 @@ const FundraiserDetailsPage = () => {
 
                   <Button
                     className={clsx(
-                      "rounded-bl text-sm bg-blue text-primary shadow px-6",
+                      "rounded-bl text-sm bg-blue text-white shadow px-6",
                       "hover:bg-blueLight",
                     )}
                     onClick={() => {

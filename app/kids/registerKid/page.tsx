@@ -48,7 +48,7 @@ export default function RegisterKidPage() {
   const onSubmit = (data: RegisterFormValues) => {
     const payload: CreateChildPayload = {
       name: `${data.firstName} ${data.lastName}`,
-      classId: data.classId,
+      classId: data.classId || null,
     };
 
     createChild(payload, {
@@ -62,7 +62,7 @@ export default function RegisterKidPage() {
       onError: () => {
         toast({
           title: "Registration failed",
-          description: "An error occurred during child registration.",
+          description: `An error occurred during child registration. Payload:"${payload.classId}"`,
           variant: "destructive",
         });
       },
@@ -73,15 +73,18 @@ export default function RegisterKidPage() {
     <div className="flex flex-col w-screen h-screen">
       {/* Header */}
       <Header withBorder>
-        <div className="flex items-center gap-4">
-          <span className="text-lg">
+        <div className="flex items-center py-[27.5px] mr-[40px]">
+          <span className="text-lg mr-[22px]">
             {loadingUser
               ? "Loading..."
               : `Welcome, ${userData?.name || "Guest"}`}
           </span>
           <Avatar>
             <AvatarFallback>
-              {loadingUser ? "..." : userData?.name?.[0] || "G"}
+              {loadingUser
+                ? "..."
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
             </AvatarFallback>
           </Avatar>
         </div>
@@ -108,9 +111,10 @@ export default function RegisterKidPage() {
           <div className="flex w-full h-full gap-10 justify-center">
             {/* Avatar Section */}
             <div className="flex flex-col items-center justify-center w-full max-w-[512px] max-h-[512px] border rounded-lg">
-              <Avatar className="w-52 h-52 bg-gray-200">
-                <AvatarFallback>
-                  {form.watch("firstName")?.[0] || "..."}
+              <Avatar className="w-52 h-52">
+                <AvatarFallback className="text-4xl">
+                  {`${form.watch("firstName")?.[0] || ""}${form.watch("lastName")?.[0] || ""}` ||
+                    "..."}
                 </AvatarFallback>
               </Avatar>
             </div>
@@ -192,7 +196,7 @@ export default function RegisterKidPage() {
                   <div className="col-span-2 flex justify-center mt-4">
                     <Button
                       type="submit"
-                      className="w-1/2 bg-blue hover:bg-blueLight text-white"
+                      className="font-poppins text-base w-72 rounded-bl font-semibold bg-blue text-white shadow hover:bg-blueLight"
                       disabled={creatingChild}
                     >
                       {creatingChild ? "Registering..." : "Register"}

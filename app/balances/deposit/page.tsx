@@ -75,11 +75,14 @@ export default function DepositScreen() {
           <span className="text-lg mr-[22px]">
             {loadingUser
               ? "Loading..."
-              : `Welcome, ${userData?.name || "User"}`}
+              : `Welcome, ${userData?.name || "Guest"}`}
           </span>
           <Avatar>
             <AvatarFallback>
-              {loadingUser ? "..." : userData?.name?.[0] || "U"}
+              {loadingUser
+                ? "..."
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
             </AvatarFallback>
           </Avatar>
         </div>
@@ -127,7 +130,7 @@ export default function DepositScreen() {
                 {/* Amount Field */}
                 <div className="w-full">
                   <label htmlFor="amount" className="text-gray-500">
-                    Amount
+                    Amount [PLN]
                   </label>
                   <Input
                     id="amount"
@@ -167,7 +170,7 @@ export default function DepositScreen() {
           <div className="mt-6 flex justify-center">
             <Button
               onClick={handleDeposit}
-              className="bg-blue text-white px-6 py-2 rounded-lg hover:bg-blueLight"
+              className="font-poppins text-base w-72 rounded-bl font-semibold bg-blue text-white shadow hover:bg-blueLight"
               disabled={depositLoading}
             >
               {depositLoading ? "Processing..." : "Make a deposit"}

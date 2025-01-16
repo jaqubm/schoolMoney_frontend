@@ -31,7 +31,7 @@ const FundraisersPage = () => {
   const [formData, setFormData] = useState({});
   const [isNextEnabled, setIsNextEnabled] = useState(false);
   const router = useRouter();
-  const { data: user } = useUserData();
+  const { data: userData, isLoading: loadingUser } = useUserData();
   const CurrentForm = stepComponents[currentStep];
   const isLastStep = currentStep === stepComponents.length - 1;
   const createFundraiserMutation = useCreateFundraise();
@@ -123,10 +123,19 @@ const FundraisersPage = () => {
   return (
     <div className="flex flex-col h-screen w-screen">
       <Header withBorder>
-        <div className="flex items-center gap-4">
-          <span className="text-base">Welcome, {user?.name || "User"}</span>
+        <div className="flex items-center py-[27.5px] mr-[40px]">
+          <span className="text-lg mr-[22px]">
+            {loadingUser
+              ? "Loading..."
+              : `Welcome, ${userData?.name || "Guest"}`}
+          </span>
           <Avatar>
-            <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+            <AvatarFallback>
+              {loadingUser
+                ? "..."
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
+            </AvatarFallback>
           </Avatar>
         </div>
       </Header>

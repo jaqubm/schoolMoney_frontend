@@ -42,12 +42,9 @@ const FundraiserCard = ({ fundraiser }: { fundraiser: FundraiseDetails }) => {
           <Button
             variant="default"
             onClick={() => router.push(`/fundraise/${fundraiser.fundraiseId}`)}
-            className={clsx(
-              "font-poppins text-sm w-32 h-6 rounded-bl bg-blue text-primary shadow",
-              "hover:bg-blueLight",
-            )}
+            className={clsx("text-white bg-blue hover:bg-blueLight")}
           >
-            Details
+            View Details
           </Button>
         </div>
       </div>

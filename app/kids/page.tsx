@@ -51,11 +51,20 @@ const KidsProfilesPage = () => {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [userData?.children, appliedSchool, appliedClass]);
 
-  const availableSchools = useMemo(() => {
+  const uniqueClasses = useMemo(() => {
+    if (!classes) return [];
+    return Array.from(new Set(classes.map((classItem) => classItem.name)));
+  }, [classes]);
+
+  const uniqueSchools = useMemo(() => {
     if (!selectedClass || !classes) return [];
-    return classes
-      .filter((classItem) => classItem.name === selectedClass)
-      .map((classItem) => classItem.schoolName);
+    return Array.from(
+      new Set(
+        classes
+          .filter((classItem) => classItem.name === selectedClass)
+          .map((classItem) => classItem.schoolName),
+      ),
+    );
   }, [selectedClass, classes]);
 
   return (
@@ -70,7 +79,10 @@ const KidsProfilesPage = () => {
           </span>
           <Avatar>
             <AvatarFallback>
-              {loadingUser ? "..." : userData?.name?.[0] || "G"}
+              {loadingUser
+                ? "..."
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
             </AvatarFallback>
           </Avatar>
         </div>
@@ -96,7 +108,7 @@ const KidsProfilesPage = () => {
             </button>
             <Button
               variant="outline"
-              className="text-xl w-[284px] bg-blue hover:bg-blueLight"
+              className="font-poppins text-base w-72 rounded-bl font-semibold bg-blue text-white shadow hover:bg-blueLight"
               onClick={() => router.push("/kids/registerKid")}
             >
               Register kid
@@ -114,8 +126,11 @@ const KidsProfilesPage = () => {
                   className="flex flex-col items-center justify-center border rounded-lg h-full max-h-[576px] min-w-[576px] shadow-md"
                 >
                   <Avatar className="w-52 h-52">
-                    <AvatarFallback className={"text-4xl"}>
-                      {child.name[0]}
+                    <AvatarFallback className="text-4xl">
+                      {child.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col items-center gap-2 mt-5">
@@ -163,9 +178,7 @@ const KidsProfilesPage = () => {
                 >
                   <option value="">Select class</option>
                   {!loadingClasses &&
-                    Array.from(
-                      new Set(classes?.map((classItem) => classItem.name)),
-                    ).map((className, index) => (
+                    uniqueClasses.map((className, index) => (
                       <option key={index} value={className}>
                         {className}
                       </option>
@@ -185,7 +198,7 @@ const KidsProfilesPage = () => {
                   disabled={!selectedClass}
                 >
                   <option value="">Select school</option>
-                  {availableSchools.map((schoolName, index) => (
+                  {uniqueSchools.map((schoolName, index) => (
                     <option key={index} value={schoolName}>
                       {schoolName}
                     </option>
