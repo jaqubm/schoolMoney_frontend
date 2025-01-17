@@ -207,7 +207,9 @@ export default function RegisterKidPage() {
                               <CommandInput
                                 placeholder="Search class..."
                                 className="h-9"
-                                onInput={(e) => {
+                                onInput={(
+                                  e: React.ChangeEvent<HTMLInputElement>,
+                                ) => {
                                   setEnteredClassName(e.target.value);
                                 }}
                               />
