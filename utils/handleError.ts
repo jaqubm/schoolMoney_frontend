@@ -5,7 +5,7 @@ export const handleError = (error: unknown): void => {
   let errorMessage = "An unexpected error occurred.";
 
   if (axios.isAxiosError(error) && error.response) {
-    errorMessage = error.response.data?.message || errorMessage;
+    errorMessage = error.response.data || errorMessage;
   } else if (error instanceof Error) {
     errorMessage = error.message;
   }

@@ -28,7 +28,6 @@ export default function WithdrawScreen() {
     defaultValues: {
       title: "",
       amount: 0,
-      recipient: "",
       accountNumber: "",
     },
   });
@@ -142,23 +141,6 @@ export default function WithdrawScreen() {
                 {form.formState.errors.amount && (
                   <span className="text-red text-sm">
                     {form.formState.errors.amount.message}
-                  </span>
-                )}
-              </div>
-
-              {/* Recipient Field */}
-              <div className="flex flex-col w-full max-w-80">
-                <label htmlFor="recipient" className="text-gray-500 mb-1">
-                  To recipient
-                </label>
-                <Input
-                  id="recipient"
-                  placeholder="Recipient"
-                  {...form.register("recipient")}
-                />
-                {form.formState.errors.recipient && (
-                  <span className="text-red text-sm">
-                    {form.formState.errors.recipient.message}
                   </span>
                 )}
               </div>

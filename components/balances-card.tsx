@@ -19,7 +19,7 @@ export const BalancesCard: React.FC<BalanceCardProps> = ({ balanceCard }) => {
     <Card className="p-4 flex flex-col w-full h-full">
       <h3 className="text-lg font-semibold">{balanceCard.type}</h3>
       <div className="flex flex-col justify-evenly items-start h-full w-full">
-        <p className="pt-2">Transaction Type: {balanceCard.status}</p>
+        <p className="pt-2">Transaction type: {balanceCard.status}</p>
         <p>Amount: {balanceCard.amount} PLN</p>
         <p>
           Date:{" "}

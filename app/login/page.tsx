@@ -19,14 +19,12 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/Header";
 import { Spinner } from "@/components/Spinner";
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { toast } = useToast();
   const loginMutation = useLogin();
 
   const form = useForm<LoginFormValues>({
@@ -47,23 +45,7 @@ export default function Login() {
           secure: true,
         });
         router.replace("/home");
-      } else {
-        toast({
-          title: "Login failed: Invalid login details.",
-          description: "An error occurred.",
-          variant: "destructive",
-        });
       }
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "An unexpected error occurred.";
-      toast({
-        title: "Logging in failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
     } finally {
       setLoading(false);
     }

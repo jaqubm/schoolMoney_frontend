@@ -28,7 +28,6 @@ export default function DepositScreen() {
     defaultValues: {
       title: "",
       amount: 0,
-      description: "",
     },
   });
 
@@ -108,8 +107,8 @@ export default function DepositScreen() {
           </div>
 
           <div className="flex p-8 w-full h-full max-h-80 max-w-3xl mx-auto border mt-3 rounded-lg">
-            <form className="flex justify-evenly items-center content-around h-full w-full flex-wrap gap-2">
-              <div className="flex w-full gap-4">
+            <form className="flex items-center content-around h-full w-full flex-wrap gap-2">
+              <div className="flex w-full flex-col gap-4">
                 {/* Title Field */}
                 <div className="w-full">
                   <label htmlFor="title" className="text-gray-500">
@@ -145,23 +144,6 @@ export default function DepositScreen() {
                     </span>
                   )}
                 </div>
-              </div>
-
-              {/* Description Field */}
-              <div className="w-full">
-                <label htmlFor="description" className="text-gray-500">
-                  Description
-                </label>
-                <Input
-                  id="description"
-                  placeholder="Description"
-                  {...form.register("description")}
-                />
-                {form.formState.errors.description && (
-                  <span className="text-red-500 text-sm">
-                    {form.formState.errors.description.message}
-                  </span>
-                )}
               </div>
             </form>
           </div>

@@ -90,7 +90,7 @@ const TransactionDetailsPage = () => {
                 {transaction.destinationAccountNumber || "N/A"}
               </p>
               <p>
-                <strong>Payment method:</strong> Transfer to account
+                <strong>Payment method:</strong> {transaction.type}
               </p>
               <p>
                 <strong>Transaction reference number:</strong>{" "}
