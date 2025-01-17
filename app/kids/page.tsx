@@ -116,14 +116,14 @@ const KidsProfilesPage = () => {
           </div>
 
           {/* Profiles list */}
-          <div className="flex overflow-x-auto overflow-visible gap-6 mt-6 h-full max-h-[650px] items-center mr-[59px]">
+          <div className="flex overflow-x-auto overflow-visible gap-6 mt-6 h-full max-h-[650px] items-center mr-[59px] mb-7 px-7">
             {loadingUser ? (
               <p className="flex h-full w-full">Loading profiles...</p>
             ) : filteredChildren.length > 0 ? (
               filteredChildren.map((child) => (
                 <div
                   key={child.childId}
-                  className="flex flex-col items-center justify-center border rounded-lg h-full max-h-[576px] min-w-[576px] shadow-md"
+                  className="flex flex-col items-center justify-center border rounded-lg h-full max-h-[400px] min-w-[400px] shadow-md"
                 >
                   <Avatar className="w-52 h-52">
                     <AvatarFallback className="text-4xl">
