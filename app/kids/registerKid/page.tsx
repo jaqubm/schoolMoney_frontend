@@ -1,22 +1,28 @@
 "use client";
 
 import { Sidebar } from "@/components/sidebar";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Header } from "@/components/Header";
 import {
-  useCreateChildProfile,
-  useGetClasses,
-  useUserData,
-} from "@/queries/user";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Header } from "@/components/Header";
+import { useCreateChildProfile, useUserData } from "@/queries/user";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -27,14 +33,36 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { CreateChildPayload } from "@/app/user/User.types";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import React from "react";
+import React, { useMemo, useState } from "react";
+import { useSearchClasses } from "@/queries/class";
+import { cn } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export default function RegisterKidPage() {
   const router = useRouter();
   const { data: userData, isLoading: loadingUser } = useUserData();
-  const { data: classes, isLoading: loadingClasses } = useGetClasses();
   const { mutate: createChild, isLoading: creatingChild } =
     useCreateChildProfile();
+
+  const [enteredClassName, setEnteredClassName] = useState("");
+  const { data: classes, isLoading: loadingClasses } =
+    useSearchClasses(enteredClassName);
+  const [selectedClass, setSelectedClass] = useState("");
+
+  const uniqueClasses = useMemo(() => {
+    if (!classes) return [];
+    const seen = new Set();
+    return classes.filter((classItem) => {
+      const key = `${classItem.name}-${classItem.schoolName}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [classes]);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerKidSchema),
@@ -44,7 +72,6 @@ export default function RegisterKidPage() {
       classId: "",
     },
   });
-
   const onSubmit = (data: RegisterFormValues) => {
     const payload: CreateChildPayload = {
       name: `${data.firstName} ${data.lastName}`,
@@ -62,7 +89,7 @@ export default function RegisterKidPage() {
       onError: () => {
         toast({
           title: "Registration failed",
-          description: `An error occurred during child registration. Payload:"${payload.classId}"`,
+          description: `An error occurred during child registration.`,
           variant: "destructive",
         });
       },
@@ -71,7 +98,6 @@ export default function RegisterKidPage() {
 
   return (
     <div className="flex flex-col w-screen h-screen">
-      {/* Header */}
       <Header withBorder>
         <div className="flex items-center py-[27.5px] mr-[40px]">
           <span className="text-lg mr-[22px]">
@@ -90,14 +116,11 @@ export default function RegisterKidPage() {
         </div>
       </Header>
 
-      {/* Main Content */}
       <div className="flex w-full h-full">
-        {/* Sidebar */}
         <div className="flex w-full max-w-[339px] h-full border">
           <Sidebar />
         </div>
 
-        {/* Right Section */}
         <div className="flex flex-col w-full h-full px-16 py-10">
           <button
             className="flex items-center gap-4 text-secondary hover:text-gray-800 mb-6"
@@ -107,9 +130,7 @@ export default function RegisterKidPage() {
             <span className="text-xl font-bold">Register your kid</span>
           </button>
 
-          {/* Registration Form */}
           <div className="flex w-full h-full gap-10 justify-center">
-            {/* Avatar Section */}
             <div className="flex flex-col items-center justify-center w-full max-w-[512px] max-h-[512px] border rounded-lg">
               <Avatar className="w-52 h-52">
                 <AvatarFallback className="text-4xl">
@@ -119,7 +140,6 @@ export default function RegisterKidPage() {
               </Avatar>
             </div>
 
-            {/* Form Section */}
             <div className="w-full h-full max-h-[512px] max-w-5xl border rounded-lg p-10">
               <Form {...form}>
                 <form
@@ -164,44 +184,96 @@ export default function RegisterKidPage() {
                     control={form.control}
                     name="classId"
                     render={({ field }) => (
-                      <FormItem>
-                        <p>Class</p>
-                        <FormControl>
-                          <select
-                            {...field}
-                            className="w-full border rounded-lg p-2"
-                          >
-                            <option value="" disabled>
-                              Select a class
-                            </option>
-                            {loadingClasses ? (
-                              <option>Loading classes...</option>
-                            ) : (
-                              classes?.map((classItem) => (
-                                <option
-                                  key={classItem.classId}
-                                  value={classItem.classId}
-                                >
-                                  {classItem.name} - {classItem.schoolName}
-                                </option>
-                              ))
-                            )}
-                          </select>
-                        </FormControl>
+                      <FormItem className="flex flex-col">
+                        <FormLabel>Class</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                className={cn(
+                                  "w-full justify-between",
+                                  !field.value && "text-muted-foreground",
+                                )}
+                              >
+                                {field.value ? selectedClass : "Select class"}
+                                <ChevronsUpDown className="opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-full">
+                            <Command>
+                              <CommandInput
+                                placeholder="Search class..."
+                                className="h-9"
+                                onInput={(
+                                  e: React.ChangeEvent<HTMLInputElement>,
+                                ) => {
+                                  setEnteredClassName(e.target.value);
+                                }}
+                              />
+                              <CommandList>
+                                <CommandGroup>
+                                  {enteredClassName ? (
+                                    loadingClasses ? (
+                                      <p>Loading...</p>
+                                    ) : (
+                                      uniqueClasses?.map((listElement) => (
+                                        <CommandItem
+                                          value={
+                                            listElement.name +
+                                            " - " +
+                                            listElement.schoolName
+                                          }
+                                          key={listElement.classId}
+                                          onSelect={(e) => {
+                                            form.setValue(
+                                              "classId",
+                                              listElement.classId,
+                                            );
+                                            setSelectedClass(e);
+                                          }}
+                                        >
+                                          {listElement.name +
+                                            " - " +
+                                            listElement.schoolName}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              listElement.name +
+                                                " - " +
+                                                listElement.schoolName ===
+                                                selectedClass
+                                                ? "opacity-100"
+                                                : "opacity-0",
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))
+                                    )
+                                  ) : (
+                                    <CommandEmpty>
+                                      Enter class name
+                                    </CommandEmpty>
+                                  )}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
 
-                  <div className="col-span-2 flex justify-center mt-4">
-                    <Button
-                      type="submit"
-                      className="font-poppins text-base w-72 rounded-bl font-semibold bg-blue text-white shadow hover:bg-blueLight"
-                      disabled={creatingChild}
-                    >
-                      {creatingChild ? "Registering..." : "Register"}
-                    </Button>
-                  </div>
+                  <Button
+                    type="submit"
+                    className="font-poppins text-base w-72 rounded-bl font-semibold bg-blue text-white shadow hover:bg-blueLight self-center mt-8"
+                    disabled={creatingChild}
+                  >
+                    {creatingChild ? "Registering..." : "Register"}
+                  </Button>
                 </form>
               </Form>
             </div>

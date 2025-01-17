@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/queries/axios";
 import { toast } from "@/hooks/use-toast";
-import axios from "axios";
 import {
   CreateClassPayload,
   UpdateClassPayload,
@@ -44,6 +43,7 @@ export const useSearchClasses = (className: string) => {
       return response.data;
     },
     onError: handleError,
+    enabled: !!className,
   });
 };
 
