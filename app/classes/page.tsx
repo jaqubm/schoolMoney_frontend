@@ -83,19 +83,6 @@ const ClassProfilesPage = () => {
     );
   }, [selectedClass, classes]);
 
-  // Unique treasurers list
-  const uniqueTreasurers = useMemo(() => {
-    if (!classes) return [];
-    return Array.from(
-      new Set(
-        classes.map(
-          (classItem) =>
-            `${classItem.treasurer.name} ${classItem.treasurer.surname}`,
-        ),
-      ),
-    );
-  }, [classes]);
-
   return (
     <div className="flex flex-col w-screen h-screen">
       {/* Upper screen */}
@@ -162,12 +149,9 @@ const ClassProfilesPage = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col items-center gap-2 mt-5">
+                    <p className="text-xl font-bold">{classItem.name}</p>
                     <p className="text-xl">
                       <strong>School:</strong> {classItem.schoolName}
-                    </p>
-                    <p className="text-xl">
-                      <strong>Treasurer:</strong> {classItem.treasurer.name}{" "}
-                      {classItem.treasurer.surname}
                     </p>
                   </div>
                 </div>
@@ -176,6 +160,8 @@ const ClassProfilesPage = () => {
               <p className="flex h-full w-full">No classes available.</p>
             )}
           </div>
+
+          {/* Filter Modal */}
           {showFilterModal && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg w-[400px] p-6 relative">
@@ -220,7 +206,7 @@ const ClassProfilesPage = () => {
                       By School
                     </label>
                     <select
-                      className="w-full border p-2 rounded-lg bg-white"
+                      className={`w-full border p-2 rounded-lg bg-white ${!selectedClass ? "border-gray-400 text-gray-400" : "border-black text-black"}`}
                       value={selectedSchool}
                       onChange={(e) => setSelectedSchool(e.target.value)}
                       disabled={!selectedClass}
@@ -229,23 +215,6 @@ const ClassProfilesPage = () => {
                       {uniqueSchools.map((schoolName, index) => (
                         <option key={index} value={schoolName}>
                           {schoolName}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Filter By Treasurer */}
-                  <div>
-                    <label className="text-black">By Treasurer</label>
-                    <select
-                      className="w-full border p-2 rounded-lg bg-white text-black"
-                      value={selectedTreasurer}
-                      onChange={(e) => setSelectedTreasurer(e.target.value)}
-                    >
-                      <option value="">Select treasurer</option>
-                      {uniqueTreasurers.map((treasurer, index) => (
-                        <option key={index} value={treasurer}>
-                          {treasurer}
                         </option>
                       ))}
                     </select>
