@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import {
   Command,
+  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -32,7 +33,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { CreateChildPayload } from "@/app/user/User.types";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSearchClasses } from "@/queries/class";
 import { cn } from "@/lib/utils";
 import {
@@ -48,10 +49,20 @@ export default function RegisterKidPage() {
     useCreateChildProfile();
 
   const [enteredClassName, setEnteredClassName] = useState("");
-  const validSearch = /[a-zA-Z0-9]/.test(enteredClassName);
-  const { data: classes, isLoading: loadingClasses } = useSearchClasses(
-    validSearch ? enteredClassName : "",
-  );
+  const { data: classes, isLoading: loadingClasses } =
+    useSearchClasses(enteredClassName);
+  const [selectedClass, setSelectedClass] = useState("");
+
+  const uniqueClasses = useMemo(() => {
+    if (!classes) return [];
+    const seen = new Set();
+    return classes.filter((classItem) => {
+      const key = `${classItem.name}-${classItem.schoolName}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [classes]);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerKidSchema),
@@ -182,27 +193,19 @@ export default function RegisterKidPage() {
                                 variant="outline"
                                 role="combobox"
                                 className={cn(
-                                  "w-[200px] justify-between",
+                                  "w-full justify-between",
                                   !field.value && "text-muted-foreground",
                                 )}
                               >
-                                {field.value
-                                  ? classes?.find(
-                                      (writtenClass) =>
-                                        writtenClass.name +
-                                          " - " +
-                                          writtenClass.schoolName ===
-                                        field.value,
-                                    )?.name
-                                  : "Select class"}
+                                {field.value ? selectedClass : "Select class"}
                                 <ChevronsUpDown className="opacity-50" />
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[200px] p-0">
+                          <PopoverContent className="w-full">
                             <Command>
                               <CommandInput
-                                placeholder="Search framework..."
+                                placeholder="Search class..."
                                 className="h-9"
                                 onInput={(e) => {
                                   setEnteredClassName(e.target.value);
@@ -210,38 +213,47 @@ export default function RegisterKidPage() {
                               />
                               <CommandList>
                                 <CommandGroup>
-                                  {loadingClasses ? (
-                                    <p>Loading...</p>
+                                  {enteredClassName ? (
+                                    loadingClasses ? (
+                                      <p>Loading...</p>
+                                    ) : (
+                                      uniqueClasses?.map((listElement) => (
+                                        <CommandItem
+                                          value={
+                                            listElement.name +
+                                            " - " +
+                                            listElement.schoolName
+                                          }
+                                          key={listElement.classId}
+                                          onSelect={(e) => {
+                                            form.setValue(
+                                              "classId",
+                                              listElement.classId,
+                                            );
+                                            setSelectedClass(e);
+                                          }}
+                                        >
+                                          {listElement.name +
+                                            " - " +
+                                            listElement.schoolName}
+                                          <Check
+                                            className={cn(
+                                              "ml-auto",
+                                              listElement.name +
+                                                " - " +
+                                                listElement.schoolName ===
+                                                selectedClass
+                                                ? "opacity-100"
+                                                : "opacity-0",
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))
+                                    )
                                   ) : (
-                                    classes?.map((listElement) => (
-                                      <CommandItem
-                                        value={
-                                          listElement.name +
-                                          " - " +
-                                          listElement.schoolName
-                                        }
-                                        key={listElement.classId}
-                                        onSelect={() => {
-                                          form.setValue(
-                                            "classId",
-                                            listElement.classId,
-                                          );
-                                          field.value = "TEST";
-                                        }}
-                                      >
-                                        {listElement.name +
-                                          " - " +
-                                          listElement.schoolName}
-                                        <Check
-                                          className={cn(
-                                            "ml-auto",
-                                            listElement.name === field.value
-                                              ? "opacity-100"
-                                              : "opacity-0",
-                                          )}
-                                        />
-                                      </CommandItem>
-                                    ))
+                                    <CommandEmpty>
+                                      Enter class name
+                                    </CommandEmpty>
                                   )}
                                 </CommandGroup>
                               </CommandList>
@@ -255,7 +267,7 @@ export default function RegisterKidPage() {
 
                   <Button
                     type="submit"
-                    className="font-poppins text-base w-72 rounded-bl font-semibold bg-blue text-white shadow hover:bg-blueLight"
+                    className="font-poppins text-base w-72 rounded-bl font-semibold bg-blue text-white shadow hover:bg-blueLight self-center mt-8"
                     disabled={creatingChild}
                   >
                     {creatingChild ? "Registering..." : "Register"}
