@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "@/queries/axios";
 import { toast } from "@/hooks/use-toast";
-import axios from "axios";
 import {
   RegisterPayload,
   LoginPayload,
@@ -31,7 +30,7 @@ export const useLogin = () => {
       const response = await axiosInstance.post("/Auth/Login", data);
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
         title: "Login successful",
         description: "You are now logged in.",
