@@ -36,28 +36,12 @@ export default function WithdrawScreen() {
     const isValid = await form.trigger();
     if (isValid) {
       const data = form.getValues();
-      makeWithdraw(
-        {
-          amount: data.amount,
-          destinationAccountNumber: data.accountNumber,
-        },
-        {
-          onSuccess: () => {
-            toast({
-              title: "Withdrawal successful",
-              description: "The funds have been successfully withdrawn.",
-            });
-            router.push("/balances");
-          },
-          onError: () => {
-            toast({
-              title: "Withdrawal failed",
-              description: "There was an error processing your withdrawal.",
-              variant: "destructive",
-            });
-          },
-        },
-      );
+      makeWithdraw({
+        title: data.title,
+        amount: data.amount,
+        destinationAccountNumber: data.accountNumber,
+      });
+      router.push("/balances");
     } else {
       toast({
         title: "Validation Error",
