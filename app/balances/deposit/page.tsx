@@ -36,29 +36,12 @@ export default function DepositScreen() {
     const isValid = await form.trigger();
     if (isValid) {
       const data = form.getValues();
-      makeDeposit(
-        {
-          title: data.title,
-          amount: data.amount,
-          sourceAccountNumber: "", // Empty account number, it generates randomly on backend
-        },
-        {
-          onSuccess: () => {
-            toast({
-              title: "Deposit successful",
-              description: "Your deposit was successfully made.",
-            });
-            router.push("/balances");
-          },
-          onError: () => {
-            toast({
-              title: "Deposit failed",
-              description: "There was an error making your deposit.",
-              variant: "destructive",
-            });
-          },
-        },
-      );
+      makeDeposit({
+        title: data.title,
+        amount: data.amount,
+        sourceAccountNumber: "", // Empty account number, it generates randomly on backend
+      });
+      router.push("/balances");
     } else {
       toast({
         title: "Validation Error",

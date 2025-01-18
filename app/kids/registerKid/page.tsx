@@ -30,7 +30,6 @@ import {
   registerKidSchema,
   RegisterFormValues,
 } from "@/app/kids/registerKid/kidRegistrationRules";
-import { toast } from "@/hooks/use-toast";
 import { CreateChildPayload } from "@/app/user/User.types";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import React, { useMemo, useState } from "react";
@@ -78,22 +77,8 @@ export default function RegisterKidPage() {
       classId: data.classId || null,
     };
 
-    createChild(payload, {
-      onSuccess: () => {
-        toast({
-          title: "Child registered",
-          description: "Your child has been successfully registered.",
-        });
-        router.push("/kids");
-      },
-      onError: () => {
-        toast({
-          title: "Registration failed",
-          description: `An error occurred during child registration.`,
-          variant: "destructive",
-        });
-      },
-    });
+    createChild(payload);
+    router.push("/kids");
   };
 
   return (
