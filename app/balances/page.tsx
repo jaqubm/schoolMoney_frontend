@@ -100,6 +100,7 @@ const BalancesPage = () => {
                     key={index}
                     balanceCard={{
                       transactionId: transaction.transactionId,
+                      title: transaction.title,
                       amount: transaction.amount,
                       date: transaction.date,
                       type: transaction.type,

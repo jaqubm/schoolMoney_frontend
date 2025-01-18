@@ -67,7 +67,7 @@ const TransactionDetailsPage = () => {
           </button>
           <div className="flex flex-col p-8 w-full h-full max-h-80 max-w-3xl mx-auto border mt-3 rounded-lg">
             <div className="w-full text-center">
-              <strong className="text-2xl">{transaction.type}</strong>
+              <strong className="text-2xl">{transaction.title}</strong>
             </div>
             <div className="flex flex-col justify-evenly items-start h-full w-full">
               <p>
@@ -90,7 +90,7 @@ const TransactionDetailsPage = () => {
                 {transaction.destinationAccountNumber || "N/A"}
               </p>
               <p>
-                <strong>Payment method:</strong> Transfer to account
+                <strong>Transaction type:</strong> {transaction.type}
               </p>
               <p>
                 <strong>Transaction reference number:</strong>{" "}
