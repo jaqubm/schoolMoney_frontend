@@ -6,7 +6,7 @@ export const withdrawSchema = z.object({
     .number()
     .min(1, "Amount must be at least 1")
     .nonnegative("Amount cannot be negative"),
-  accountNumber: z.string().min(12, "Account number must have 12 digits"),
+  accountNumber: z.string().length(12, "Account number must have 12 digits"),
 });
 
 export type WithdrawFormValues = z.infer<typeof withdrawSchema>;

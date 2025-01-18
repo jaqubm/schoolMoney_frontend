@@ -1,4 +1,5 @@
 export type WithdrawPayload = {
+  title: string;
   amount: number;
   destinationAccountNumber: string;
 };
