@@ -50,6 +50,7 @@ export type FundraiseDetails = {
 
 export type TransactionDetails = {
   transactionId: string;
+  title: string;
   amount: number;
   date: string;
   type: string;

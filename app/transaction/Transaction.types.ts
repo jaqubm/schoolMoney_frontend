@@ -1,11 +1,10 @@
-import { ColumnDef } from "@tanstack/table-core";
-
 export type WithdrawPayload = {
   amount: number;
   destinationAccountNumber: string;
 };
 
 export type DepositPayload = {
+  title: string;
   amount: number;
   sourceAccountNumber: string;
 };
@@ -17,6 +16,7 @@ export type TransferPayload = {
 
 export type TransactionDetails = {
   transactionId: string;
+  title: string;
   amount: number;
   date: string;
   type: string;

@@ -28,6 +28,7 @@ export default function DepositScreen() {
     defaultValues: {
       title: "",
       amount: 0,
+      sourceAccountNumber: "",
     },
   });
 
@@ -37,6 +38,7 @@ export default function DepositScreen() {
       const data = form.getValues();
       makeDeposit(
         {
+          title: data.title,
           amount: data.amount,
           sourceAccountNumber: "", // Empty account number, it generates randomly on backend
         },
