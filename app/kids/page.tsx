@@ -5,13 +5,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { useRouter } from "next/navigation";
-import { useUserData, useGetClasses } from "@/queries/user";
+import { useUserData } from "@/queries/user";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import { useMemo, useState } from "react";
 
 const KidsProfilesPage = () => {
   const { data: userData, isLoading: loadingUser } = useUserData();
-  const { data: classes, isLoading: loadingClasses } = useGetClasses();
   const router = useRouter();
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [selectedSchool, setSelectedSchool] = useState("");
@@ -42,6 +41,8 @@ const KidsProfilesPage = () => {
     if (!userData?.children) return [];
     return userData.children
       .filter((child) => {
+        if (child.schoolName == undefined) child.schoolName = "No school";
+        if (child.className == undefined) child.className = "No class";
         const schoolMatch =
           appliedSchool === "" || child.schoolName === appliedSchool;
         const classMatch =
@@ -52,20 +53,37 @@ const KidsProfilesPage = () => {
   }, [userData?.children, appliedSchool, appliedClass]);
 
   const uniqueClasses = useMemo(() => {
-    if (!classes) return [];
-    return Array.from(new Set(classes.map((classItem) => classItem.name)));
-  }, [classes]);
-
-  const uniqueSchools = useMemo(() => {
-    if (!selectedClass || !classes) return [];
+    if (!userData?.children) return [];
     return Array.from(
       new Set(
-        classes
-          .filter((classItem) => classItem.name === selectedClass)
-          .map((classItem) => classItem.schoolName),
+        userData.children.map((child) =>
+          child.className && child.className.trim() !== ""
+            ? child.className
+            : "No class",
+        ),
       ),
     );
-  }, [selectedClass, classes]);
+  }, [userData]);
+
+  const uniqueSchools = useMemo(() => {
+    if (!selectedClass || !userData?.children) return [];
+    return Array.from(
+      new Set(
+        userData.children
+          .filter(
+            (child) =>
+              (child.className && child.className.trim() !== ""
+                ? child.className
+                : "No class") === selectedClass,
+          )
+          .map((child) =>
+            child.schoolName && child.schoolName.trim() !== ""
+              ? child.schoolName
+              : "No school",
+          ),
+      ),
+    );
+  }, [selectedClass, userData]);
 
   return (
     <div className="flex flex-col w-screen h-screen">
@@ -177,17 +195,20 @@ const KidsProfilesPage = () => {
                   }}
                 >
                   <option value="">Select class</option>
-                  {!loadingClasses &&
-                    uniqueClasses.map((className, index) => (
-                      <option key={index} value={className}>
-                        {className}
-                      </option>
-                    ))}
+                  {uniqueClasses.map((className, index) => (
+                    <option key={index} value={className}>
+                      {className}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
                 <label
-                  className={!selectedClass ? "text-gray-400" : "text-black"}
+                  className={
+                    !selectedClass || selectedClass === "No class"
+                      ? "text-gray-400"
+                      : "text-black"
+                  }
                 >
                   By School
                 </label>
@@ -195,7 +216,7 @@ const KidsProfilesPage = () => {
                   className={`w-full border p-2 rounded-lg bg-white ${!selectedClass ? "border-gray-400 text-gray-400" : "border-black text-black"}`}
                   value={selectedSchool}
                   onChange={(e) => setSelectedSchool(e.target.value)}
-                  disabled={!selectedClass}
+                  disabled={!selectedClass || selectedClass === "No class"}
                 >
                   <option value="">Select school</option>
                   {uniqueSchools.map((schoolName, index) => (
