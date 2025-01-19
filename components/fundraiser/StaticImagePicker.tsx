@@ -65,7 +65,7 @@ export const StaticImagePicker = ({
           </Button>
         </div>
       ) : (
-        <div className="flex items-center justify-start gap-4 border-2 border-dashed border-gray-200 h-20 p-3">
+        <div className="flex items-center justify-start gap-4 border-2 border-dashed border-gray-800 h-20 p-3">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button

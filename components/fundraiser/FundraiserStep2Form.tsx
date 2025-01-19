@@ -51,14 +51,14 @@ const FundraiserStep2Form = () => {
           />
 
           {searchTerm && (
-            <ul className="absolute z-10 w-full bg-white border rounded-md mt-1 max-h-48 overflow-y-auto">
+            <ul className="absolute z-10 w-full bg-white dark:bg-[#1e293b] border rounded-md mt-1 max-h-48 overflow-y-auto">
               {isLoading ? (
                 <li className="p-2 text-gray-500">Loading...</li>
               ) : classes && classes.length > 0 ? (
                 classes.map((classItem: any) => (
                   <li
                     key={classItem.classId}
-                    className="p-2 cursor-pointer hover:bg-gray-100"
+                    className="p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-[#121b2a]"
                     onClick={() => handleClassSelect(classItem)}
                   >
                     {classItem.name} ({classItem.schoolName})
