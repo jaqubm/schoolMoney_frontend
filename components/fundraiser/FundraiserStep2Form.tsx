@@ -2,11 +2,9 @@
 
 import { useFormContext } from "react-hook-form";
 import React, { useEffect, useState } from "react";
-import {
-  useFetchClassesByName,
-  useFetchClassById,
-} from "@/queries/classes/classes";
+import { useFetchClassById } from "@/queries/classes/classes";
 import { Input } from "@/components/ui/input";
+import { useGetClasses } from "@/queries/user";
 
 const FundraiserStep2Form = () => {
   const { setValue, register, watch } = useFormContext();
@@ -14,7 +12,7 @@ const FundraiserStep2Form = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
-  const { data: classes, isLoading } = useFetchClassesByName(searchTerm);
+  const { data: classes, isLoading } = useGetClasses();
   const { data: classDetails } = useFetchClassById(classId);
 
   useEffect(() => {
@@ -27,6 +25,7 @@ const FundraiserStep2Form = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
+
     setSelectedClass(null);
     setValue("classId", "");
   };
@@ -42,8 +41,8 @@ const FundraiserStep2Form = () => {
       <div>
         <label className="block text-sm font-medium mb-2">Select Class</label>
         <div className="relative">
+          <input className="hidden" {...register("classId")} />
           <Input
-            {...register("classId")}
             type="text"
             placeholder="Search for a class"
             className="w-full p-2 border rounded-md"

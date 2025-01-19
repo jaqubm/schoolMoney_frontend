@@ -8,13 +8,12 @@ import { StaticImagePicker } from "@/components/fundraiser/StaticImagePicker";
 
 const FundraiserStep1Form = () => {
   const { register, formState, setValue, getValues } = useFormContext();
-  const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
   const [tempImageId, setTempImageId] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleImage = (imageValue: number | null) => {
     setTempImageId(imageValue);
-    setValue("imageIndex", tempImageId, { shouldValidate: true });
+    setValue("imageIndex", imageValue, { shouldValidate: true });
 
     if (tempImageId !== null) {
       setIsDialogOpen(false);
@@ -25,7 +24,6 @@ const FundraiserStep1Form = () => {
     const storedImageId = getValues("imageIndex");
 
     if (storedImageId !== undefined && storedImageId !== null) {
-      setSelectedImageId(storedImageId);
       setTempImageId(storedImageId);
     }
   }, [getValues]);

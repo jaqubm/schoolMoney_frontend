@@ -175,6 +175,7 @@ const EditFundraisePage = () => {
   };
 
   const handleImage = (imageValue: number | null) => {
+    debugger;
     setTempImageId(imageValue);
     setValue("imageIndex", tempImageId, { shouldValidate: true });
 
@@ -195,6 +196,8 @@ const EditFundraisePage = () => {
   if (error || !fundraiserDetails) {
     return <div>Error fetching fundraiser details.</div>;
   }
+
+  debugger;
 
   return (
     <div className="flex flex-col h-screen w-screen">

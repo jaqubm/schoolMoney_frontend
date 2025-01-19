@@ -28,11 +28,7 @@ export const StaticImagePicker = ({
   const [localValue, setLocalValue] = useState<number>(DEFAULT_VALUE);
 
   useEffect(() => {
-    if (!imageIndex) {
-      return;
-    }
-
-    setLocalValue(imageIndex);
+    setLocalValue(imageIndex ?? DEFAULT_VALUE);
   }, [imageIndex]);
 
   const handleDeleteImage = () => {
@@ -50,11 +46,6 @@ export const StaticImagePicker = ({
 
       {imageIndex != null ? (
         <div className="flex items-center justify-between gap-4 border-2 border-dashed border-gray-200 h-20 p-3">
-          {/*<img*/}
-          {/*    src={images[imageIndex]}*/}
-          {/*    alt={`Selected image ${imageIndex}`}*/}
-          {/*    className="w-12 h-12 rounded-full"*/}
-          {/*/>*/}
           <Image
             src={images[imageIndex]}
             alt={`Selected image ${imageIndex}`}

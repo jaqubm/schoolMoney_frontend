@@ -69,7 +69,7 @@ export default function Register() {
         <div className="flex-1 flex items-center justify-center flex-col gap-10">
           <div className="flex flex-col justify-center gap-4">
             <h3 className="font-bold text-2xl">Create an account</h3>
-            <p className="flex flex-row text-grayLight gap-1 font-poppins text-xs mx-auto">
+            <p className="flex flex-row text-grayMedium font-poppins text-xs mx-auto">
               Already have an account?
               <a href="/login" className="text-accent font-bold">
                 Sign in
@@ -195,7 +195,7 @@ export default function Register() {
                           <Checkbox
                             checked={field.value}
                             onCheckedChange={field.onChange}
-                            className="border-grayLight"
+                            className="border-grayMedium"
                           />
                         </FormControl>
                         <FormLabel className="text-sm text-secondary cursor-pointer">

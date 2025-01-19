@@ -62,8 +62,6 @@ const FundraisersPage = () => {
       currentFields = Object.keys(baseSchema.shape);
     }
 
-    console.log("Current Fields:", { currentFields });
-
     const allFieldsFilled = currentFields.every((field) => {
       const value = getValues(field as keyof typeof formData);
 
