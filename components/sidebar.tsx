@@ -40,11 +40,6 @@ const NAV_ITEMS = [
     path: "/balances",
   },
   {
-    name: "History",
-    Icon: ({ className }: IconProps) => <ClockIcon className={className} />,
-    path: "/history",
-  },
-  {
     name: "Classes",
     Icon: ({ className }: IconProps) => (
       <AcademicCapIcon className={className} />
