@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowLongRightIcon } from "@heroicons/react/24/outline";
+import { useScreen, useWindowSize } from "usehooks-ts";
 
 const steps = [
   { stepNumber: 0, label: "General" },
@@ -12,15 +13,41 @@ type StepperProps = {
 };
 
 export const Stepper = ({ currentStep }: StepperProps) => {
+  const screen = useWindowSize();
+
+  if (screen.width <= 1015) {
+    const current =
+      steps.find((step) => step.stepNumber === currentStep) ?? steps[0];
+
+    return (
+      <div
+        key={currentStep}
+        className="flex items-center justify-center gap-5 w-fit"
+      >
+        <div
+          className={
+            "flex items-center justify-center min-w-10 min-h-10 rounded-full bg-blue text-primary"
+          }
+        >
+          {currentStep + 1}
+        </div>
+
+        <span className={"text-base font-medium text-secondary"}>
+          {current.label}
+        </span>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex items-center justify-center w-full gap-5">
       {steps.map((step, index) => (
         <div
           key={step.stepNumber}
-          className="flex items-center justify-center gap-5 w-fit p-5"
+          className="flex items-center justify-center gap-5 w-fit"
         >
           <div
-            className={`flex items-center justify-center w-10 h-10 rounded-full ${
+            className={`flex items-center justify-center min-w-10 min-h-10 rounded-full ${
               currentStep === step.stepNumber
                 ? "bg-blue text-primary"
                 : "bg-grayLight text-secondary"

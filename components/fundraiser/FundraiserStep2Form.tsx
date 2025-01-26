@@ -2,11 +2,9 @@
 
 import { useFormContext } from "react-hook-form";
 import React, { useEffect, useState } from "react";
-import {
-  useFetchClassesByName,
-  useFetchClassById,
-} from "@/queries/classes/classes";
+import { useFetchClassById } from "@/queries/classes/classes";
 import { Input } from "@/components/ui/input";
+import { useGetClasses } from "@/queries/user";
 
 const FundraiserStep2Form = () => {
   const { setValue, register, watch } = useFormContext();
@@ -14,7 +12,7 @@ const FundraiserStep2Form = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
-  const { data: classes, isLoading } = useFetchClassesByName(searchTerm);
+  const { data: classes, isLoading } = useGetClasses();
   const { data: classDetails } = useFetchClassById(classId);
 
   useEffect(() => {
@@ -27,6 +25,7 @@ const FundraiserStep2Form = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
+
     setSelectedClass(null);
     setValue("classId", "");
   };
@@ -42,8 +41,8 @@ const FundraiserStep2Form = () => {
       <div>
         <label className="block text-sm font-medium mb-2">Select Class</label>
         <div className="relative">
+          <input className="hidden" {...register("classId")} />
           <Input
-            {...register("classId")}
             type="text"
             placeholder="Search for a class"
             className="w-full p-2 border rounded-md"
@@ -52,14 +51,14 @@ const FundraiserStep2Form = () => {
           />
 
           {searchTerm && (
-            <ul className="absolute z-10 w-full bg-white border rounded-md mt-1 max-h-48 overflow-y-auto">
+            <ul className="absolute z-10 w-full bg-white dark:bg-[#1e293b] border rounded-md mt-1 max-h-48 overflow-y-auto">
               {isLoading ? (
                 <li className="p-2 text-gray-500">Loading...</li>
               ) : classes && classes.length > 0 ? (
                 classes.map((classItem: any) => (
                   <li
                     key={classItem.classId}
-                    className="p-2 cursor-pointer hover:bg-gray-100"
+                    className="p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-[#121b2a]"
                     onClick={() => handleClassSelect(classItem)}
                   >
                     {classItem.name} ({classItem.schoolName})

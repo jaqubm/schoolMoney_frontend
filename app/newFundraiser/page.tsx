@@ -62,8 +62,6 @@ const FundraisersPage = () => {
       currentFields = Object.keys(baseSchema.shape);
     }
 
-    console.log("Current Fields:", { currentFields });
-
     const allFieldsFilled = currentFields.every((field) => {
       const value = getValues(field as keyof typeof formData);
 
@@ -145,7 +143,7 @@ const FundraisersPage = () => {
           <Sidebar />
         </div>
 
-        <div className="flex flex-col w-full h-full">
+        <div className="flex flex-col w-full h-full flex-1">
           <div className="flex w-full h-fit justify-start items-center p-3 pl-6 pt-6">
             <button
               onClick={() => router.back()}
@@ -156,25 +154,25 @@ const FundraisersPage = () => {
             </button>
           </div>
 
-          <div className="flex items-center pl-14">
+          <div className="flex flex-shrink-0 flex-grow-0 items-center px-14">
             <p className="text-gray-500 text-sm">
               Add a new fundraiser to your class
             </p>
           </div>
 
-          <div className="flex items-center pl-14 mt-8">
-            <Stepper currentStep={currentStep} />
-          </div>
+          <div className="overflow-y-auto w-full flex-1">
+            <div className="flex flex-shrink-0 flex-grow-0 items-center px-14 py-5 mb-2 justify-center">
+              <Stepper currentStep={currentStep} />
+            </div>
 
-          <div className="flex items-center justify-center pl-14">
-            <FormProvider {...methods}>
-              <div className="flex items-center justify-center pt-5">
+            <div className="flex flex-1 items-center justify-center px-14">
+              <FormProvider {...methods}>
                 <CurrentForm />
-              </div>
-            </FormProvider>
+              </FormProvider>
+            </div>
           </div>
 
-          <div className="flex items-center justify-center pt-8 gap-4 pl-14">
+          <div className="flex flex-grow-0 flex-shrink-0 items-center justify-center py-4 gap-4 px-14">
             <Button
               onClick={handlePrevStep}
               disabled={currentStep === 0}

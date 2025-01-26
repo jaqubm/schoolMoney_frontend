@@ -5,16 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import React, { useEffect, useState } from "react";
 import { StaticImagePicker } from "@/components/fundraiser/StaticImagePicker";
+import clsx from "clsx";
 
 const FundraiserStep1Form = () => {
   const { register, formState, setValue, getValues } = useFormContext();
-  const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
   const [tempImageId, setTempImageId] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleImage = (imageValue: number | null) => {
     setTempImageId(imageValue);
-    setValue("imageIndex", tempImageId, { shouldValidate: true });
+    setValue("imageIndex", imageValue, { shouldValidate: true });
 
     if (tempImageId !== null) {
       setIsDialogOpen(false);
@@ -25,15 +25,20 @@ const FundraiserStep1Form = () => {
     const storedImageId = getValues("imageIndex");
 
     if (storedImageId !== undefined && storedImageId !== null) {
-      setSelectedImageId(storedImageId);
       setTempImageId(storedImageId);
     }
   }, [getValues]);
 
   return (
-    <div className="flex flex-col items-center p-6 shadow-lg rounded-md bg-white">
-      <div className="flex flex-wrap justify-between w-full max-w-4xl gap-6">
-        <div className="flex flex-col w-[48%]">
+    <div
+      className={clsx(
+        "flex flex-row flex-wrap w-full max-w-[40rem]",
+        "items-start shadow-lg",
+        "border border-solid rounded-md",
+      )}
+    >
+      <div className="flex flex-1 flex-col p-4 gap-4 min-w-64">
+        <div className="flex flex-col">
           <label className="text-sm font-medium text-secondary mb-1">
             Fundraiser Name
           </label>
@@ -54,7 +59,7 @@ const FundraiserStep1Form = () => {
           )}
         </div>
 
-        <div className="flex flex-col w-[48%]">
+        <div className="flex flex-col">
           <label className="text-sm font-medium text-secondary mb-1">
             Fundraiser Description
           </label>
@@ -74,8 +79,10 @@ const FundraiserStep1Form = () => {
             </p>
           )}
         </div>
+      </div>
 
-        <div className="flex flex-col w-[48%]">
+      <div className="flex flex-1 flex-col p-4 gap-4 min-w-64">
+        <div className="flex flex-col">
           <label className="text-sm font-medium text-secondary mb-1">
             Fundraiser Goal
           </label>
@@ -96,7 +103,7 @@ const FundraiserStep1Form = () => {
           )}
         </div>
 
-        <div className="flex flex-col w-[48%] justify-end items-center">
+        <div className="flex flex-col justify-end items-center">
           <div className="flex-1 w-full">
             <StaticImagePicker
               imageIndex={getValues("imageIndex")}
