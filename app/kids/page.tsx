@@ -141,7 +141,8 @@ const KidsProfilesPage = () => {
               filteredChildren.map((child) => (
                 <div
                   key={child.childId}
-                  className="flex flex-col items-center justify-center border rounded-lg h-full max-h-[400px] min-w-[400px] shadow-md"
+                  className="flex flex-col items-center justify-center border rounded-lg h-full max-h-[400px] min-w-[400px] shadow-md cursor-pointer"
+                  onClick={() => router.push(`/kids/${child.childId}`)}
                 >
                   <Avatar className="w-52 h-52">
                     <AvatarFallback className="text-4xl">
