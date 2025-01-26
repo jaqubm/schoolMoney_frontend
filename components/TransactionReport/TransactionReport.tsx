@@ -12,10 +12,10 @@ const TransactionReport = ({ transactions }: Transactions) => (
   <Document>
     <Page style={styles.page}>
       <Text style={styles.title}>Transaction Report</Text>
+      <Text style={styles.text}>(Date - Type - Amount - Source Account Number - Destination Account Number)</Text>
       {transactions.map((transaction, index) => (
         <Text key={index} style={styles.text}>
-          {transaction.date} - {transaction.type} - $
-          {transaction.amount.toFixed(2)} - {transaction.sourceAccountNumber}
+          {transaction.date} - {transaction.type} - {transaction.amount.toFixed(2)}$ - {transaction.sourceAccountNumber} - {transaction.destinationAccountNumber}
         </Text>
       ))}
     </Page>

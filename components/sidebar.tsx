@@ -1,9 +1,19 @@
 "use client";
 
 import {Button} from "@/components/ui/button";
-import {AcademicCapIcon, BanknotesIcon, HomeIcon, UserIcon, UsersIcon,} from "@heroicons/react/24/outline";
+import {
+  AcademicCapIcon,
+  BanknotesIcon,
+  HomeIcon,
+  MoonIcon,
+  SunIcon,
+  UserIcon,
+  UsersIcon,
+} from "@heroicons/react/24/outline";
 import {useRouter} from "next/navigation";
 import Cookies from "js-cookie";
+import React from "react";
+import {useTheme} from "next-themes";
 
 type IconProps = {
   className: string;
@@ -46,10 +56,15 @@ const BUTTON_STYLE =
 
 export const Sidebar = () => {
   const router = useRouter();
+  const { setTheme, theme } = useTheme();
 
   const handleLogout = () => {
     Cookies.remove("access_token");
     router.push("/");
+  };
+
+  const handleThemeToggle = () => {
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (
@@ -70,30 +85,45 @@ export const Sidebar = () => {
         ))}
       </div>
 
-      <div className="w-full space-y-2">
-        <Button
-          key="Logout"
-          variant="ghost"
-          className={BUTTON_STYLE + " text-red"}
-          onClick={handleLogout}
-        >
-          <div className="flex justify-center items-center h-1/2">
-            <UserIcon className="w-full h-full rotate-180" />
-          </div>
-          Logout
-        </Button>
+      <div className="flex">
+        <div className="w-full space-y-2">
+          <Button
+              key="Logout"
+              variant="ghost"
+              className={BUTTON_STYLE + " text-red"}
+              onClick={handleLogout}
+          >
+            <div className="flex justify-center items-center h-1/2">
+              <UserIcon className="w-full h-full rotate-180" />
+            </div>
+            Logout
+          </Button>
 
-        <Button
-          key="Profile"
-          variant="ghost"
-          className={BUTTON_STYLE}
-          onClick={() => router.push("/profile")}
-        >
-          <div className="flex justify-center items-center h-1/2">
-            <UserIcon className="w-full h-full" />
-          </div>
-          Profile
-        </Button>
+          <Button
+              key="Profile"
+              variant="ghost"
+              className={BUTTON_STYLE}
+              onClick={() => router.push("/profile")}
+          >
+            <div className="flex justify-center items-center h-1/2">
+              <UserIcon className="w-full h-full" />
+            </div>
+            Profile
+          </Button>
+        </div>
+
+        <div className="flex justify-center items-end m-2">
+          <Button
+              className="h-12 bg-transparent border"
+              onClick={handleThemeToggle}
+          >
+            {theme === "light" ? (
+                <MoonIcon className="size-6" />
+            ) : (
+                <SunIcon className="size-6 text-yellow-200 hover:bg-none" />
+            )}
+          </Button>
+        </div>
       </div>
     </nav>
   );

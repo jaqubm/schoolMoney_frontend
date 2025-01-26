@@ -17,18 +17,18 @@ const PageHeader = ({ title, subtitle, children }: PageHeaderProps) => {
         <div className="flex justify-start items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-4 text-secondary"
+            className="flex items-center gap-4"
           >
             <ArrowLeftIcon className="w-5 h-5" />
           </button>
 
-          <div className="text-lg font-semibold text-secondary">{title}</div>
+          <div className="text-lg font-semibold">{title}</div>
         </div>
 
         <div className="flex gap-4">{children}</div>
       </div>
       <div>
-        <div className="text-xs text-grayMedium pl-9 pt-1">{subtitle}</div>
+        <div className="text-xs text-secondary pl-9 pt-1">{subtitle}</div>
       </div>
     </div>
   );

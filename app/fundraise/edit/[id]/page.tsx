@@ -229,7 +229,7 @@ const EditFundraisePage = () => {
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col items-start p-6 w-2/3 h-fit gap-6 shadow-lg rounded-md bg-white"
+            className="flex flex-col items-start p-6 w-2/3 h-fit gap-6 rounded-md border"
           >
             <div className="flex w-full gap-6">
               <div className="flex w-[48%] flex-col justify-between gap-6">

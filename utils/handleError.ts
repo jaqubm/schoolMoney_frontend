@@ -1,5 +1,5 @@
 import axios from "axios";
-import { toast } from "@/hooks/use-toast";
+import {toast} from "@/hooks/use-toast";
 
 export const handleError = (error: unknown): void => {
   let errorMessage = "An unexpected error occurred.";

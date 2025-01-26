@@ -43,11 +43,6 @@ const FundraisersPage = () => {
   return (
     <div className="flex flex-col h-screen w-screen">
       <Header withBorder>
-        <Input
-          type="search"
-          placeholder="Search..."
-          className="w-[654px] h-[66px] rounded-lg text-base"
-        />
         <div className="flex items-center py-[27.5px] mr-[40px]">
           <span className="text-lg mr-[22px]">
             {loadingUser
