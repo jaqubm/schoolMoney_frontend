@@ -1,15 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  HomeIcon,
-  UserIcon,
-  AcademicCapIcon,
-  BanknotesIcon,
-  ClockIcon,
-  UsersIcon,
-} from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {AcademicCapIcon, BanknotesIcon, HomeIcon, UserIcon, UsersIcon,} from "@heroicons/react/24/outline";
+import {useRouter} from "next/navigation";
 import Cookies from "js-cookie";
 
 type IconProps = {
