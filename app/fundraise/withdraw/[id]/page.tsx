@@ -17,6 +17,7 @@ import { z } from "zod";
 import { toast } from "@/hooks/use-toast";
 import PaymentForm from "@/components/fundraiser/PaymentForm";
 import PageHeader from "@/components/PageHeader/PageHeader";
+import {WithdrawFundraisePayload} from "@/app/fundraise/Fundraise.types";
 
 type WithdrawFromFundraiserData = {
   amount: string;
@@ -39,7 +40,7 @@ const WithdrawFromFundraisePage = () => {
   const { id } = useParams();
   const { data: userData, isLoading: loadingUser } = useUserData();
 
-  const withdrawFromFundraise = useWithdrawFromFundraise();
+  const { mutate: withdrawFromFundraise } = useWithdrawFromFundraise();
   const { data: fundraiserDetails, isLoading, error } = useGetFundraiseById(id);
 
   const { handleSubmit, control } = useForm<WithdrawFromFundraiserData>({
@@ -65,12 +66,13 @@ const WithdrawFromFundraisePage = () => {
 
   const onSubmit = (data: WithdrawFromFundraiserData) => {
     const backendData = {
-      amount: parseFloat(data.amount),
-      destinationAccountNumber: fundraiserDetails.accountNumber,
       fundraiseId: id as string,
+      data: {
+        amount: parseFloat(data.amount)
+      }
     };
 
-    withdrawFromFundraise.mutate(backendData, {
+    withdrawFromFundraise(backendData, {
       onSuccess: () => {
         toast({ title: "Fundraiser withdrawal successful" });
         router.push(`/fundraise/${id}`);
@@ -111,7 +113,7 @@ const WithdrawFromFundraisePage = () => {
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col items-start p-6 w-fit h-fit gap-6 shadow-lg rounded-md bg-white"
+            className="flex flex-col items-start p-6 w-fit h-fit gap-6 shadow-lg rounded-md"
           >
             <PaymentForm
               hintMessage={"Enter the amount you want to withdraw"}

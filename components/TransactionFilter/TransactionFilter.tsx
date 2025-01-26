@@ -65,7 +65,7 @@ const TransactionFilter = ({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="border-dashed gap-2.5 hover:bg-gray-200 hover:text-secondary"
+          className="border-dashed gap-2.5"
         >
           <AdjustmentsHorizontalIcon className="size-4"></AdjustmentsHorizontalIcon>
           {title}

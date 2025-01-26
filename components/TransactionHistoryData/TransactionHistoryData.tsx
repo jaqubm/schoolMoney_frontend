@@ -37,23 +37,21 @@ export const TransactionHistoryData = ({
     <div className="rounded-md border w-full overflow-y-auto">
       <Table>
         <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="flex justify-around">
-              {headerGroup.headers.map((header) => (
-                <TableHead
-                  key={header.id}
-                  className="flex items-center sticky top-0"
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
+          <TableRow>
+            {table.getHeaderGroups().map((headerGroup) => headerGroup.headers.map((header) => (
+                    <TableHead
+                        key={header.id}
+                    >
+                      {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                          )}
+                    </TableHead>
+                )
+            ))}
+          </TableRow>
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows.length ? (

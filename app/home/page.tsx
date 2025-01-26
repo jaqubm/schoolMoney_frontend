@@ -1,14 +1,12 @@
 "use client";
 
-import { Sidebar } from "@/components/sidebar";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Activity, ActivityCard } from "@/components/activity-card";
-import { Header } from "@/components/Header";
-import { useUserData, useGetTransactionHistory } from "@/queries/user";
+import {Sidebar} from "@/components/sidebar";
+import {Avatar, AvatarFallback} from "@/components/ui/avatar";
+import {Activity, ActivityCard} from "@/components/activity-card";
+import {Header} from "@/components/Header";
+import {useGetTransactionHistory, useUserData} from "@/queries/user";
 import React from "react";
-import { useRouter } from "next/navigation";
+import {useRouter} from "next/navigation";
 
 const HomePage = () => {
     const router = useRouter();
@@ -34,11 +32,6 @@ const HomePage = () => {
         <div className="flex flex-col w-screen h-screen">
             {/* Upper screen */}
             <Header withBorder>
-                <Input
-                    type="search"
-                    placeholder="Search..."
-                    className="w-[654px] h-[66px] rounded-lg text-base"
-                />
                 <div className="flex items-center py-[27.5px] mr-[40px]">
           <span className="text-lg mr-[22px]">
             {loadingUser

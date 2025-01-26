@@ -30,14 +30,17 @@ const FundraiserTransactionHistoryPage = () => {
     error: fundraiserError,
   } = useGetFundraiseById(id);
   const {
-    data: transactions = [],
+    data: transactions,
     isLoading: isTransactionLoading,
     error: transactionError,
   } = useGetTransactionHistory(id);
 
+  console.log(fundraiserDetails)
+  console.log(transactions)
+
   const filterOptions = [
-    { label: "Deposit", value: "Deposit" },
-    { label: "Withdrawal", value: "Withdrawal" },
+    { label: "Transfer", value: "Transfer" },
+    { label: "Withdraw", value: "Withdraw" },
   ];
 
   const [selectedFilters, setSelectedFilters] =
@@ -124,8 +127,9 @@ const FundraiserTransactionHistoryPage = () => {
                   }
                   fileName={`${sanitizedTitle}_transaction_report.pdf`}
                 >
-                  <button className="p-2 rounded hover:bg-gray-200">
+                  <button className="p-2 rounded flex items-center gap-2">
                     <DocumentArrowDownIcon className="size-6 text-secondary" />
+                    <span>Download Report</span>
                   </button>
                 </PDFDownloadLink>
               </div>

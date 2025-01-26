@@ -4,10 +4,10 @@ import { toast } from "@/hooks/use-toast";
 import {
   CreateFundraisePayload,
   UpdateFundraisePayload,
-  FundraiseDetails,
+  FundraiseDetails, WithdrawFundraisePayload,
 } from "@/app/fundraise/Fundraise.types";
 import { handleError } from "@/utils/handleError";
-import { TransactionDetails } from "@/app/transaction/Transaction.types";
+import {TransactionDetails, TransferPayload} from "@/app/transaction/Transaction.types";
 
 export const useCreateFundraise = () => {
   return useMutation({
@@ -79,10 +79,12 @@ export const useWithdrawFromFundraise = () => {
   return useMutation({
     mutationFn: async ({
       fundraiseId,
+      data
     }: {
       fundraiseId: string;
+      data: WithdrawFundraisePayload
     }): Promise<void> => {
-      await axiosInstance.post(`/Fundraise/Withdraw/${fundraiseId}`);
+      await axiosInstance.put(`/Fundraise/Withdraw/${fundraiseId}`, data);
     },
     onSuccess: () => {
       toast({
@@ -96,7 +98,7 @@ export const useWithdrawFromFundraise = () => {
 
 export const useGetTransactionHistory = (fundraiseId: string | string[]) => {
   return useQuery<TransactionDetails[]>({
-    queryKey: ["fundraise", fundraiseId],
+    queryKey: ["fundraiseTransactionHistory", fundraiseId],
     queryFn: async (): Promise<TransactionDetails[]> => {
       const response = await axiosInstance.get(
         `/Fundraise/GetTransactionHistory/${fundraiseId}`,

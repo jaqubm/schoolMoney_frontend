@@ -1,36 +1,18 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
-import { useUserData } from "@/queries/user";
-import { Header } from "@/components/Header";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Sidebar } from "@/components/sidebar";
-import {
-  ArrowLeftIcon,
-  Bars4Icon,
-  PencilIcon,
-  TrashIcon,
-  BanknotesIcon,
-} from "@heroicons/react/24/outline";
-import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import {useParams, useRouter} from "next/navigation";
+import {useUserData} from "@/queries/user";
+import {Header} from "@/components/Header";
+import {Avatar, AvatarFallback} from "@/components/ui/avatar";
+import {Sidebar} from "@/components/sidebar";
+import {ArrowLeftIcon, BanknotesIcon, PencilIcon, TrashIcon,} from "@heroicons/react/24/outline";
+import {Button} from "@/components/ui/button";
+import React, {useState} from "react";
 import images from "@/public/images";
-import { clsx } from "clsx";
+import {clsx} from "clsx";
 import Image from "next/image";
-import { useDeleteFundraise, useGetFundraiseById } from "@/queries/fundraise";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import {useDeleteFundraise, useGetFundraiseById} from "@/queries/fundraise";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
 
 const FundraiserDetailsPage = () => {
   const router = useRouter();
@@ -65,29 +47,6 @@ const FundraiserDetailsPage = () => {
 
   return (
     <div className="flex flex-col h-screen w-screen">
-      <Dialog open={isDeletionDialogOpen} onOpenChange={setDeletionDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
-            <p>
-              Are you sure you want to delete this fundraiser? This action
-              cannot be undone.
-            </p>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="secondary"
-              onClick={() => setDeletionDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       <Header withBorder>
         <div className="flex items-center py-[27.5px] mr-[40px]">
           <span className="text-lg mr-[22px]">
@@ -119,34 +78,6 @@ const FundraiserDetailsPage = () => {
             >
               <ArrowLeftIcon className="w-5 h-5" />
             </button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="text-secondary">
-                  <Bars4Icon className="w-6 h-6" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-48">
-                <DropdownMenuItem
-                  onClick={() => {
-                    router.push(`/fundraise/edit/${id}`);
-                  }}
-                >
-                  <PencilIcon className="w-5 h-5" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setDeletionDialogOpen(true)}>
-                  <TrashIcon className="w-5 h-5" />
-                  Cancel
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => router.push(`/fundraise/withdraw/${id}`)}
-                >
-                  <BanknotesIcon className="w-5 h-5" />
-                  Withdraw Funds
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
 
           <div className="flex w-full h-full">
@@ -161,7 +92,8 @@ const FundraiserDetailsPage = () => {
             </div>
 
             <div className=" flex flex-1 h-full flex-col justify-between gap-4 pb-24">
-              <div>
+              <div className="flex justify-between">
+                <div>
                 <div className="text-sm text-grayMedium">
                   Klasa {fundraiserDetails.className} (
                   {fundraiserDetails.schoolName})
@@ -219,6 +151,27 @@ const FundraiserDetailsPage = () => {
                   </Button>
                 </div>
               </div>
+                <div className="flex flex-col items-end mx-4 gap-2">
+                  <Button variant="outline"
+                      onClick={() => {
+                        router.push(`/fundraise/edit/${id}`);
+                      }}
+                  >
+                    Edit
+                    <PencilIcon className="w-5 h-5" />
+                  </Button>
+                  <Button variant="outline" onClick={() => setDeletionDialogOpen(true)}>
+                    Cancel
+                    <TrashIcon className="w-5 h-5" />
+                  </Button>
+                  <Button variant="outline"
+                      onClick={() => router.push(`/fundraise/withdraw/${id}`)}
+                  >
+                    Withdraw Funds
+                    <BanknotesIcon className="w-5 h-5" />
+                  </Button>
+                </div>
+              </div>
 
               <div className="flex w-full h-fit justify-around">
                 <div className="flex flex-col w-fit h-fit items-center justify-center">
@@ -255,6 +208,29 @@ const FundraiserDetailsPage = () => {
           </div>
         </div>
       </div>
+
+      <Dialog open={isDeletionDialogOpen} onOpenChange={() => setDeletionDialogOpen(false)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <p>
+              Are you sure you want to delete this fundraiser? This action
+              cannot be undone.
+            </p>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+                variant="secondary"
+                onClick={() => setDeletionDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

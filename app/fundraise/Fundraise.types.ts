@@ -26,3 +26,7 @@ export type FundraiseDetails = {
   schoolName: string;
   isTreasurer: boolean;
 };
+
+export type WithdrawFundraisePayload = {
+  amount: number;
+}

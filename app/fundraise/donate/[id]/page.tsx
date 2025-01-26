@@ -107,7 +107,7 @@ const DonateFundraisePage = () => {
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col items-start p-6 w-fit h-fit gap-6 shadow-lg rounded-md bg-white"
+            className="flex flex-col items-start p-6 w-fit h-fit gap-6 shadow-lg rounded-md"
           >
             <PaymentForm
               hintMessage={"Enter the amount you want to donate"}

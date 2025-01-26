@@ -1,33 +1,25 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Sidebar } from "@/components/sidebar";
-import { Header } from "@/components/Header";
-import { useUserData, useUpdateUser } from "@/queries/user";
-import { useUpdatePassword } from "@/queries/auth";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { updateUserSchema, updatePasswordSchema } from "./profileValidation";
-import { PencilIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { useToast } from "@/hooks/use-toast";
-import React, { useState } from "react";
-import { useTheme } from "next-themes";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
+import {Avatar, AvatarFallback} from "@/components/ui/avatar";
+import {Sidebar} from "@/components/sidebar";
+import {Header} from "@/components/Header";
+import {useUpdateUser, useUserData} from "@/queries/user";
+import {useUpdatePassword} from "@/queries/auth";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {updatePasswordSchema, updateUserSchema} from "./profileValidation";
+import {PencilIcon} from "@heroicons/react/24/outline";
+import {Form, FormControl, FormField, FormItem, FormMessage,} from "@/components/ui/form";
+import {useToast} from "@/hooks/use-toast";
+import React, {useState} from "react";
 
 export default function ProfilePage() {
   const { data: userData, isLoading: loadingUser } = useUserData();
   const { mutate: updateUser } = useUpdateUser();
   const { mutate: updatePassword } = useUpdatePassword();
   const { toast } = useToast();
-  const { setTheme, theme } = useTheme();
 
   const [editableFields, setEditableFields] = useState<Record<string, boolean>>(
     {
@@ -36,10 +28,6 @@ export default function ProfilePage() {
       email: false,
     },
   );
-
-  const handleThemeToggle = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
 
   const toggleFieldEditable = (field: string) => {
     setEditableFields((prev) => ({ ...prev, [field]: true }));
@@ -129,16 +117,6 @@ export default function ProfilePage() {
         <div className="flex flex-col items-center justify-center w-full h-full px-4 overflow-y-auto">
           <div className="flex justify-center items-center w-full relative mb-6">
             <h2 className="text-4xl font-semibold">Your Profile</h2>
-            <Button
-              className="absolute right-1 h-12 bg-transparent border"
-              onClick={handleThemeToggle}
-            >
-              {theme === "light" ? (
-                <MoonIcon className="size-6" />
-              ) : (
-                <SunIcon className="size-6 text-yellow-200 hover:bg-none" />
-              )}
-            </Button>
           </div>
           <div className="flex flex-col gap-10 w-full max-w-4xl">
             <div className="border p-6 rounded-lg shadow-md w-full">
