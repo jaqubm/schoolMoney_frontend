@@ -1,14 +1,17 @@
-"use client";
-
-import { Inter } from "next/font/google";
+import {Inter} from "next/font/google";
 import "@/styles/globals.css";
 import React from "react";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {ThemeProvider} from "@/components/theme-provider";
+import {Toaster} from "@/components/ui/toaster";
+import {Metadata} from "next";
+import {QueryProvider} from "@/components/QueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
-const queryClient = new QueryClient();
+
+export const metadata: Metadata = {
+  title: "schoolMoney",
+  description: "School Money - Website to manage yours class finances!",
+}
 
 export default function RootLayout({
   children,
@@ -18,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <QueryClientProvider client={queryClient}>
+        <QueryProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -30,7 +33,7 @@ export default function RootLayout({
             </div>
             <Toaster />
           </ThemeProvider>
-        </QueryClientProvider>
+        </QueryProvider>
       </body>
     </html>
   );
