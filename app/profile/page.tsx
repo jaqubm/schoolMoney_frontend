@@ -1,53 +1,37 @@
 "use client";
 
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import {Avatar, AvatarFallback} from "@/components/ui/avatar";
-import {Sidebar} from "@/components/sidebar";
-import {Header} from "@/components/Header";
-import {useUpdateUser, useUserData} from "@/queries/user";
-import {useUpdatePassword} from "@/queries/auth";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {updatePasswordSchema, updateUserSchema} from "./profileValidation";
-import {PencilIcon} from "@heroicons/react/24/outline";
-import {Form, FormControl, FormField, FormItem, FormMessage,} from "@/components/ui/form";
-import {useToast} from "@/hooks/use-toast";
-import React, {useState} from "react";
+import { useUpdateUser, useUserData } from "@/queries/user";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Sidebar } from "@/components/sidebar";
+import { Header } from "@/components/Header";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
+import { useUpdatePassword } from "@/queries/auth";
+import { updatePasswordSchema, updateUserSchema } from "./profileValidation";
 
 export default function ProfilePage() {
   const { data: userData, isLoading: loadingUser } = useUserData();
-  const { mutate: updateUser } = useUpdateUser();
+  const { mutate: updateUser, isLoading: updatingUser } = useUpdateUser();
   const { mutate: updatePassword } = useUpdatePassword();
   const { toast } = useToast();
 
-  const [editableFields, setEditableFields] = useState<Record<string, boolean>>(
-    {
-      name: false,
-      surname: false,
-      email: false,
-    },
-  );
-
-  const toggleFieldEditable = (field: string) => {
-    setEditableFields((prev) => ({ ...prev, [field]: true }));
-  };
-
-  const userForm = useForm({
+  const form = useForm({
     resolver: zodResolver(updateUserSchema),
     defaultValues: {
       email: userData?.email || "",
       name: userData?.name || "",
       surname: userData?.surname || "",
-    },
-  });
-
-  const passwordForm = useForm({
-    resolver: zodResolver(updatePasswordSchema),
-    defaultValues: {
-      oldPassword: "",
-      newPassword: "",
-      newPasswordConfirm: "",
     },
   });
 
@@ -69,6 +53,15 @@ export default function ProfilePage() {
       },
     });
   };
+
+  const passwordForm = useForm({
+    resolver: zodResolver(updatePasswordSchema),
+    defaultValues: {
+      oldPassword: "",
+      newPassword: "",
+      newPasswordConfirm: "",
+    },
+  });
 
   const handlePasswordChange = (data: any) => {
     updatePassword(data, {
@@ -110,102 +103,104 @@ export default function ProfilePage() {
         </div>
       </Header>
 
-      <div className="flex w-full h-full overflow-hidden">
+      <div className="flex w-full h-full">
         <div className="flex w-full max-w-[339px] h-full border">
           <Sidebar />
         </div>
-        <div className="flex flex-col items-center justify-center w-full h-full px-4 overflow-y-auto">
-          <div className="flex justify-center items-center w-full relative mb-6">
-            <h2 className="text-4xl font-semibold">Your Profile</h2>
-          </div>
-          <div className="flex flex-col gap-10 w-full max-w-4xl">
-            <div className="border p-6 rounded-lg shadow-md w-full">
-              <Form {...userForm}>
-                <form
-                  onSubmit={userForm.handleSubmit(handleUserUpdate)}
-                  className="flex flex-col gap-4 w-full"
-                >
-                  <FormField
-                    control={userForm.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem className="relative">
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="First Name"
-                            readOnly={!editableFields.name}
-                            className={`${
-                              editableFields.name ? "" : "text-gray-500"
-                            }`}
-                          />
-                        </FormControl>
-                        {!editableFields.name && (
-                          <PencilIcon
-                            className="w-5 h-5 text-gray-500 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                            onClick={() => toggleFieldEditable("name")}
-                          />
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={userForm.control}
-                    name="surname"
-                    render={({ field }) => (
-                      <FormItem className="relative">
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Last Name"
-                            readOnly={!editableFields.surname}
-                            className={`${
-                              editableFields.surname ? "" : "text-gray-500"
-                            }`}
-                          />
-                        </FormControl>
-                        {!editableFields.surname && (
-                          <PencilIcon
-                            className="w-5 h-5 text-gray-500 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                            onClick={() => toggleFieldEditable("surname")}
-                          />
-                        )}
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={userForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem className="relative">
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Email Address"
-                            readOnly={!editableFields.email}
-                            className={`${
-                              editableFields.email ? "" : "text-gray-500"
-                            }`}
-                          />
-                        </FormControl>
-                        {!editableFields.email && (
-                          <PencilIcon
-                            className="w-5 h-5 text-gray-500 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                            onClick={() => toggleFieldEditable("email")}
-                          />
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" className="w-full">
-                    Update
-                  </Button>
-                </form>
-              </Form>
-            </div>
 
+        <div className="flex flex-col w-full h-full px-16 py-10">
+          <div className="flex w-full h-full min-h-[91px] max-h-[91px] gap-[30px] items-center">
+            <h2 className="text-4xl font-normal line-">Your profile</h2>
+          </div>
+
+          <div>
+            <div className="flex gap-10">
+              {/* AVATAR */}
+              <div className="flex flex-col items-center justify-center w-full max-w-[512px] max-h-[512px] border rounded-lg">
+                <Avatar className="w-52 h-52">
+                  <AvatarFallback className="text-4xl">
+                    {`${form.watch("name")?.[0]?.toUpperCase() || ""}${form.watch("surname")?.[0]?.toUpperCase() || ""}` ||
+                      "..."}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+
+              {/* USER DETAILS FORM */}
+              <div className="w-full h-full max-h-[512px] max-w-5xl border rounded-lg p-10">
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(handleUserUpdate)}
+                    className="flex flex-col gap-5"
+                  >
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>First Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter your first name"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="surname"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Last Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter your last name"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter your email" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="flex justify-between mt-8">
+                      <Button
+                        type="submit"
+                        className="bg-blue text-white w-40"
+                        disabled={updatingUser}
+                      >
+                        {updatingUser ? "Saving..." : "Save Changes"}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        className="bg-red text-white w-40"
+                      >
+                        Delete Account
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </div>
+            </div>
+            {/* UPDATE PASSWORD */}
             <div className="border p-6 rounded-lg shadow-md w-full">
               <Form {...passwordForm}>
                 <form

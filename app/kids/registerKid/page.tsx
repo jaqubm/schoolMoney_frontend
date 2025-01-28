@@ -119,7 +119,7 @@ export default function RegisterKidPage() {
             <div className="flex flex-col items-center justify-center w-full max-w-[512px] max-h-[512px] border rounded-lg">
               <Avatar className="w-52 h-52">
                 <AvatarFallback className="text-4xl">
-                  {`${form.watch("firstName")?.[0] || ""}${form.watch("lastName")?.[0] || ""}` ||
+                  {`${form.watch("firstName")?.[0]?.toUpperCase() || ""}${form.watch("lastName")?.[0]?.toUpperCase() || ""}` ||
                     "..."}
                 </AvatarFallback>
               </Avatar>

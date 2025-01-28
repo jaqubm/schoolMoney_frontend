@@ -7,7 +7,7 @@ import { Header } from "@/components/Header";
 import { useRouter } from "next/navigation";
 import { useUserData, useGetClasses } from "@/queries/user";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 
 const ClassProfilesPage = () => {
   const { data: userData, isLoading: loadingUser } = useUserData();
@@ -97,10 +97,8 @@ const ClassProfilesPage = () => {
             <AvatarFallback>
               {loadingUser
                 ? "..."
-                : `${userData?.name
-                    ?.split(" ")
-                    .map((n) => n[0])
-                    .join("")}`.toUpperCase() || "G"}
+                : `${userData?.name?.[0] || ""}${userData?.surname?.[0] || ""}` ||
+                  "G"}
             </AvatarFallback>
           </Avatar>
         </div>
@@ -146,7 +144,7 @@ const ClassProfilesPage = () => {
                 >
                   <Avatar className="w-52 h-52">
                     <AvatarFallback className="text-3xl text-wrap">
-                      {classItem.name}
+                      {classItem.name.slice(0, 2)?.toUpperCase() || "..."}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col items-center gap-2 mt-5">
