@@ -6,9 +6,15 @@ import React from "react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {Metadata} from "next";
 
 const inter = Inter({ subsets: ["latin"] });
 const queryClient = new QueryClient();
+
+export const metadata: Metadata = {
+  title: "schoolMoney",
+  description: "School Money - Website to manage yours class finances!",
+}
 
 export default function RootLayout({
   children,
