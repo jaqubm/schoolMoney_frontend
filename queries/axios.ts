@@ -14,7 +14,7 @@ axiosInstance.interceptors.request.use(
     const accessToken = Cookies.get("access_token");
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
-    }
+    } else throw new Error("Unauthorized");
     return config;
   },
   (error) => Promise.reject(error),

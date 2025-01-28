@@ -53,7 +53,7 @@ export default function WithdrawScreen() {
 
   return (
     <div className="flex flex-col w-screen h-screen">
-      {/* Header */}
+      {/* UserInfo */}
       <Header withBorder>
         <div className="flex items-center py-[27.5px] mr-[40px]">
           <span className="text-lg mr-[22px]">

@@ -1,14 +1,18 @@
-"use client";
-
-import { Inter } from "next/font/google";
+import {Inter} from "next/font/google";
 import "@/styles/globals.css";
 import React from "react";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {ThemeProvider} from "@/components/theme-provider";
+import {Toaster} from "@/components/ui/toaster";
+import {Metadata} from "next";
+import {Header} from "@/components/Header";
+import {QueryProvider} from "@/components/QueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
-const queryClient = new QueryClient();
+
+export const metadata: Metadata = {
+  title: "schoolMoney",
+  description: "School Money - Website to manage yours class finances!",
+}
 
 export default function RootLayout({
   children,
@@ -18,19 +22,28 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider
+
+        <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
-          >
-            <div className="w-full min-h-[calc(100dvh-4rem)] mx-auto overflow-hidden flex flex-col justify-center items-center">
-              {children}
-            </div>
-            <Toaster />
-          </ThemeProvider>
-        </QueryClientProvider>
+        >
+
+          <QueryProvider>
+
+              <Header/>
+
+              <div className="w-full min-h-[calc(100dvh-4rem)] mx-auto overflow-hidden flex flex-col justify-center items-center">
+                {children}
+              </div>
+
+              <Toaster />
+
+          </QueryProvider>
+
+        </ThemeProvider>
+
       </body>
     </html>
   );

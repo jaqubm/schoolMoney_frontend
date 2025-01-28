@@ -1,16 +1,16 @@
-import { ReactNode } from "react";
+"use client";
+
+import {usePathname, useRouter} from "next/navigation";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
+import {UserInfo} from "@/components/UserInfo";
 
-type HeaderProps = {
-  buttonText?: string;
-  onButtonClick?: () => void;
-  children?: ReactNode;
-  withBorder?: boolean;
-};
-
-export const Header = ({ children, withBorder = false }: HeaderProps) => {
+export function Header() {
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Define the routes where user info should be hidden
+  const hideUserInfoRoutes = ["/", "/login", "/register"];
+  const showUserInfo = !hideUserInfoRoutes.includes(pathname);
 
   const handleLogoClick = () => {
     const token = Cookies.get("access_token");
@@ -21,20 +21,19 @@ export const Header = ({ children, withBorder = false }: HeaderProps) => {
     }
   };
 
-  return (
-    <nav
-      className={`flex h-24 justify-between items-center w-full p-4 relative z-20 ${
-        withBorder ? "border-b" : "border-b-0"
-      }`}
-    >
-      <button
-        onClick={handleLogoClick}
-        className="text-2xl font-poppins text-secondary text-white"
-      >
-        School<span className="font-bold">Money</span>
-      </button>
+  return showUserInfo ? (
+            <nav
+                className={`flex h-24 justify-between items-center w-full p-4 relative z-20 ${
+                    showUserInfo ? "border-b" : "border-b-0"
+                }`}
+            >
+              {/* Logo */}
+              <button onClick={handleLogoClick} className="text-2xl font-poppins">
+                School<span className="font-bold">Money</span>
+              </button>
 
-      {children}
-    </nav>
-  );
-};
+              {/* Conditionally Render User Info */}
+              {showUserInfo && <UserInfo />}
+            </nav>
+        ) : null;
+}
