@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const registerKidSchema = z.object({
+export const kidSchema = z.object({
   firstName: z
     .string()
     .min(1, "First name is required")
@@ -23,4 +23,4 @@ export const registerKidSchema = z.object({
   classId: z.string(),
 });
 
-export type RegisterFormValues = z.infer<typeof registerKidSchema>;
+export type KidFormValues = z.infer<typeof kidSchema>;

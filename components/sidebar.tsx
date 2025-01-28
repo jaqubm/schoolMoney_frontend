@@ -1,6 +1,6 @@
 "use client";
 
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   AcademicCapIcon,
   BanknotesIcon,
@@ -9,11 +9,12 @@ import {
   SunIcon,
   UserIcon,
   UsersIcon,
+  CreditCardIcon,
 } from "@heroicons/react/24/outline";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import React from "react";
-import {useTheme} from "next-themes";
+import { useTheme } from "next-themes";
 
 type IconProps = {
   className: string;
@@ -38,7 +39,7 @@ const NAV_ITEMS = [
   {
     name: "Balances",
     Icon: ({ className }: IconProps) => (
-      <AcademicCapIcon className={className} />
+      <CreditCardIcon className={className} />
     ),
     path: "/balances",
   },
@@ -88,10 +89,10 @@ export const Sidebar = () => {
       <div className="flex">
         <div className="w-full space-y-2">
           <Button
-              key="Logout"
-              variant="ghost"
-              className={BUTTON_STYLE + " text-red"}
-              onClick={handleLogout}
+            key="Logout"
+            variant="ghost"
+            className={BUTTON_STYLE + " text-red"}
+            onClick={handleLogout}
           >
             <div className="flex justify-center items-center h-1/2">
               <UserIcon className="w-full h-full rotate-180" />
@@ -100,10 +101,10 @@ export const Sidebar = () => {
           </Button>
 
           <Button
-              key="Profile"
-              variant="ghost"
-              className={BUTTON_STYLE}
-              onClick={() => router.push("/profile")}
+            key="Profile"
+            variant="ghost"
+            className={BUTTON_STYLE}
+            onClick={() => router.push("/profile")}
           >
             <div className="flex justify-center items-center h-1/2">
               <UserIcon className="w-full h-full" />
@@ -114,13 +115,13 @@ export const Sidebar = () => {
 
         <div className="flex justify-center items-end m-2">
           <Button
-              className="h-12 bg-transparent border"
-              onClick={handleThemeToggle}
+            className="h-12 bg-transparent border"
+            onClick={handleThemeToggle}
           >
             {theme === "light" ? (
-                <MoonIcon className="size-6" />
+              <MoonIcon className="size-6" />
             ) : (
-                <SunIcon className="size-6 text-yellow-200 hover:bg-none" />
+              <SunIcon className="size-6 text-yellow-200 hover:bg-none" />
             )}
           </Button>
         </div>

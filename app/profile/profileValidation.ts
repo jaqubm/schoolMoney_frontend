@@ -1,9 +1,30 @@
 import { z } from "zod";
 
 export const updateUserSchema = z.object({
-  name: z.string().min(1, "First name is required"),
-  surname: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
+  name: z
+    .string()
+    .min(1, { message: "First name is required" })
+    .min(3, {
+      message: "First name must be at least 3 characters long",
+    })
+    .max(20, { message: "First name cannot exceed 20 characters" })
+    .regex(/^[A-Z][a-zA-Z]*$/, {
+      message:
+        "First name must start with a capital letter and contain only letters",
+    }),
+  surname: z
+    .string()
+    .min(1, { message: "Surname is required" })
+    .min(3, { message: "Surname must be at least 3 characters long" })
+    .max(30, { message: "Surname cannot exceed 30 characters" })
+    .regex(/^[A-Z][a-zA-Z]*$/, {
+      message:
+        "Surname must start with a capital letter and contain only letters",
+    }),
+  email: z
+    .string()
+    .min(1, { message: "Email is required" })
+    .email({ message: "Invalid email format" }),
 });
 
 export const updatePasswordSchema = z

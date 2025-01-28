@@ -19,7 +19,8 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeftIcon, Check, ChevronsUpDown } from "lucide-react";
+import { ArrowLeftIcon, PencilIcon } from "@heroicons/react/24/outline";
+import { Check, ChevronsUpDown } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -34,28 +35,40 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
-import { useForm } from "react-hook-form";
+import { useForm, useFormState } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/Header";
 import { useSearchClasses } from "@/queries/class";
-
-const editKidSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  classId: z.string(),
-});
-
-type EditKidFormValues = z.infer<typeof editKidSchema>;
+import {
+  KidFormValues,
+  kidSchema,
+} from "@/app/kids/registerKid/kidRegistrationRules";
+import { Spinner } from "@/components/Spinner";
 
 const EditChildPage = () => {
   const { data: userData, isLoading: loadingUser } = useUserData();
   const router = useRouter();
   const { id } = useParams();
-  const { data: childData, isLoading } = useGetChildProfile(id as string);
-  const updateChildProfile = useUpdateChildProfile();
-  const deleteChildProfile = useDeleteChildProfile();
+  const { data: childData, isLoading: loadingChild } = useGetChildProfile(
+    id as string,
+  );
+  const { mutateAsync: updateChildProfile, isLoading: updatingChild } =
+    useUpdateChildProfile();
+  const { mutateAsync: deleteChildProfile, isLoading: deletingChild } =
+    useDeleteChildProfile();
+
+  const [editableFields, setEditableFields] = useState<Record<string, boolean>>(
+    {
+      firstName: false,
+      lastName: false,
+      className: false,
+    },
+  );
+
+  const toggleFieldEditable = (field: string) => {
+    setEditableFields((prev) => ({ ...prev, [field]: true }));
+  };
 
   const [enteredClassName, setEnteredClassName] = useState("");
   const { data: classes, isLoading: loadingClasses } =
@@ -73,8 +86,8 @@ const EditChildPage = () => {
     });
   }, [classes]);
 
-  const form = useForm<EditKidFormValues>({
-    resolver: zodResolver(editKidSchema),
+  const form = useForm<KidFormValues>({
+    resolver: zodResolver(kidSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -82,13 +95,18 @@ const EditChildPage = () => {
     },
   });
 
+  const { isDirty } = useFormState({ control: form.control });
+
   useEffect(() => {
-    if (childData) {
-      form.setValue("firstName", childData.name.split(" ")[0]);
-      form.setValue("lastName", childData.name.split(" ")[1] || "");
+    if (!loadingChild && childData) {
+      form.reset({
+        firstName: childData.name.split(" ")[0] || "",
+        lastName: childData.name.split(" ")[1] || "",
+        classId: "",
+      });
       setEnteredClassName(childData.className);
     }
-  }, [childData, form]);
+  }, [loadingChild, childData, form]);
 
   useEffect(() => {
     if (classes && childData) {
@@ -104,25 +122,32 @@ const EditChildPage = () => {
     }
   }, [classes, childData, form]);
 
-  const handleUpdate = async (data: EditKidFormValues) => {
-    await updateChildProfile.mutateAsync({
-      childId: id as string,
-      data: {
-        name: `${data.firstName} ${data.lastName}`,
-        classId: data.classId,
+  const handleUpdate = async (data: KidFormValues) => {
+    await updateChildProfile(
+      {
+        childId: id as string,
+        data: {
+          name: `${data.firstName} ${data.lastName}`,
+          classId: data.classId || null,
+        },
       },
-    });
-    router.push("/kids");
+      {
+        onSuccess: () => {
+          form.reset(data);
+          setEditableFields({
+            firstName: false,
+            lastName: false,
+            className: false,
+          });
+        },
+      },
+    );
   };
 
   const handleDelete = async () => {
-    await deleteChildProfile.mutateAsync(id as string);
+    await deleteChildProfile(id as string);
     router.push("/kids");
   };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="flex flex-col w-screen h-screen">
@@ -156,10 +181,10 @@ const EditChildPage = () => {
             onClick={() => router.back()}
           >
             <ArrowLeftIcon className="w-5 h-5" />
-            <span className="text-xl font-bold">Kid's profile</span>
+            <span className="text-xl font-bold">Kid&apos;s profile</span>
           </button>
 
-          <div className="flex gap-10">
+          <div className="flex gap-10 w-full h-full justify-center">
             <div className="flex flex-col items-center justify-center w-full max-w-[512px] max-h-[512px] border rounded-lg">
               <Avatar className="w-52 h-52">
                 <AvatarFallback className="text-4xl">
@@ -174,7 +199,7 @@ const EditChildPage = () => {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(handleUpdate)}
-                  className="flex flex-col gap-5"
+                  className="flex flex-col w-full h-full gap-5"
                 >
                   <FormField
                     control={form.control}
@@ -183,10 +208,25 @@ const EditChildPage = () => {
                       <FormItem>
                         <FormLabel>First Name</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Enter your kid's first name"
-                            {...field}
-                          />
+                          <div className="flex items-center gap-2">
+                            <Input
+                              {...field}
+                              placeholder="..."
+                              readOnly={!editableFields.firstName}
+                              className={
+                                editableFields.firstName ? "" : "text-gray-500"
+                              }
+                            />
+                            <button
+                              className="flex w-6 h-6"
+                              onClick={(event) => {
+                                event.preventDefault();
+                                toggleFieldEditable("firstName");
+                              }}
+                            >
+                              <PencilIcon />
+                            </button>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -199,10 +239,25 @@ const EditChildPage = () => {
                       <FormItem>
                         <FormLabel>Last Name</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Enter your kid's last name"
-                            {...field}
-                          />
+                          <div className="flex items-center gap-2">
+                            <Input
+                              {...field}
+                              placeholder="..."
+                              readOnly={!editableFields.lastName}
+                              className={
+                                editableFields.lastName ? "" : "text-gray-500"
+                              }
+                            />
+                            <button
+                              className="flex w-6 h-6"
+                              onClick={(event) => {
+                                event.preventDefault();
+                                toggleFieldEditable("lastName");
+                              }}
+                            >
+                              <PencilIcon />
+                            </button>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -215,21 +270,41 @@ const EditChildPage = () => {
                       <FormItem className="flex flex-col">
                         <FormLabel>Class</FormLabel>
                         <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                role="combobox"
-                                className={cn(
-                                  "w-full justify-between",
-                                  !field.value && "text-muted-foreground",
-                                )}
-                              >
-                                {field.value ? selectedClass : "Select class"}
-                                <ChevronsUpDown className="opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
+                          <div className="flex items-center gap-2">
+                            <PopoverTrigger
+                              asChild
+                              disabled={!editableFields.className}
+                            >
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  className={cn(
+                                    "w-full justify-between",
+                                    !field.value && "text-muted-foreground",
+                                  )}
+                                >
+                                  {field.value
+                                    ? selectedClass
+                                    : loadingChild
+                                      ? "..."
+                                      : "Select class"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+
+                            <button
+                              className="flex w-6 h-6"
+                              onClick={(event) => {
+                                event.preventDefault();
+                                toggleFieldEditable("className");
+                              }}
+                            >
+                              <PencilIcon />
+                            </button>
+                          </div>
+
                           <PopoverContent className="w-full">
                             <Command>
                               <CommandInput
@@ -259,6 +334,7 @@ const EditChildPage = () => {
                                             form.setValue(
                                               "classId",
                                               listElement.classId,
+                                              { shouldDirty: true },
                                             );
                                             setSelectedClass(e);
                                           }}
@@ -294,17 +370,36 @@ const EditChildPage = () => {
                       </FormItem>
                     )}
                   />
-                  <div className="flex justify-between mt-8">
-                    <Button type="submit" className="bg-blue text-white w-40">
-                      Save Changes
+                  <div className="flex flex-col w-full gap-5 h-full justify-center items-center">
+                    <Button
+                      type="submit"
+                      className="bg-blue py-2 hover:bg-blueLight text-white"
+                      disabled={!(isDirty && !updatingChild)}
+                    >
+                      {updatingChild ? (
+                        <span className="flex items-center gap-2">
+                          <Spinner />
+                          Updating Profile..
+                        </span>
+                      ) : (
+                        "Update Profile"
+                      )}
                     </Button>
                     <Button
                       type="button"
                       variant="destructive"
-                      className="bg-red text-white w-40"
+                      className="bg-red hover:bg-redLight text-white py-2"
                       onClick={handleDelete}
+                      disabled={deletingChild || loadingChild}
                     >
-                      Delete Profile
+                      {deletingChild ? (
+                        <span className="flex items-center gap-2">
+                          <Spinner />
+                          Deleting Profile..
+                        </span>
+                      ) : (
+                        "Delete Profile"
+                      )}
                     </Button>
                   </div>
                 </form>

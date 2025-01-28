@@ -134,7 +134,7 @@ export default function Login() {
 
             <Button
               type="submit"
-              className="w-full bg-blue text-white py-2 rounded-lg"
+              className="w-full bg-blue text-white py-2 rounded-lg hover:bg-blueLight"
               disabled={loading}
             >
               {loading ? (

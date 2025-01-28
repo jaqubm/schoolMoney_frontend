@@ -6,7 +6,7 @@ import {
   useUpdateClass,
   useDeleteClass,
 } from "@/queries/class";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Form,
   FormControl,
@@ -18,56 +18,75 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeftIcon } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { ArrowLeftIcon, PencilIcon } from "@heroicons/react/24/outline";
+import { useForm, useFormState } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/Header";
 import { useUserData } from "@/queries/user";
-
-// Validation schema
-const editClassSchema = z.object({
-  name: z.string().min(1, "Class name is required"),
-  schoolName: z.string().min(1, "School name is required"),
-});
-
-type EditClassFormValues = z.infer<typeof editClassSchema>;
+import { ClassFormValues, classSchema } from "@/app/classes/create/classRules";
+import { Spinner } from "@/components/Spinner";
 
 const EditClassPage = () => {
   const { data: userData, isLoading: loadingUser } = useUserData();
   const router = useRouter();
   const { id } = useParams();
-  const { data: classData, isLoading } = useGetClassById(id as string);
-  const updateClass = useUpdateClass();
-  const deleteClass = useDeleteClass();
+  const { data: classData, isLoading: loadingClass } = useGetClassById(
+    id as string,
+  );
+  const { mutateAsync: updateClass, isLoading: updatingClass } =
+    useUpdateClass();
+  const { mutateAsync: deleteClass, isLoading: deletingClass } =
+    useDeleteClass();
 
-  const form = useForm<EditClassFormValues>({
-    resolver: zodResolver(editClassSchema),
+  const [editableFields, setEditableFields] = useState<Record<string, boolean>>(
+    {
+      name: false,
+      schoolName: false,
+    },
+  );
+
+  const toggleFieldEditable = (field: string) => {
+    setEditableFields((prev) => ({ ...prev, [field]: true }));
+  };
+
+  const form = useForm<ClassFormValues>({
+    resolver: zodResolver(classSchema),
     defaultValues: {
       name: "",
       schoolName: "",
     },
   });
 
-  useEffect(() => {
-    if (classData) {
-      form.setValue("name", classData.name);
-      form.setValue("schoolName", classData.schoolName);
-    }
-  }, [classData, form]);
+  const { isDirty } = useFormState({ control: form.control });
 
-  const handleUpdate = async (data: EditClassFormValues) => {
+  useEffect(() => {
+    if (!loadingClass && classData) {
+      form.reset({
+        name: classData.name,
+        schoolName: classData.schoolName,
+      });
+    }
+  }, [loadingClass, classData, form]);
+
+  const handleUpdate = async (data: ClassFormValues) => {
     if (userData?.email !== classData?.treasurer?.email) {
       alert("Only the treasurer can edit this class.");
       return;
     }
 
-    await updateClass.mutateAsync({
-      classId: id as string,
-      data: { name: data.name, schoolName: data.schoolName },
-    });
-    router.push("/classes");
+    await updateClass(
+      {
+        classId: id as string,
+        data: { name: data.name, schoolName: data.schoolName },
+      },
+      {
+        onSuccess: () => {
+          form.reset(data);
+          setEditableFields({ name: false, schoolName: false });
+        },
+      },
+    );
   };
 
   const handleDelete = async () => {
@@ -76,13 +95,9 @@ const EditClassPage = () => {
       return;
     }
 
-    await deleteClass.mutateAsync(id as string);
+    await deleteClass(id as string);
     router.push("/classes");
   };
-
-  if (isLoading || loadingUser) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="flex flex-col w-screen h-screen">
@@ -119,8 +134,8 @@ const EditClassPage = () => {
             <span className="text-xl font-bold">Class</span>
           </button>
 
-          <div className="flex gap-10">
-            <div className="flex flex-col items-center justify-center w-full max-w-[512px] max-h-[512px] border rounded-lg">
+          <div className="flex gap-10 w-full h-full justify-center">
+            <div className="flex items-center justify-center w-full max-w-[512px] max-h-[512px] border rounded-lg">
               <Avatar className="w-52 h-52">
                 <AvatarFallback className="text-4xl">
                   {form.watch("name")?.slice(0, 2)?.toUpperCase() || "..."}
@@ -128,11 +143,11 @@ const EditClassPage = () => {
               </Avatar>
             </div>
 
-            <div className="w-full h-full max-h-[512px] max-w-5xl border rounded-lg p-10">
+            <div className="flex w-full h-full max-h-[512px] max-w-5xl border rounded-lg p-10">
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(handleUpdate)}
-                  className="flex flex-col gap-5"
+                  className="flex flex-col w-full h-full gap-5"
                 >
                   <FormField
                     control={form.control}
@@ -141,7 +156,25 @@ const EditClassPage = () => {
                       <FormItem>
                         <FormLabel>Class Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter class name" {...field} />
+                          <div className="flex items-center gap-2">
+                            <Input
+                              {...field}
+                              placeholder="..."
+                              readOnly={!editableFields.name}
+                              className={
+                                editableFields.name ? "" : "text-gray-500"
+                              }
+                            />
+                            <button
+                              className="flex w-6 h-6"
+                              onClick={(event) => {
+                                event.preventDefault();
+                                toggleFieldEditable("name");
+                              }}
+                            >
+                              <PencilIcon />
+                            </button>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -154,23 +187,61 @@ const EditClassPage = () => {
                       <FormItem>
                         <FormLabel>School Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter school name" {...field} />
+                          <div className="flex items-center gap-2">
+                            <Input
+                              {...field}
+                              placeholder="..."
+                              readOnly={!editableFields.schoolName}
+                              className={
+                                editableFields.schoolName ? "" : "text-gray-500"
+                              }
+                            />
+                            <button
+                              className="flex w-6 h-6"
+                              onClick={(event) => {
+                                event.preventDefault();
+                                toggleFieldEditable("schoolName");
+                              }}
+                            >
+                              <PencilIcon />
+                            </button>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <div className="flex justify-between mt-8">
-                    <Button type="submit" className="bg-blue text-white w-40">
-                      Save Changes
+
+                  <div className="flex flex-col w-full gap-5 h-full justify-center items-center">
+                    <Button
+                      type="submit"
+                      className="bg-blue hover:bg-blueLight text-white py-2"
+                      disabled={!(isDirty && !updatingClass)}
+                    >
+                      {updatingClass ? (
+                        <span className="flex items-center gap-2">
+                          <Spinner />
+                          Updating Class..
+                        </span>
+                      ) : (
+                        "Update Class"
+                      )}
                     </Button>
                     <Button
                       type="button"
                       variant="destructive"
-                      className="bg-red text-white w-40"
+                      className="bg-red hover:bg-redLight text-white py-2"
                       onClick={handleDelete}
+                      disabled={deletingClass || loadingClass}
                     >
-                      Delete Class
+                      {deletingClass ? (
+                        <span className="flex items-center gap-2">
+                          <Spinner />
+                          Deleting Class..
+                        </span>
+                      ) : (
+                        "Delete Class"
+                      )}
                     </Button>
                   </div>
                 </form>

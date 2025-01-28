@@ -19,28 +19,26 @@ import { useCreateClass } from "@/queries/class";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import {
-  createClassSchema,
-  CreateClassFormValues,
-} from "@/app/classes/create/classRules";
+import { classSchema, ClassFormValues } from "@/app/classes/create/classRules";
 import React from "react";
 import { useUserData } from "@/queries/user";
 
 export default function CreateClassPage() {
   const router = useRouter();
   const { data: userData, isLoading: loadingUser } = useUserData();
-  const { mutate: createClass, isLoading: creatingClass } = useCreateClass();
+  const { mutateAsync: createClass, isLoading: creatingClass } =
+    useCreateClass();
 
-  const form = useForm<CreateClassFormValues>({
-    resolver: zodResolver(createClassSchema),
+  const form = useForm<ClassFormValues>({
+    resolver: zodResolver(classSchema),
     defaultValues: {
       name: "",
       schoolName: "",
     },
   });
 
-  const onSubmit = (data: CreateClassFormValues) => {
-    createClass(data, {
+  const onSubmit = async (data: ClassFormValues) => {
+    await createClass(data, {
       onSuccess: () => {
         router.push("/classes");
       },
