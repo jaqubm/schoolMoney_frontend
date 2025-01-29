@@ -35,10 +35,6 @@ export default function ProfilePage() {
       email: false,
     },
   );
-  const [updatedUserData, setUpdatedUserData] = useState({
-    name: userData?.name || "",
-    surname: userData?.surname || "",
-  });
 
   const toggleFieldEditable = (field: string) => {
     setEditableFields((prev) => ({ ...prev, [field]: true }));
@@ -62,9 +58,11 @@ export default function ProfilePage() {
         name: userData.name,
         surname: userData.surname,
       });
-      setUpdatedUserData({
+
+      setInitialValues({
         name: userData.name,
         surname: userData.surname,
+        email: userData.email,
       });
     }
   }, [loadingUser, userData, userForm]);
@@ -82,12 +80,26 @@ export default function ProfilePage() {
     control: passwordForm.control,
   });
 
+  const [initialValues, setInitialValues] = useState({
+    name: "",
+    surname: "",
+    email: "",
+  });
+
+  const handleBlur = (field: keyof typeof initialValues) => {
+    const currentValue = userForm.getValues(field);
+    if (currentValue === initialValues[field]) {
+      setEditableFields((prev) => ({ ...prev, [field]: false }));
+    }
+  };
+
   const handleUserUpdate = (data: any) => {
     updateUser(data, {
       onSuccess: () => {
-        setUpdatedUserData({
+        setInitialValues({
           name: data.name,
           surname: data.surname,
+          email: data.email,
         });
 
         userForm.reset(data);
@@ -111,13 +123,13 @@ export default function ProfilePage() {
           <span className="text-lg mr-[22px]">
             {loadingUser
               ? "Loading..."
-              : `Welcome, ${updatedUserData?.name || "Guest"}`}
+              : `Welcome, ${initialValues?.name || "Guest"}`}
           </span>
           <Avatar>
             <AvatarFallback>
               {loadingUser
                 ? "..."
-                : `${updatedUserData?.name?.[0] || ""}${updatedUserData?.surname?.[0] || ""}` ||
+                : `${initialValues?.name?.[0] || ""}${initialValues?.surname?.[0] || ""}` ||
                   "G"}
             </AvatarFallback>
           </Avatar>
@@ -168,6 +180,7 @@ export default function ProfilePage() {
                                 className={`${
                                   editableFields.name ? "" : "text-gray-500"
                                 }`}
+                                onBlur={() => handleBlur("name")}
                               />
                               <button
                                 className="flex w-6 h-6"
@@ -200,6 +213,7 @@ export default function ProfilePage() {
                                 className={`${
                                   editableFields.surname ? "" : "text-gray-500"
                                 }`}
+                                onBlur={() => handleBlur("surname")}
                               />
                               <button
                                 className="flex w-6 h-6"
@@ -232,6 +246,7 @@ export default function ProfilePage() {
                                 className={`${
                                   editableFields.email ? "" : "text-gray-500"
                                 }`}
+                                onBlur={() => handleBlur("email")}
                               />
                               <button
                                 className="flex w-6 h-6"

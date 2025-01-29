@@ -72,7 +72,7 @@ export default function CreateClassPage() {
 
         <div className="flex flex-col w-full h-full px-16 py-10">
           <button
-            className="flex items-center gap-4 text-secondary hover:text-gray-800 mb-6"
+            className="flex w-fit items-center gap-4 text-secondary hover:text-gray-800 mb-6"
             onClick={() => router.back()}
           >
             <ArrowLeftIcon className="w-5 h-5" />

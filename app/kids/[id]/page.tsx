@@ -96,6 +96,11 @@ const EditChildPage = () => {
   });
 
   const { isDirty } = useFormState({ control: form.control });
+  const [initialValues, setInitialValues] = useState({
+    firstName: "",
+    lastName: "",
+    classId: "",
+  });
 
   useEffect(() => {
     if (!loadingChild && childData) {
@@ -105,6 +110,11 @@ const EditChildPage = () => {
         classId: "",
       });
       setEnteredClassName(childData.className);
+      setInitialValues({
+        firstName: childData.name.split(" ")[0] || "",
+        lastName: childData.name.split(" ")[1] || "",
+        classId: "",
+      });
     }
   }, [loadingChild, childData, form]);
 
@@ -121,6 +131,13 @@ const EditChildPage = () => {
       }
     }
   }, [classes, childData, form]);
+
+  const handleBlur = (field: keyof KidFormValues) => {
+    const currentValue = form.getValues(field);
+    if (currentValue === initialValues[field]) {
+      setEditableFields((prev) => ({ ...prev, [field]: false }));
+    }
+  };
 
   const handleUpdate = async (data: KidFormValues) => {
     await updateChildProfile(
@@ -177,7 +194,7 @@ const EditChildPage = () => {
 
         <div className="flex flex-col w-full h-full px-16 py-10 gap-10">
           <button
-            className="flex items-center gap-4 text-secondary hover:text-gray-800 mb-6"
+            className="flex w-fit items-center gap-4 text-secondary hover:text-gray-800"
             onClick={() => router.back()}
           >
             <ArrowLeftIcon className="w-5 h-5" />
@@ -216,6 +233,7 @@ const EditChildPage = () => {
                               className={
                                 editableFields.firstName ? "" : "text-gray-500"
                               }
+                              onBlur={() => handleBlur("firstName")}
                             />
                             <button
                               className="flex w-6 h-6"
@@ -247,6 +265,7 @@ const EditChildPage = () => {
                               className={
                                 editableFields.lastName ? "" : "text-gray-500"
                               }
+                              onBlur={() => handleBlur("lastName")}
                             />
                             <button
                               className="flex w-6 h-6"

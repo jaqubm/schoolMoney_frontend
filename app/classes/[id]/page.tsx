@@ -58,11 +58,27 @@ const EditClassPage = () => {
     },
   });
 
+  const [initialValues, setInitialValues] = useState({
+    name: "",
+    schoolName: "",
+  });
+
+  const handleBlur = (field: keyof typeof initialValues) => {
+    const currentValue = form.getValues(field);
+    if (currentValue === initialValues[field]) {
+      setEditableFields((prev) => ({ ...prev, [field]: false }));
+    }
+  };
+
   const { isDirty } = useFormState({ control: form.control });
 
   useEffect(() => {
     if (!loadingClass && classData) {
       form.reset({
+        name: classData.name,
+        schoolName: classData.schoolName,
+      });
+      setInitialValues({
         name: classData.name,
         schoolName: classData.schoolName,
       });
@@ -127,7 +143,7 @@ const EditClassPage = () => {
 
         <div className="flex flex-col w-full h-full px-16 py-10 gap-10">
           <button
-            className="flex items-center gap-4 text-secondary hover:text-gray-800 mb-6"
+            className="flex w-fit items-center gap-4 text-secondary hover:text-gray-800 mb-6"
             onClick={() => router.back()}
           >
             <ArrowLeftIcon className="w-5 h-5" />
@@ -164,6 +180,7 @@ const EditClassPage = () => {
                               className={
                                 editableFields.name ? "" : "text-gray-500"
                               }
+                              onBlur={() => handleBlur("name")}
                             />
                             <button
                               className="flex w-6 h-6"
@@ -195,6 +212,7 @@ const EditClassPage = () => {
                               className={
                                 editableFields.schoolName ? "" : "text-gray-500"
                               }
+                              onBlur={() => handleBlur("schoolName")}
                             />
                             <button
                               className="flex w-6 h-6"
