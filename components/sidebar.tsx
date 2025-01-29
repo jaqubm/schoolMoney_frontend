@@ -11,7 +11,7 @@ import {
   UsersIcon,
   CreditCardIcon,
 } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import React from "react";
 import { useTheme } from "next-themes";
@@ -57,6 +57,7 @@ const BUTTON_STYLE =
 
 export const Sidebar = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const { setTheme, theme } = useTheme();
 
   const handleLogout = () => {
@@ -71,19 +72,29 @@ export const Sidebar = () => {
   return (
     <nav className="flex flex-col justify-between w-full h-full">
       <div className="flex flex-col space-y-2 w-full">
-        {NAV_ITEMS.map(({ name, path, Icon }) => (
-          <Button
-            key={name}
-            variant="ghost"
-            className={BUTTON_STYLE}
-            onClick={() => router.push(path)}
-          >
-            <div className="flex justify-center items-center h-1/2">
-              <Icon className="w-full h-full" />
-            </div>
-            {name}
-          </Button>
-        ))}
+        {NAV_ITEMS.map(({ name, path, Icon }) => {
+          let isActive = pathname.startsWith(path);
+
+          if (path === "/fundraisers") {
+            isActive =
+              pathname.startsWith("/fundraise") ||
+              pathname.startsWith("/newFundraiser");
+          }
+
+          return (
+            <Button
+              key={name}
+              variant="ghost"
+              className={BUTTON_STYLE + (isActive ? " text-blue" : "")}
+              onClick={() => router.push(path)}
+            >
+              <div className="flex justify-center items-center h-1/2">
+                <Icon className="w-full h-full" />
+              </div>
+              {name}
+            </Button>
+          );
+        })}
       </div>
 
       <div className="flex">
@@ -103,7 +114,10 @@ export const Sidebar = () => {
           <Button
             key="Profile"
             variant="ghost"
-            className={BUTTON_STYLE}
+            className={
+              BUTTON_STYLE +
+              (pathname.startsWith("/profile") ? " text-blue" : "")
+            }
             onClick={() => router.push("/profile")}
           >
             <div className="flex justify-center items-center h-1/2">
