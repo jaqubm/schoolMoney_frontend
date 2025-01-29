@@ -32,7 +32,7 @@ export const BalancesCard: React.FC<BalanceCardProps> = ({ balanceCard }) => {
       </div>
       <Button
         variant="outline"
-        className="self-end bg-blue hover:bg-blueLight"
+        className="self-end bg-blue hover:bg-blueLight text-white"
         onClick={handleViewDetails}
       >
         View Details

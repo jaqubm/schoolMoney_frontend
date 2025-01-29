@@ -29,7 +29,7 @@ export const Header = ({ children, withBorder = false }: HeaderProps) => {
     >
       <button
         onClick={handleLogoClick}
-        className="text-2xl font-poppins text-secondary text-white"
+        className="text-2xl font-poppins text-secondary"
       >
         School<span className="font-bold">Money</span>
       </button>

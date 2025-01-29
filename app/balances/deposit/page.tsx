@@ -28,7 +28,7 @@ export default function DepositScreen() {
     defaultValues: {
       title: "",
       amount: 0,
-      sourceAccountNumber: "",
+      sourceAccountNumber: "", // Empty account number, it generates randomly on backend
     },
   });
 
@@ -39,7 +39,7 @@ export default function DepositScreen() {
       makeDeposit({
         title: data.title,
         amount: data.amount,
-        sourceAccountNumber: "", // Empty account number, it generates randomly on backend
+        sourceAccountNumber: data.sourceAccountNumber,
       });
       router.push("/balances");
     } else {

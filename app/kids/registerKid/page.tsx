@@ -27,8 +27,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import {
-  registerKidSchema,
-  RegisterFormValues,
+  kidSchema,
+  KidFormValues,
 } from "@/app/kids/registerKid/kidRegistrationRules";
 import { CreateChildPayload } from "@/app/user/User.types";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
@@ -44,7 +44,7 @@ import {
 export default function RegisterKidPage() {
   const router = useRouter();
   const { data: userData, isLoading: loadingUser } = useUserData();
-  const { mutate: createChild, isLoading: creatingChild } =
+  const { mutateAsync: createChild, isLoading: creatingChild } =
     useCreateChildProfile();
 
   const [enteredClassName, setEnteredClassName] = useState("");
@@ -63,22 +63,25 @@ export default function RegisterKidPage() {
     });
   }, [classes]);
 
-  const form = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerKidSchema),
+  const form = useForm<KidFormValues>({
+    resolver: zodResolver(kidSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
       classId: "",
     },
   });
-  const onSubmit = (data: RegisterFormValues) => {
+  const onSubmit = async (data: KidFormValues) => {
     const payload: CreateChildPayload = {
       name: `${data.firstName} ${data.lastName}`,
       classId: data.classId || null,
     };
 
-    createChild(payload);
-    router.push("/kids");
+    await createChild(payload, {
+      onSuccess: () => {
+        router.push("/kids");
+      },
+    });
   };
 
   return (
@@ -108,7 +111,7 @@ export default function RegisterKidPage() {
 
         <div className="flex flex-col w-full h-full px-16 py-10">
           <button
-            className="flex items-center gap-4 text-secondary hover:text-gray-800 mb-6"
+            className="flex w-fit items-center gap-4 text-secondary hover:text-gray-800 mb-6"
             onClick={() => router.back()}
           >
             <ArrowLeftIcon className="w-5 h-5" />
@@ -119,7 +122,7 @@ export default function RegisterKidPage() {
             <div className="flex flex-col items-center justify-center w-full max-w-[512px] max-h-[512px] border rounded-lg">
               <Avatar className="w-52 h-52">
                 <AvatarFallback className="text-4xl">
-                  {`${form.watch("firstName")?.[0] || ""}${form.watch("lastName")?.[0] || ""}` ||
+                  {`${form.watch("firstName")?.[0]?.toUpperCase() || ""}${form.watch("lastName")?.[0]?.toUpperCase() || ""}` ||
                     "..."}
                 </AvatarFallback>
               </Avatar>

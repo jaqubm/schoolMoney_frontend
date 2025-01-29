@@ -60,7 +60,7 @@ const TransactionDetailsPage = () => {
         <div className="flex flex-col w-full h-full px-16 py-10">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-secondary hover:text-gray-800 mb-6"
+            className="flex w-fit items-center gap-2 text-secondary hover:text-gray-800 mb-6"
           >
             <ArrowLeftIcon className="w-5 h-5" />
             <span className="text-lg font-bold">Transaction details</span>

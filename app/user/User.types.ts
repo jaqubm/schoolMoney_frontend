@@ -72,5 +72,5 @@ export type CreateChildPayload = {
 
 export type UpdateChildPayload = {
   name: string;
-  classId: string;
+  classId: string | null;
 };

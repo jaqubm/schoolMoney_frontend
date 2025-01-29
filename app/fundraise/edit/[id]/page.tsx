@@ -45,7 +45,7 @@ const schema = z
     title: z
       .string()
       .min(6, "Title must be at least 6 characters long.")
-      .max(40, "Title must be maximum 40 characters long")
+      .max(255, "Title must be maximum 255 characters long")
       .regex(
         /^[a-zA-Z\u00C0-\u017F\s]+$/,
         "Only letters and spaces are allowed.",
@@ -53,7 +53,7 @@ const schema = z
     description: z
       .string()
       .min(10, "Description must be at least 10 characters long.")
-      .max(140, "Title must be maximum 140 characters long")
+      .max(500, "Title must be maximum 500 characters long")
       .regex(
         /^[a-zA-Z\u00C0-\u017F\s]+$/,
         "Only letters and spaces are allowed.",
