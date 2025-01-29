@@ -7,7 +7,7 @@ export const updateUserSchema = z.object({
     .min(3, {
       message: "First name must be at least 3 characters long",
     })
-    .max(20, { message: "First name cannot exceed 20 characters" })
+    .max(100, { message: "First name cannot exceed 100 characters" })
     .regex(/^[A-Z][a-zA-Z]*$/, {
       message:
         "First name must start with a capital letter and contain only letters",
@@ -16,7 +16,7 @@ export const updateUserSchema = z.object({
     .string()
     .min(1, { message: "Surname is required" })
     .min(3, { message: "Surname must be at least 3 characters long" })
-    .max(30, { message: "Surname cannot exceed 30 characters" })
+    .max(100, { message: "Surname cannot exceed 100 characters" })
     .regex(/^[A-Z][a-zA-Z]*$/, {
       message:
         "Surname must start with a capital letter and contain only letters",

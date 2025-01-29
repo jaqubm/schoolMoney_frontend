@@ -4,7 +4,7 @@ export const classSchema = z.object({
   name: z
     .string()
     .min(1, "Class name is required")
-    .max(50, "Class name cannot exceed 50 characters"),
+    .max(100, "Class name cannot exceed 100 characters"),
   schoolName: z
     .string()
     .min(1, "School name is required")

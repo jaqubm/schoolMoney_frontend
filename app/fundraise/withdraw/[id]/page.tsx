@@ -17,7 +17,6 @@ import { z } from "zod";
 import { toast } from "@/hooks/use-toast";
 import PaymentForm from "@/components/fundraiser/PaymentForm";
 import PageHeader from "@/components/PageHeader/PageHeader";
-import {WithdrawFundraisePayload} from "@/app/fundraise/Fundraise.types";
 
 type WithdrawFromFundraiserData = {
   amount: string;
@@ -28,7 +27,7 @@ const schema = z.object({
     .string()
     .regex(/^\d+$/, "Donation amount must be a number.")
     .refine((value) => Number(value) > 0, {
-      message: "Donation amount  cannot be less than 0.",
+      message: "Donation amount cannot be less than 0.",
     })
     .refine((value) => Number(value) <= 10000, {
       message: "Donation amount be greater than 10,000.",
@@ -68,8 +67,8 @@ const WithdrawFromFundraisePage = () => {
     const backendData = {
       fundraiseId: id as string,
       data: {
-        amount: parseFloat(data.amount)
-      }
+        amount: parseFloat(data.amount),
+      },
     };
 
     withdrawFromFundraise(backendData, {
